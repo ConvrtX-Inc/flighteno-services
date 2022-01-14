@@ -10,6 +10,11 @@
 		"slack": "https://codeigniterchat.slack.com",
 		"source": "https://github.com/bcit-ci/CodeIgniter"
 	},
+	"config": {
+		"platform": {
+			"php": "7.4.26"
+		}
+	},
 	"require": {
 		"php": "7.4.26",
 		"twilio/sdk": "^6.24"
