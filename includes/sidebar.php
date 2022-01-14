@@ -126,11 +126,32 @@
                 </li>
 
 
-                <li class="">
+                <!-- <li class="">
                     <a href="<?php echo base_url();?>index.php/admin/Support/tickets">
                         <i class="mdi mdi-view-dashboard-outline"></i>
                         <span> Support </span>
                     </a>
+                </li> -->
+
+
+                <li class="hasSubmenu">
+                    <a href="#" data-target="#menu-style6" data-toggle="collapse4"><i class="mdi mdi-view-dashboard-outline"></i>
+                    <span>Support</span></a>
+
+                    <ul class="collapse4 styleClass" id="menu-style6">
+                        <li class="">
+                            <a href="<?php echo base_url();?>index.php/admin/Support/tickets?profile=buyer">
+                                <i class="fas fa-user-lock"></i>
+                                <span> Buyers </span>
+                            </a>      
+                        </li>
+                        <li class="mt-2">                        
+                            <a href="<?php echo base_url();?>index.php/admin/Support/tickets?profile=traveler">
+                                <i class="fas fa-user-lock"></i>
+                                <span> Traveler </span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
