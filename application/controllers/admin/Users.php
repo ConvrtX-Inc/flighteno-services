@@ -21,8 +21,13 @@ class Users extends CI_Controller {
         }
         $searchData = $this->session->userdata('buyerUsersFilter');
 	if(!is_null($searchData)){
-        if($searchData['location'] != "" && !$is_null($searchData)){
+        // if($searchData['location'] != "" && !$is_null($searchData)){
 
+        //     $findArray['country'] = $searchData['location'];
+        // }
+        
+        /* FLIGHT-28 Fix */
+        if (!empty($searchData['location'])) {
             $findArray['country'] = $searchData['location'];
         }
         
