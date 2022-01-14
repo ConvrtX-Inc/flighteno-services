@@ -12,11 +12,11 @@
 	},
 	"config": {
 		"platform": {
-			"php": "7.4.26"
+			"php": "8.0.14"
 		}
 	},
 	"require": {
-		"php": "7.4.26",
+		"php": "8.0.14",
 		"twilio/sdk": "^6.24"
 	},
 	"suggest": {
