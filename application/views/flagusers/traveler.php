@@ -178,7 +178,8 @@
                         <div class = "row mt-4">
                             <table>
                                 <tr>
-                                    <th>Image</th>
+                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                    <th>Select All</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
                                     <th>Location</th>
@@ -186,6 +187,7 @@
                                 </tr>
                                 <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
                                     <tr>
+                                        <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" /></td>
                                         <td>
                                             <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
                                                 
