@@ -139,7 +139,7 @@
                     <div class="container-fluid" style="padding-left:4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
-                                <h4 class="page-title styleHeader titleStyle">Transection</h4>
+                                <h4 class="page-title styleHeader titleStyle">Transaction</h4>
                                 <p class="titleStyle2">Buyer</p>
                             </div>  
                         </div>
@@ -176,8 +176,8 @@
                         <div class = "row mt-4">
                             <table>
                                 <tr>
-                                    <!-- <th> <input type="checkbox" id="checkAll" name="checkAll" value="all"> select All </th> -->
-                                    <th>Image</th>
+                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                    <th>Select All</th>
                                     <th>Name</th>
                                     <th>Date</th>
                                     <th>OrderId</th>
@@ -185,7 +185,7 @@
                                 </tr>
                                 <?php foreach ($buyers_payment as $value){?>
                                 <tr>
-                                    <!-- <td> <input type="checkbox" id="select" name="select" value="select"></td> -->
+                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
                                     <td>
                                         <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
                                             
@@ -240,10 +240,10 @@
         <script src="<?php echo SURL;?>assets/js/pages/dashboard.init.js"></script>
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
-        <!-- <script>
+        <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
-        </script> -->
+        </script>
     </body>
 </html>
