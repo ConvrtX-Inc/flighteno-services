@@ -176,7 +176,8 @@
                         <div class = "row mt-4">
                             <table>
                                 <tr>
-                                    <th>Image</th>
+                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                    <th>Select All</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
                                     <th>Location</th>
@@ -185,6 +186,7 @@
 
                                 <?php foreach($flagUsers as $buyerFlag) { ?>
                                     <tr>
+                                        <td><input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" /></td>
                                         <td>
                                             <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
                                                 
