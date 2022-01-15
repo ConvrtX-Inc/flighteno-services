@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://dev-flighteno-convrtx.herokuapp.com/';
+$config['base_url'] = 'https://dev-flighteno-convrtx.herokuapp.com';
 //$config['base_url'] = 'http://3.124.117.144/flighteno-services';
 // $config['base_url'] = 'http://localhost/flighteno';
 // $config['base_url'] = 'http://flighteno.techticksdigital.com';
