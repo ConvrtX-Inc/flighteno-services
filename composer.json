@@ -17,7 +17,8 @@
 	},
 	"require": {
 		"php": "8.0.13",
-		"twilio/sdk": "^6.24"
+		"twilio/sdk": "^6.24",
+		"ext-mongo": "*"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
