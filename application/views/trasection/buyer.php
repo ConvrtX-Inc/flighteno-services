@@ -144,23 +144,23 @@
                             </div>  
                         </div>
 
-                    <?php $buyerUsersFilter = $this->session->userdata('buyerUsersFilter'); ?>
+                    <?php $buyerTransactionsFilter = $this->session->userdata('buyerTransactionsFilter'); ?>
                         <!-- start page title -->
                         <form method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
                             <div class="row">
                                 <div class="col-xl-3">
                                     <label>From: </label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($buyerUsersFilter['start_date']) ? $buyerUsersFilter['start_date'] : "")?>" />
+                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
                                     <label> To:</label>
-                                    <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($buyerUsersFilter['end_date']) ? $buyerUsersFilter['end_date'] : "")?>" />
+                                    <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
                                     <label>Price:</label>
-                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($buyerUsersFilter['price']) ? $buyerUsersFilter['price'] : "")?>" />
+                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($buyerTransactionsFilter['price']) ? $buyerTransactionsFilter['price'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">

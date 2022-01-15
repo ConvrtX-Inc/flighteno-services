@@ -20,9 +20,6 @@ class Trasection extends CI_Controller {
     }
     $filterDataBuyer = $this->session->userdata('buyerTransactionsFilter');
 
-    // var_dump($filterDataBuyer);
-    // exit();
-
     if(!is_null($filterDataBuyer)){
       if($filterDataBuyer['start_date'] != "" && $filterDataBuyer['end_date'] != ""){
       $startDate =  $this->mongo_db->converToMongodttime($filterDataBuyer['start_date']);
@@ -32,8 +29,8 @@ class Trasection extends CI_Controller {
     }
     
     if(!empty($filterDataBuyer['price'])){
-
-      $findArray['price'] = $filterDataBuyer['price'];
+      /* FLIGHT-31 fix */
+      $findArray['price'] = intval($filterDataBuyer['price']);
     }}
    
     $findArray['type'] = 'buyer';

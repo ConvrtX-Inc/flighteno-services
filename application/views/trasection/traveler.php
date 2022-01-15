@@ -147,23 +147,23 @@
                             </div>  
                         </div>
 
-                    <?php $travelerUsersFilter = $this->session->userdata('travelerUsersFilter'); ?>
+                    <?php $travelerTransactionsFilter = $this->session->userdata('travelerTransactionsFilter'); ?>
                         <!-- start page title -->
                         <form method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
                             <div class="row">
                                 <div class="col-xl-3">
                                     <label>From:</label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($travelerUsersFilter['start_date']) ? $travelerUsersFilter['start_date'] : "")?>" />
+                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($travelerTransactionsFilter['start_date']) ? $travelerTransactionsFilter['start_date'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
                                     <label> To:</label>
-                                  <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($travelerUsersFilter['end_date']) ? $travelerUsersFilter['end_date'] : "")?>" />
+                                  <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($travelerTransactionsFilter['end_date']) ? $travelerTransactionsFilter['end_date'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
                                     <label>Price:</label>
-                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($travelerUsersFilter['price']) ? $travelerUsersFilter['price'] : "")?>" />
+                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($travelerTransactionsFilter['price']) ? $travelerTransactionsFilter['price'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
