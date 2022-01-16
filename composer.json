@@ -12,13 +12,14 @@
 	},
 	"config": {
 		"platform": {
-			"php": "8.0.14"
+			"php": "7.4.27"
 		}
 	},
 	"require": {
-		"php": "8.0.14",
+		"php": "7.4.27",
 		"twilio/sdk": "^6.24",
-		"ext-mongodb": "*"
+		"ext-mongodb": "*",
+		"mongodb/mongodb": "^1.11.0"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
