@@ -312,5 +312,5 @@ switch (ENVIRONMENT)
  *
  * And away we go...
  */
-echo(BASEPATH);
+echo (BASEPATH.'core/CodeIgniter.php');
 require_once BASEPATH.'core/CodeIgniter.php';
