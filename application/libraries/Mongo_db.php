@@ -151,7 +151,7 @@ Class Mongo_db {
 
             require 'mongodb_class/autoload.php'; // include Composer's autoloader
 
-            $url = 'mongodb+srv://admin-convrtx:bwuSme9s7ZgUyOr3@flightenocluster.irdgi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+            $url = 'mongodb+srv://admin-convrtx:bwuSme9s7ZgUyOr3@flightenocluster.irdgi.mongodb.net/flighteno?retryWrites=true&w=majority';
             // $url = 'mongodb://127.0.0.1:27017/';
 
             $this->connect = new MongoDB\Client($url);
