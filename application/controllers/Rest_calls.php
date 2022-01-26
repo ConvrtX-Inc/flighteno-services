@@ -2652,28 +2652,27 @@ class Rest_calls extends REST_Controller
                     $this->set_response($response_array, REST_Controller::HTTP_OK);
 
                     $updateData = [
-                        'id_type' => (string)$data['id_type'],
-                        'id_number' => (string)$data['id_number'],
-                        'id_front' => (string)$data['id_front'],
-                        'id_back' => (string)$data['id_back'],
-                        'profile_image' => (string)$data['profile_image'],
-                        'first_name' => (string)$data['last_name'],
-                        'middle_name' => (string)$data['last_name'],
-                        'last_name' => (string)$data['last_name'],
-                        'suffix' => (string)$data['suffix'],
+                        'id_type'        => (string)$data['id_type'],
+                        'id_number'      => (string)$data['id_number'],
+                        'id_front'       => (string)$data['id_front'],
+                        'id_back'        => (string)$data['id_back'],
+                        'profile_image'  => (string)$data['profile_image'],
+                        'first_name'     => (string)$data['first_name'],
+                        'middle_name'    => (string)$data['middle_name'],
+                        'last_name'      => (string)$data['last_name'],
+                        'suffix'         => (string)$data['suffix'],
                         'address_line_1' => (string)$data['address_line_1'],
-                        'location' => (string)$data['address_line_2'],
-                        'birth_date' => (string)$data['phone_number'],
-                        'phone_number' => (string)$data['phone_number'],
+                        'location'       => (string)$data['address_line_2'],
+                        'birth_date'     => (string)$data['birth_date'],
+                        'phone_number'   => (string)$data['phone_number'],
                     ];
-//                //lock the activity
-//                $activityData = [
-//                    'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-//                    'message' => 'Sign Up',
-//                    'admin_id' => (string)$checkStatus->getInsertedId()
-//                ];
-//                $this->Mod_activity->saveActivity($activityData);
-//                //end lock the activity
+                $this->Mod_users->kycUpdate($data['user_id'], $updateData);
+                $activityData = [
+                    'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                    'message' => 'KYC Update',
+                    'admin_id' => (string)$data['user_id']
+                ];
+                $this->Mod_activity->saveActivity($activityData);
 
                 } else {
                     $this->set_response([
