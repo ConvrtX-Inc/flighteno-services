@@ -15,10 +15,10 @@ class Trasection extends CI_Controller {
     $db  =  $this->mongo_db->customQuery();
     if( $this->input->post() ){
 
-      $filterData['buyerUsersFilter'] = $this->input->post();
+      $filterData['buyerTransactionsFilter'] = $this->input->post();
       $this->session->set_userdata($filterData);
     }
-    $filterDataBuyer = $this->session->userdata('buyerUsersFilter');
+    $filterDataBuyer = $this->session->userdata('buyerTransactionsFilter');
 
     if(!is_null($filterDataBuyer)){
       if($filterDataBuyer['start_date'] != "" && $filterDataBuyer['end_date'] != ""){
@@ -29,8 +29,8 @@ class Trasection extends CI_Controller {
     }
     
     if(!empty($filterDataBuyer['price'])){
-
-      $findArray['price'] = $filterDataBuyer['price'];
+      /* FLIGHT-31 fix */
+      $findArray['price'] = intval($filterDataBuyer['price']);
     }}
    
     $findArray['type'] = 'buyer';
@@ -141,11 +141,11 @@ class Trasection extends CI_Controller {
     $db  =  $this->mongo_db->customQuery();
     if( $this->input->post() ){
 
-      $filterData['travelerUsersFilter'] = $this->input->post();
+      $filterData['travelerTransactionsFilter'] = $this->input->post();
       $this->session->set_userdata($filterData);
     }
    
-    $filterData = $this->session->userdata('travelerUsersFilter');
+    $filterData = $this->session->userdata('travelerTransactionsFilter');
 if(!is_null($filterData)){
     if($filterData['start_date'] !="" && $filterData['end_date'] != ""){
       $startDate = $this->mongo_db->converToMongodttime($filterData['start_date']);
@@ -264,13 +264,13 @@ if(!is_null($filterData)){
 
   public function resetFilterTravelers(){ 
 
-    $this->session->unset_userdata('travelerUsersFilter');
+    $this->session->unset_userdata('travelerTransactionsFilter');
     $this->trasectionTraveler();
   }
 
   public function resetFilterBuyers(){
       
-    $this->session->unset_userdata('buyerUsersFilter');
+    $this->session->unset_userdata('buyerTransactionsFilter');
     $this->index();
   }//end
 }
