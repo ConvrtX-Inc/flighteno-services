@@ -2639,17 +2639,6 @@ class Rest_calls extends REST_Controller
                         ], REST_Controller::HTTP_BAD_REQUEST);
                         return;
                     }
-                    $response_array = [
-                        'error' => false,
-                        'sent_data' => $data,
-                        'response' => [
-                            'details' => '',
-                            'message' => 'user_id is required on this request!',
-                        ],
-                        'status_code' => REST_Controller::HTTP_OK
-
-                    ];
-                    $this->set_response($response_array, REST_Controller::HTTP_OK);
 
                     $updateData = [
                         'id_type'        => (string)$data['id_type'],
@@ -2666,14 +2655,25 @@ class Rest_calls extends REST_Controller
                         'birth_date'     => (string)$data['birth_date'],
                         'phone_number'   => (string)$data['phone_number'],
                     ];
-                $this->Mod_users->kycUpdate($data['user_id'], $updateData);
-                $activityData = [
-                    'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-                    'message' => 'KYC Update',
-                    'admin_id' => (string)$data['user_id']
-                ];
-                $this->Mod_activity->saveActivity($activityData);
+                    $this->Mod_users->kycUpdate($data['user_id'], $updateData);
+                    $activityData = [
+                        'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                        'message' => 'KYC Update',
+                        'admin_id' => (string)$data['user_id']
+                    ];
+                    $this->Mod_activity->saveActivity($activityData);
 
+                    $response_array = [
+                        'error' => false,
+                        'sent_data' => $data,
+                        'response' => [
+                            'details' => $this->Mod_users->getUser($data['user_id']),
+                            'message' => 'Successfully updated',
+                        ],
+                        'status_code' => REST_Controller::HTTP_OK
+
+                    ];
+                    $this->set_response($response_array, REST_Controller::HTTP_OK);
                 } else {
                     $this->set_response([
                         'error' => true,
