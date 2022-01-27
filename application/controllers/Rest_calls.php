@@ -2619,22 +2619,21 @@ class Rest_calls extends REST_Controller
         try {
             if (!empty($this->input->request_headers('Authorization'))) {
                 $receivedTokenArray = $this->input->request_headers('Authorization');
-                $receivedToken = $receivedTokenArray['authorization'];
+                $receivedToken      = $receivedTokenArray['authorization'];
                 if ($receivedToken == '' || $receivedToken == null || empty($receivedToken)) {
-                    $receivedToken = $receivedTokenArray['Authorization'];
+                    $receivedToken  = $receivedTokenArray['Authorization'];
                 }
                 $token = trim(str_replace(["Token: ", 'Bearer'], ["",''], $receivedToken));
                 $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
                 if (!empty($tokenArray->admin_id)) {
-                    $db = $this->mongo_db->customQuery();
                     if (!$data['user_id']) {
                         $this->set_response([
-                            'error' => true,
-                            'sent_data' => $data,
-                            'response' => [
-                                'message' => 'user_id is required on this request!',
+                            'error'         => true,
+                            'sent_data'     => $data,
+                            'response'      => [
+                                'message'   => 'user_id is required on this request!',
                             ],
-                            'status_code' => REST_Controller::HTTP_BAD_REQUEST
+                            'status_code'   => REST_Controller::HTTP_BAD_REQUEST
 
                         ], REST_Controller::HTTP_BAD_REQUEST);
                         return;
@@ -2658,53 +2657,53 @@ class Rest_calls extends REST_Controller
                     $updateData = array_filter($updateData, fn($value) => !is_null($value) && $value !== '');
                     $this->Mod_users->kycUpdate($data['user_id'], $updateData);
                     $activityData = [
-                        'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-                        'message' => 'KYC Update',
-                        'admin_id' => (string)$data['user_id']
+                        'created_date'  => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                        'message'       => 'KYC Update',
+                        'admin_id'      => (string)$data['user_id']
                     ];
                     $this->Mod_activity->saveActivity($activityData);
 
                     $response_array = [
-                        'error' => false,
-                        'sent_data' => $data,
-                        'response' => [
-                            'details' => $this->Mod_users->getUser($data['user_id']),
-                            'message' => 'Successfully updated',
+                        'error'         => false,
+                        'sent_data'     => $data,
+                        'response'      => [
+                            'details'   => $this->Mod_users->getUser($data['user_id']),
+                            'message'   => 'Successfully updated',
                         ],
-                        'status_code' => REST_Controller::HTTP_OK
+                        'status_code'   => REST_Controller::HTTP_OK
 
                     ];
                     $this->set_response($response_array, REST_Controller::HTTP_OK);
                 } else {
                     $this->set_response([
-                        'error' => true,
-                        'sent_data' => $data,
-                        'response' => [
-                            'message' => 'Authorization Failed!!',
+                        'error'         => true,
+                        'sent_data'     => $data,
+                        'response'      => [
+                            'message'   => 'Authorization Failed!!',
                         ],
-                        'status_code' => REST_Controller::HTTP_UNAUTHORIZED
+                        'status_code'   => REST_Controller::HTTP_UNAUTHORIZED
 
                     ], REST_Controller::HTTP_UNAUTHORIZED);
                 }
             } else {
                 $this->set_response([
-                    'error' => true,
-                    'sent_data' => $data,
-                    'response' => [
-                        'message' => 'Headers Are Missing!!!!!!!!!!!',
+                    'error'         => true,
+                    'sent_data'     => $data,
+                    'response'      => [
+                        'message'   => 'Headers Are Missing!!!!!!!!!!!',
                     ],
-                    'status_code' => REST_Controller::HTTP_BAD_REQUEST
+                    'status_code'   => REST_Controller::HTTP_BAD_REQUEST
 
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
         } catch (\Exception $exception) {
             $this->set_response([
-                'error' => true,
-                'sent_data' => $data,
-                'response' => [
-                    'message' => 'Something went wrong!!',
+                'error'         => true,
+                'sent_data'     => $data,
+                'response'      => [
+                    'message'   => 'Something went wrong!!',
                 ],
-                'status_code' => REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                'status_code'   => REST_Controller::HTTP_INTERNAL_SERVER_ERROR
 
             ], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         }
