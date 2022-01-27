@@ -50,3 +50,4 @@ Thumbs.db
 
 #Vendor
 /vendor/
+composer.lock
