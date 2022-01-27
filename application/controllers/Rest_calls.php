@@ -2655,6 +2655,7 @@ class Rest_calls extends REST_Controller
                         'birth_date'     => (string)$data['birth_date'],
                         'phone_number'   => (string)$data['phone_number'],
                     ];
+                    $updateData = array_filter($updateData, fn($value) => !is_null($value) && $value !== '');
                     $this->Mod_users->kycUpdate($data['user_id'], $updateData);
                     $activityData = [
                         'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
