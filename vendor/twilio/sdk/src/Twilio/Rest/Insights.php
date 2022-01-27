@@ -15,8 +15,11 @@ use Twilio\Rest\Insights\V1;
 
 /**
  * @property \Twilio\Rest\Insights\V1 $v1
+ * @property \Twilio\Rest\Insights\V1\SettingList $settings
  * @property \Twilio\Rest\Insights\V1\CallList $calls
+ * @property \Twilio\Rest\Insights\V1\CallSummariesList $callSummaries
  * @property \Twilio\Rest\Insights\V1\RoomList $rooms
+ * @method \Twilio\Rest\Insights\V1\SettingContext settings()
  * @method \Twilio\Rest\Insights\V1\CallContext calls(string $sid)
  * @method \Twilio\Rest\Insights\V1\RoomContext rooms(string $roomSid)
  */
@@ -77,6 +80,14 @@ class Insights extends Domain {
         throw new TwilioException('Unknown context ' . $name);
     }
 
+    protected function getSettings(): \Twilio\Rest\Insights\V1\SettingList {
+        return $this->v1->settings;
+    }
+
+    protected function contextSettings(): \Twilio\Rest\Insights\V1\SettingContext {
+        return $this->v1->settings();
+    }
+
     protected function getCalls(): \Twilio\Rest\Insights\V1\CallList {
         return $this->v1->calls;
     }
@@ -86,6 +97,10 @@ class Insights extends Domain {
      */
     protected function contextCalls(string $sid): \Twilio\Rest\Insights\V1\CallContext {
         return $this->v1->calls($sid);
+    }
+
+    protected function getCallSummaries(): \Twilio\Rest\Insights\V1\CallSummariesList {
+        return $this->v1->callSummaries;
     }
 
     protected function getRooms(): \Twilio\Rest\Insights\V1\RoomList {
