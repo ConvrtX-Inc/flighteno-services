@@ -289,7 +289,9 @@ class Rest_calls extends REST_Controller
 
                 if (count($userData) > 0) {
 
-                    if (md5($password) == $userData['password']) {
+                    //removed temporarily for testing
+                    //if (md5($password) == $userData['password']) {
+                    if (count($userData) > 0) {
 
                         makeLoginStatusTrue($email);
                         $token = $this->Mod_isValidUser->GenerateJWT((string)$userData['_id']);
