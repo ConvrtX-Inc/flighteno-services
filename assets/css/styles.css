@@ -3,3 +3,43 @@
 * Admin global styles
 * ############################################################
 */
+
+/* 
+* --------------------
+* Fonts
+* --------------------
+*/
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("../fonts/GilroyMedium.ttf");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("../fonts/GilroySemibold.ttf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("../fonts/GilroyBold.ttf");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("../fonts/GilroyExtraBold.ttf");
+  font-weight: 800;
+}
+
+body {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 600;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 800;
+}
