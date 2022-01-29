@@ -1750,7 +1750,7 @@ class Rest_calls extends REST_Controller
         }
     }//end
 
-    public function getUserDetailsTest_post()
+    public function getUserDetailsAndProfile_post()
     {
 
         //$db = $this->mongo_db->customQuery();
