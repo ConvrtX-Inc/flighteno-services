@@ -1753,7 +1753,7 @@ class Rest_calls extends REST_Controller
     public function getUserDetails_post()
     {
 
-        $db = $this->mongo_db->customQuery();
+        //$db = $this->mongo_db->customQuery();
 
         if (!empty($this->input->request_headers('Authorization'))) {
 
@@ -1765,6 +1765,7 @@ class Rest_calls extends REST_Controller
                 $received_Token = $received_Token_Array['Authorization'];
             }
             $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
             $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
 
             if (!empty($tokenArray->admin_id)) {
