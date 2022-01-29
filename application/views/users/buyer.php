@@ -169,7 +169,7 @@
                         <!-- start page title -->
                 
                         <?php $buyerData = $this->session->userdata('buyerUsersFilter'); ?>
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
+                        <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
                             <div class="row filter-row">
                                 <div class="col-xl-3">  
                                     <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
@@ -189,9 +189,8 @@
                                 </div> <!-- end col -->
                                 
                                 <div class="col-xl-4" style="/* background: black; */">           
-                                    <!-- <button type="submit" class="form-control filters_style_input filter button">Filter</button>
+                                    <!-- <button type="submit" class="form-control filters_style_input filter button">Filter</button> -->
                                     <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i>  -->
                                 </div> <!-- end col -->
                             </div>
 
@@ -310,6 +309,24 @@
                     });
                 }
                 });
+            });
+        </script>
+
+        <script>
+            $(function() {
+                $(".form-filter select.form-control").change(function() {
+                    filterSubmit();
+                });
+
+                $(".form-filter input.form-control").keypress(function(e) {
+                    if(e.which == 13) {
+                        filterSubmit();
+                    }
+                });
+                
+                const filterSubmit = () => {
+                    $(".form-filter").submit();
+                }
             });
         </script>
 
