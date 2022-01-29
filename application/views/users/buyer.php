@@ -231,6 +231,13 @@
                                     <?php } ?>
                                 </table>
                                 <div class="pagination"><?php echo $this->pagination->create_links(); ?></div>
+                                
+                                <center class="mt-4">
+                                    <div class="spinner-border text-dark" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <div><a href="" class="btn-load">Load more</a></div>
+                                </center>
                             </div>
                         </div>
 
