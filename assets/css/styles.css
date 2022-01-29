@@ -118,3 +118,66 @@ h1, h2, h3, h4, h5, h6 {
   width: 40px;
   top: calc(50% - 40px/2);
 }
+
+/* Table content styles */
+.content-table {
+  font-size: 16px;
+}
+
+.content-table th {
+  border-bottom: 1px solid #DFDFDF;
+  color: #6F6F6F;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 0;
+  padding: 18px 0;
+}
+
+.content-table td {
+  border-bottom: 1px solid #DFDFDF;
+  color: #898A8D;
+  line-height: 0;
+  padding: 25px 0;
+}
+
+.content-table tr:last-child td{
+  border-bottom: none;
+}
+
+.table-col-small {
+  width: 3%;
+}
+
+.table-col-profile {
+  width: 10%;
+}
+
+.content-table input[type="checkbox"] {
+  display: none;
+}
+
+.content-table input[type="checkbox"] + label { 
+  background: url('../images/icon-checkbox.png') no-repeat;
+  background-size: contain;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.content-table input[type="checkbox"]:checked + label {
+  background: url('../images/icon-checkbox-checked.png') no-repeat;
+  background-size: contain;
+}
+
+.avatar-sm {
+  width: 3rem;
+  height: 3rem;
+}
+
+.more-options img {
+  height: 20px;
+}
+
+.userNameColorChange {
+  color: #18243C !important;
+}

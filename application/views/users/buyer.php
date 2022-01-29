@@ -197,36 +197,42 @@
 
                         </form>
 
-                        <div class = "row mt-4 mb-5">
-                            <table>
-                                <tr>
-                                    <th><input type="checkbox" id="checkAll" /></th>
-                                    <th>Select All</th>
-                                    <th>Name</th>
-                                    <th>Area</th>
-                                    <th>Country</th>
-                                </tr>
-                                <?php foreach ($buyers as $value){ ?>
-                                <tr>
-                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                    <td> 
-                                        <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
-                                            
-                                            $imageSource = SURL.'assets/images/male.png';;
-                                        }else{
+                        <div class = "row mt-3 mb-5">
+                            <div class="col-12">
+                                <table class="content-table">
+                                    <tr>
+                                        <th><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                        <th>Select All</th>
+                                        <th>Name</th>
+                                        <th>Area</th>
+                                        <th>Country</th>
+                                        <th></th>
+                                    </tr>
+                                    <?php foreach ($buyers as $value){ ?>
+                                    <tr>
+                                        <td class="table-col-small"><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td class="table-col-profile"> 
+                                            <center>
+                                                <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
+                                                    
+                                                    $imageSource = SURL.'assets/images/male.png';;
+                                                }else{
 
-                                            $imageSource = $value['profile_image'];
-                                        } ?>
-                                                                      
-                                        <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                    </td>
-                                    <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
-                                    <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
-                                    <td><?php echo $value['country']; ?></td>
-                                </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination"><?php echo $this->pagination->create_links(); ?></div>
+                                                    $imageSource = $value['profile_image'];
+                                                } ?>
+                                                                            
+                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                            </center>
+                                        </td>
+                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
+                                        <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
+                                        <td><?php echo $value['country']; ?></td>
+                                        <td class="table-col-small"><a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a></td>
+                                    </tr>
+                                    <?php } ?>
+                                </table>
+                                <div class="pagination"><?php echo $this->pagination->create_links(); ?></div>
+                            </div>
                         </div>
 
                         <!-- <div class="row totalBoxStyle">
