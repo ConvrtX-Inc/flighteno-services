@@ -43,3 +43,78 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Gilroy', sans-serif;
   font-weight: 800;
 }
+
+
+
+/* 
+* --------------------
+* Content styles
+* --------------------
+*/
+
+.main-container {
+  background: #EEEEEE;
+  border: 1px solid #DFDFDF;
+  box-sizing: border-box;
+  border-radius: 30px;
+}
+
+/* Filters */
+.filters_style {
+  background: #F9F9F9;
+  border: none;
+  border-radius: 16px;
+  padding: 18px 22px;
+}
+
+.filter-row input,
+.selectize-input > .item {
+  color: #898A8D;
+  font-size: 14px;
+  font-weight: 600;
+  height: auto;
+}
+
+.selectize-control.single .selectize-input:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: calc(50% - 7px/2 + 3px);
+  right: 18px;
+  width: 12px;
+  height: 7px;
+  border: none;
+  background: url('../images/icon-arrow-down.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.inner-addon { 
+  position: relative; 
+}
+
+.inner-addon .image-icon {
+  position: absolute;
+  padding: 10px;
+}
+
+.left-addon .image-icon { 
+  left: 8px;
+}
+
+.right-addon .image-icon { 
+  right: 8px;
+}
+
+.left-addon input { 
+  padding-left: 50px;
+}
+
+.right-addon input { 
+  padding-right: 50px;
+}
+
+.filter-search .image-icon {
+  width: 40px;
+  top: calc(50% - 40px/2);
+}

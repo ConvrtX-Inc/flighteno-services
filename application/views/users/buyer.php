@@ -26,17 +26,13 @@
         <!-- DROP DOWN STYLE -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
 
             .userNameColorChange{
                 color: black;
-            }
-
-            .filters_style {
-                border-radius: 25px;
-                border: 2px solid #e9ecef;
-                width: 100%;
-                height: 41px;
             }
 
             table {
@@ -163,9 +159,9 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
                         <div class="row">
-                            <div class="col-12 mt-3">
+                            <div class="col-12 mt-3 mb-2">
                                 <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
                                 <p class="titleStyle2">Buyer</p>
                             </div>  
@@ -174,9 +170,9 @@
                 
                         <?php $buyerData = $this->session->userdata('buyerUsersFilter'); ?>
                         <form method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
-                            <div class="row">
-                                <div class="col-xl-4">  
-                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Select country...">
+                            <div class="row filter-row">
+                                <div class="col-xl-3">  
+                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
                                         <option value="" selected>Select Country</option>
 
                                         <?php foreach ($getAllCountries as $country) {?>
@@ -185,21 +181,23 @@
                                     </select>
                                 </div> <!-- end col -->
                                 
-                                <div class="col-xl-4">           
-
-                                    <input type="text" id ="full_name" class="form-control filters_style" placeholder="Enter full name"  name="full_name"  value="<?=(!empty($buyerData['full_name']) ? $buyerData['full_name'] : "")?>" />
+                                <div class="col-xl-4">   
+                                    <div class="inner-addon left-addon filter-search">
+                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
+                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search"  name="full_name"  value="<?=(!empty($buyerData['full_name']) ? $buyerData['full_name'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
                                 
-                                <div class="col-xl-4">           
-                                    <button type="submit" class="form-control filters_style_input filter button">Filter</button>
+                                <div class="col-xl-4" style="/* background: black; */">           
+                                    <!-- <button type="submit" class="form-control filters_style_input filter button">Filter</button>
                                     <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                    <i class="glyphicon glyphicon-calendar"></i>  -->
                                 </div> <!-- end col -->
                             </div>
 
                         </form>
 
-                        <div class = "row mt-4">
+                        <div class = "row mt-4 mb-5">
                             <table>
                                 <tr>
                                     <th><input type="checkbox" id="checkAll" /></th>
