@@ -46,6 +46,7 @@ class Rest_calls extends REST_Controller
             }
 
             $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
             $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
 
             if (!empty($tokenArray->admin_id)) {
@@ -1749,6 +1750,49 @@ class Rest_calls extends REST_Controller
         }
     }//end
 
+    public function getUserDetailsTest_post()
+    {
+
+        //$db = $this->mongo_db->customQuery();
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+
+                $admin_id = (string)$this->post('admin_id');
+
+                $userData = $this->Mod_users->getUserDetail($admin_id);
+                $userProfileData = $this->Mod_users->getUserProfileStatus($admin_id);
+
+                $getRatting = $this->Mod_rating->getUserAvgRatting($admin_id);
+                $response_array['rating'] = $getRatting;
+
+                $response_array['status'] = 'Successfully fetched!!';
+                $response_array['user_data'] = $userData;
+                $response_array['profile'] = $userProfileData;
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
 
     public function getUserDetails_post()
     {
@@ -1773,12 +1817,14 @@ class Rest_calls extends REST_Controller
                 $admin_id = (string)$this->post('admin_id');
 
                 $userData = $this->Mod_users->getUserDetail($admin_id);
+                //$userProfileData = $this->Mod_users->getUserProfileStatus($admin_id);
 
                 $getRatting = $this->Mod_rating->getUserAvgRatting($admin_id);
                 $response_array['rating'] = $getRatting;
 
                 $response_array['status'] = 'Successfully fetched!!';
                 $response_array['user_data'] = $userData;
+                $response_array['profile'] = $userProfileData;
                 $this->set_response($response_array, REST_Controller::HTTP_CREATED);
             } else {
 
