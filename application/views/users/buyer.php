@@ -189,8 +189,7 @@
                                 </div> <!-- end col -->
                                 
                                 <div class="col-xl-4" style="/* background: black; */">           
-                                    <!-- <button type="submit" class="form-control filters_style_input filter button">Filter</button> -->
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers">Reset</a>
+                                    <a href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers" class="btn-reset">Reset</a>
                                 </div> <!-- end col -->
                             </div>
 

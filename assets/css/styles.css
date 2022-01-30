@@ -207,6 +207,18 @@ h1, h2, h3, h4, h5, h6 {
   padding: 18px 90px;
 }
 
-.btn-load:hover {
+.btn-reset {
+  background: #FF2626;
+  border-radius: 29px;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+  display: inline-block;
+  padding: 18px 45px;
+}
+
+.btn-load:hover,
+.btn-reset:hover {
   color: #FFFFFF;
 }
