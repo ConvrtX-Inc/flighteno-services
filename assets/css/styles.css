@@ -145,11 +145,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .table-col-small {
-  width: 3%;
+  width: 5%;
 }
 
 .table-col-profile {
-  width: 10%;
+  width: 15%;
+}
+
+.table-col-name {
+  width: 20%;
+}
+
+.table-col-medium {
+  width: 25%;
+}
+
+.table-col-large {
+  width: 30%;
 }
 
 .content-table input[type="checkbox"] {

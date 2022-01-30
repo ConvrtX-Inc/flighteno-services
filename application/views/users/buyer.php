@@ -200,17 +200,17 @@
                             <div class="col-12">
                                 <table class="content-table">
                                     <tr>
-                                        <th><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                        <th>Select All</th>
-                                        <th>Name</th>
-                                        <th>Area</th>
-                                        <th>Country</th>
-                                        <th></th>
+                                        <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                        <th class="table-col-profile">Select All</th>
+                                        <th class="table-col-name">Name</th>
+                                        <th class="table-col-large">Area</th>
+                                        <th class="table-col-medium">Country</th>
+                                        <th class="table-col-small"></th>
                                     </tr>
                                     <?php foreach ($buyers as $value){ ?>
                                     <tr>
-                                        <td class="table-col-small"><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
-                                        <td class="table-col-profile"> 
+                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td> 
                                             <center>
                                                 <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
                                                     
@@ -226,17 +226,17 @@
                                         <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
                                         <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
                                         <td><?php echo $value['country']; ?></td>
-                                        <td class="table-col-small"><a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a></td>
+                                        <td><a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a></td>
                                     </tr>
                                     <?php } ?>
                                 </table>
-                                <div class="pagination"><?php echo $this->pagination->create_links(); ?></div>
                                 
-                                <center class="mt-4">
-                                    <div class="spinner-border text-dark" role="status">
+                                <center>
+                                    <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
+                                    <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
                                         <span class="sr-only">Loading...</span>
                                     </div>
-                                    <div><a href="" class="btn-load">Load more</a></div>
+                                    <a href="#" class="mt-4 btn-load">Load more</a>
                                 </center>
                             </div>
                         </div>
@@ -334,6 +334,50 @@
                 const filterSubmit = () => {
                     $(".form-filter").submit();
                 }
+
+                // Load More Custom AJAX Pagination
+                const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
+                let currentIndex = <?php echo $index; ?>;
+                let per_page = <?php echo $per_page; ?>;
+                let total = <?php echo $total; ?>;
+
+                if (per_page > total) {
+                    $(".btn-load").hide();
+                    $(".last-page").show();
+                }
+
+                $(".btn-load").click(function() {
+                    // toggle spinner & button
+                    $(".spinner").show();
+                    $(".btn-load").hide();
+
+                    // prepare data parameters
+                    let data = {
+                        index: currentIndex,
+                        per_page: per_page,
+                        total: total,
+                        findArray: JSON.stringify(<?php echo json_encode($findArray); ?>)
+                    };
+
+                    // load more data
+                    $.get(url, data, function(response) {
+                        // append new data in the table
+                        $(".content-table tr:last").after(response);
+
+                        // update data index
+                        currentIndex = currentIndex + per_page; 
+
+                        // toggle spinner & load more button
+                        $(".spinner").hide();
+
+                        if(total - per_page < currentIndex) {
+                            $(".btn-load").hide();
+                            $(".last-page").show();
+                        } else {
+                            $(".btn-load").show();
+                        }
+                    });
+                });
             });
         </script>
 
