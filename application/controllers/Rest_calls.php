@@ -57,12 +57,18 @@ class Rest_calls extends REST_Controller
 
                     if ($this->post()) {
 
-                        $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
+                        $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + 
+                                            ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
 
-                        error_log("preferred date: ".$this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date'))));
-                        error_log("start time: ".$this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_start_time'))));
-                        error_log("end time: ".$this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time'))));
-                        error_log("delivery date: ".$this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date'))));
+                        $pref_date = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date')));
+                        $pref_delivery_start = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_start_time')));
+                        $pref_delivery_end = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time')));
+                        $prod_delivery_date = $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date')));
+
+                        error_log("preferred date: ".$pref_date);
+                        error_log("start time: ".$pref_delivery_start);
+                        error_log("end time: ".$pref_delivery_end);
+                        error_log("delivery date: ".$prod_delivery_date);
 
                         $insertData = [
                             'url' => $this->post('prodect_url'),
@@ -70,9 +76,9 @@ class Rest_calls extends REST_Controller
                             'product_image' => $this->post('product_image'),
                             'name' => $this->post('prodect_name'),
                             'admin_id' => (string)$this->post('admin_id'),
-                            'preferred_date' => $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date'))),
-                            'preferred_dilivery_start_time' => $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_start_time'))),
-                            'preferred_dilivery_end_time' => $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time'))),
+                            'preferred_date' => $pref_date,
+                            'preferred_dilivery_start_time' => $pref_delivery_start,
+                            'preferred_dilivery_end_time' => $pref_delivery_end,
                             'quantity' => (float)$this->post('quantity'),
                             'box_status' => $this->post('box_status'),
                             'vip_service_status' => $this->post('vip_service_status'),
@@ -84,7 +90,7 @@ class Rest_calls extends REST_Controller
                             'product_buy_city_name' => $this->post('product_buy_city_name'),
                             'product_dilivery_country_name' => $this->post('product_dilivery_country_name'),
                             'product_dilivery_city_name' => $this->post('product_dilivery_city_name'),
-                            'product_dilivery_date' => $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date'))),
+                            'product_dilivery_date' => $prod_delivery_date,
                             'flighteno_cost' => (float)$this->post('flighteno_cost'),
                             'status' => 'new',
                             'tax' => (float)$this->post('tax'),
