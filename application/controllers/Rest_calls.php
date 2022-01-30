@@ -59,6 +59,11 @@ class Rest_calls extends REST_Controller
 
                         $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
 
+                        error_log("preferred date: ".$this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date'))));
+                        error_log("start time: ".$this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_start_time'))));
+                        error_log("end time: ".$this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time'))));
+                        error_log("delivery date: ".$this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date'))));
+
                         $insertData = [
                             'url' => $this->post('prodect_url'),
                             'order_type' => $this->post('order_type'), // manual/url
@@ -2135,7 +2140,7 @@ class Rest_calls extends REST_Controller
 
     public function getMyNotification_post()
     {
-        $db = $this->mongo_db->customQuery();
+        //$db = $this->mongo_db->customQuery();
 
         if (!empty($this->input->request_headers('Authorization'))) {
 
