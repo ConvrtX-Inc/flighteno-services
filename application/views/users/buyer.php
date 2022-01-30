@@ -236,7 +236,7 @@
                                     <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
                                         <span class="sr-only">Loading...</span>
                                     </div>
-                                    <a href="#" class="mt-4 btn-load">Load more</a>
+                                    <a href="#" class="mt-4 btn-load" style="display: none;">Load more</a>
                                 </center>
                             </div>
                         </div>
@@ -335,15 +335,21 @@
                     $(".form-filter").submit();
                 }
 
+                // More options
+                $(".more-options").click(function() {
+                    alert("still in progress ...");
+                });
+
                 // Load More Custom AJAX Pagination
                 const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
                 let currentIndex = <?php echo $index; ?>;
                 let per_page = <?php echo $per_page; ?>;
                 let total = <?php echo $total; ?>;
 
-                if (per_page > total) {
-                    $(".btn-load").hide();
+                if (per_page >= total) {
                     $(".last-page").show();
+                } else {
+                    $(".btn-load").show();
                 }
 
                 $(".btn-load").click(function() {
@@ -365,12 +371,12 @@
                         $(".content-table tr:last").after(response);
 
                         // update data index
-                        currentIndex = currentIndex + per_page; 
+                        currentIndex = currentIndex + per_page;
 
                         // toggle spinner & load more button
                         $(".spinner").hide();
 
-                        if(total - per_page < currentIndex) {
+                        if(total - per_page <= currentIndex) {
                             $(".btn-load").hide();
                             $(".last-page").show();
                         } else {
