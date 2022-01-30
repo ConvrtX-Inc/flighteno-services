@@ -69,10 +69,10 @@ class Rest_calls extends REST_Controller
                         $pref_delivery_end = $this->mongo_db->converToMongodttime(date("m/d/Y H:i:s", strtotime($raw_end)));
                         $prod_delivery_date = $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date')));
 
-                        error_log("preferred date: ".$pref_date);
-                        error_log("start time: ".$pref_delivery_start);
-                        error_log("end time: ".$pref_delivery_end);
-                        error_log("delivery date: ".$prod_delivery_date);
+                        //error_log("preferred date: ".$pref_date);
+                        //error_log("start time: ".$pref_delivery_start);
+                        //error_log("end time: ".$pref_delivery_end);
+                        //error_log("delivery date: ".$prod_delivery_date);
 
                         $insertData = [
                             'url' => $this->post('prodect_url'),
