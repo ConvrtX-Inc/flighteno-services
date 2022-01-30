@@ -310,6 +310,29 @@ class Mod_users extends CI_Model {
       return $getUserRes;
   }
 
+  public function getUserProfileStatus($admin_id) {
+    $db = $this->mongo_db->customQuery();
+
+    $user     =  $db->users->find(['_id' => $this->mongo_db->mongoId((string)$admin_id) ]);
+    $userData =  iterator_to_array($user);
+
+    if(count($userData) > 0) {
+
+      if(array_key_exists("profile_status", $userData[0])) {
+        return ($userData[0]['profile_status']);
+      } else {
+        return '';
+      }
+      
+
+    } else {
+
+      return '';
+    }
+
+    return '';
+  }
+
   public function saveToken($admin_id, $deveice_token){
 
     $db = $this->mongo_db->customQuery();
@@ -564,4 +587,11 @@ class Mod_users extends CI_Model {
     return true ;
   }
 
+    public function kycUpdate($admin_id, $data){
+        $db = $this->mongo_db->customQuery();
+        if( !empty($data) && !is_null($data) ){
+            $db->users->updateOne(['_id' => $this->mongo_db->mongoId($admin_id) ], ['$set' => $data ] );
+        }
+        return true ;
+    }
 }//end model

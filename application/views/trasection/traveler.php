@@ -142,28 +142,28 @@
                     <div class="container-fluid" style="padding-left:4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
-                                <h4 class="page-title styleHeader titleStyle">Transection</h4>
+                                <h4 class="page-title styleHeader titleStyle">Transaction</h4>
                                 <p class="titleStyle2">Traveler</p>
                             </div>  
                         </div>
 
-                    <?php $travelerUsersFilter = $this->session->userdata('travelerUsersFilter'); ?>
+                    <?php $travelerTransactionsFilter = $this->session->userdata('travelerTransactionsFilter'); ?>
                         <!-- start page title -->
                         <form method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
                             <div class="row">
                                 <div class="col-xl-3">
                                     <label>From:</label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($travelerUsersFilter['start_date']) ? $travelerUsersFilter['start_date'] : "")?>" />
+                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($travelerTransactionsFilter['start_date']) ? $travelerTransactionsFilter['start_date'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
                                     <label> To:</label>
-                                  <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($travelerUsersFilter['end_date']) ? $travelerUsersFilter['end_date'] : "")?>" />
+                                  <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($travelerTransactionsFilter['end_date']) ? $travelerTransactionsFilter['end_date'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
                                     <label>Price:</label>
-                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($travelerUsersFilter['price']) ? $travelerUsersFilter['price'] : "")?>" />
+                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($travelerTransactionsFilter['price']) ? $travelerTransactionsFilter['price'] : "")?>" />
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
@@ -179,7 +179,7 @@
                         <div class = "row mt-4">
                             <table>
                                 <tr>
-                                    <!-- <th> <input type="checkbox" id="checkAll" name="checkAll" value="all"> select All </th> -->
+                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
                                     <th>Image</th>
                                     <th>Name</th>
                                     <th>Date</th>
@@ -188,7 +188,7 @@
                                 </tr>
                                 <?php foreach ($traveler_res as $value){?>
                                 <tr>
-                                    <!-- <td> <input type="checkbox" id="select" name="select" value="select"></td> -->
+                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
                                     <td>
                                         <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
                                             
@@ -243,10 +243,10 @@
         <script src="<?php echo SURL;?>assets/js/pages/dashboard.init.js"></script>
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
-        <!-- <script>
+        <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
-        </script> -->
+        </script>
     </body>
 </html>

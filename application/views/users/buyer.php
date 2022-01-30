@@ -202,13 +202,15 @@
                         <div class = "row mt-4">
                             <table>
                                 <tr>
-                                    <th>Image</th>
+                                    <th><input type="checkbox" id="checkAll" /></th>
+                                    <th>Select All</th>
                                     <th>Name</th>
                                     <th>Area</th>
                                     <th>Country</th>
                                 </tr>
                                 <?php foreach ($buyers as $value){ ?>
                                 <tr>
+                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
                                     <td> 
                                         <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
                                             
