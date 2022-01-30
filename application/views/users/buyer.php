@@ -26,17 +26,13 @@
         <!-- DROP DOWN STYLE -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
 
             .userNameColorChange{
                 color: black;
-            }
-
-            .filters_style {
-                border-radius: 25px;
-                border: 2px solid #e9ecef;
-                width: 100%;
-                height: 41px;
             }
 
             table {
@@ -163,9 +159,9 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
                         <div class="row">
-                            <div class="col-12 mt-3">
+                            <div class="col-12 mt-3 mb-2">
                                 <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
                                 <p class="titleStyle2">Buyer</p>
                             </div>  
@@ -173,10 +169,10 @@
                         <!-- start page title -->
                 
                         <?php $buyerData = $this->session->userdata('buyerUsersFilter'); ?>
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
-                            <div class="row">
-                                <div class="col-xl-4">  
-                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Select country...">
+                        <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
+                            <div class="row filter-row">
+                                <div class="col-xl-3">  
+                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
                                         <option value="" selected>Select Country</option>
 
                                         <?php foreach ($getAllCountries as $country) {?>
@@ -185,50 +181,63 @@
                                     </select>
                                 </div> <!-- end col -->
                                 
-                                <div class="col-xl-4">           
-
-                                    <input type="text" id ="full_name" class="form-control filters_style" placeholder="Enter full name"  name="full_name"  value="<?=(!empty($buyerData['full_name']) ? $buyerData['full_name'] : "")?>" />
+                                <div class="col-xl-4">   
+                                    <div class="inner-addon left-addon filter-search">
+                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
+                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search"  name="full_name"  value="<?=(!empty($buyerData['full_name']) ? $buyerData['full_name'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
                                 
-                                <div class="col-xl-4">           
-                                    <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                <div class="col-xl-4" style="/* background: black; */">           
+                                    <a href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers" class="btn-reset">Reset</a>
                                 </div> <!-- end col -->
                             </div>
 
                         </form>
 
-                        <div class = "row mt-4">
-                            <table>
-                                <tr>
-                                    <th><input type="checkbox" id="checkAll" /></th>
-                                    <th>Select All</th>
-                                    <th>Name</th>
-                                    <th>Area</th>
-                                    <th>Country</th>
-                                </tr>
-                                <?php foreach ($buyers as $value){ ?>
-                                <tr>
-                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                    <td> 
-                                        <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
-                                            
-                                            $imageSource = SURL.'assets/images/male.png';;
-                                        }else{
+                        <div class = "row mt-3 mb-5">
+                            <div class="col-12">
+                                <table class="content-table">
+                                    <tr>
+                                        <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                        <th class="table-col-profile">Select All</th>
+                                        <th class="table-col-name">Name</th>
+                                        <th class="table-col-large">Area</th>
+                                        <th class="table-col-medium">Country</th>
+                                        <th class="table-col-small"></th>
+                                    </tr>
+                                    <?php foreach ($buyers as $value){ ?>
+                                    <tr>
+                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td> 
+                                            <center>
+                                                <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
+                                                    
+                                                    $imageSource = SURL.'assets/images/male.png';;
+                                                }else{
 
-                                            $imageSource = $value['profile_image'];
-                                        } ?>
-                                                                      
-                                        <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                    </td>
-                                    <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
-                                    <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
-                                    <td><?php echo $value['country']; ?></td>
-                                </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination"><?php echo $this->pagination->create_links(); ?></div>
+                                                    $imageSource = $value['profile_image'];
+                                                } ?>
+                                                                            
+                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                            </center>
+                                        </td>
+                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
+                                        <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
+                                        <td><?php echo $value['country']; ?></td>
+                                        <td><a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a></td>
+                                    </tr>
+                                    <?php } ?>
+                                </table>
+                                
+                                <center>
+                                    <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
+                                    <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <a href="#" class="mt-4 btn-load" style="display: none;">Load more</a>
+                                </center>
+                            </div>
                         </div>
 
                         <!-- <div class="row totalBoxStyle">
@@ -305,6 +314,74 @@
                     source: availableTags
                     });
                 }
+                });
+            });
+        </script>
+
+        <script>
+            $(function() {
+                $(".form-filter select.form-control").change(function() {
+                    filterSubmit();
+                });
+
+                $(".form-filter input.form-control").keypress(function(e) {
+                    if(e.which == 13) {
+                        filterSubmit();
+                    }
+                });
+                
+                const filterSubmit = () => {
+                    $(".form-filter").submit();
+                }
+
+                // More options
+                $(".more-options").click(function() {
+                    alert("still in progress ...");
+                });
+
+                // Load More Custom AJAX Pagination
+                const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
+                let currentIndex = <?php echo $index; ?>;
+                let per_page = <?php echo $per_page; ?>;
+                let total = <?php echo $total; ?>;
+
+                if (per_page >= total) {
+                    $(".last-page").show();
+                } else {
+                    $(".btn-load").show();
+                }
+
+                $(".btn-load").click(function() {
+                    // toggle spinner & button
+                    $(".spinner").show();
+                    $(".btn-load").hide();
+
+                    // prepare data parameters
+                    let data = {
+                        index: currentIndex,
+                        per_page: per_page,
+                        total: total,
+                        findArray: JSON.stringify(<?php echo json_encode($findArray); ?>)
+                    };
+
+                    // load more data
+                    $.get(url, data, function(response) {
+                        // append new data in the table
+                        $(".content-table tr:last").after(response);
+
+                        // update data index
+                        currentIndex = currentIndex + per_page;
+
+                        // toggle spinner & load more button
+                        $(".spinner").hide();
+
+                        if(total - per_page <= currentIndex) {
+                            $(".btn-load").hide();
+                            $(".last-page").show();
+                        } else {
+                            $(".btn-load").show();
+                        }
+                    });
                 });
             });
         </script>

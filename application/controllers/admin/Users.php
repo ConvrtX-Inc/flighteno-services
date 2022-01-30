@@ -9,6 +9,7 @@ class Users extends CI_Controller {
         // ini_set("display_errors", 1);
         // error_reporting(1);
         $this->load->model('Mod_login');
+        $this->load->library('parser');
 	}
 
     public function index(){
@@ -43,7 +44,7 @@ class Users extends CI_Controller {
 
         $config['base_url'] = SURL . 'index.php/admin/users/index';
         $config['total_rows'] = count($buyerCount);
-        $config['per_page'] = 10;
+        $config['per_page'] = 2;
         $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
@@ -84,6 +85,12 @@ class Users extends CI_Controller {
         $data['total']     =  count($buyerCount);
 
         $data['getAllCountries'] = getCountry();
+
+        // to be used in loadMore function
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
+        $data['findArray'] = $findArray;
+
         $this->load->view('users/buyer', $data);
     }
     public function traveler(){
@@ -178,4 +185,39 @@ class Users extends CI_Controller {
         echo json_encode($user_name_array);
         exit;
     }//end
+
+    public function loadMore() {
+        // prepare data
+        $index = intval($_GET['index']);
+        $per_page = intval($_GET['per_page']);
+        $total = $_GET['total'];
+        $findArray = json_decode(stripslashes($_GET['findArray']));
+
+        $db = $this->mongo_db->customQuery();
+
+        $condition = array('sort'=>array('created_date'=> -1));
+        $condition = array('limit' => $per_page, 'skip' =>  $index + $per_page); 
+
+        $more_data =  $db->users->find($findArray, $condition);
+        $more_data_res  =  iterator_to_array($more_data);
+
+        $temp = '';
+
+        // loop data and create string template
+        foreach ($more_data_res as $res) {
+            // fix conditional data for template usage
+            if (empty($res['profile_image']) || $res['profile_image'] == ''|| is_null($res['profile_image'])) {                               
+                $res['profile_image'] = SURL.'assets/images/male.png';
+            }
+
+            if (empty($res['location']) || is_null($res['location'])) {
+                $res['location'] = 'N/A';
+            }
+
+            $temp .= $this->parser->parse('users/template', $res, TRUE);
+        }
+
+        echo $temp;
+        exit;
+    }
 }
