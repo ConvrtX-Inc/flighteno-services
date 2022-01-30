@@ -30,11 +30,6 @@
         <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style>
-
-            .userNameColorChange{
-                color: black;
-            }
-
             table {
                 border-collapse: collapse;
                 width: 100%;
@@ -51,25 +46,6 @@
 
                 color: black;
                 font-weight : bold
-            }
-            
-            /* paggination  */
-            .pagination a {
-                color: black;
-                float: left;
-                padding: 8px 16px;
-                text-decoration: none;
-            }
-
-            .pagination a.active {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 5px;
-            }
-
-            .pagination a:hover:not(.active) {
-                background-color: #ddd;
-                border-radius: 5px;
             }
 
             .styleShow{
@@ -160,13 +136,13 @@
                 <div class="content">
                     <!-- Start Content-->
                     <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
+                        <!-- start page title -->
                         <div class="row">
                             <div class="col-12 mt-3 mb-2">
                                 <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
                                 <p class="titleStyle2">Buyer</p>
                             </div>  
                         </div>
-                        <!-- start page title -->
                 
                         <?php $buyerData = $this->session->userdata('buyerUsersFilter'); ?>
                         <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
@@ -174,7 +150,6 @@
                                 <div class="col-xl-3">  
                                     <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
                                         <option value="" selected>Select Country</option>
-
                                         <?php foreach ($getAllCountries as $country) {?>
                                             <option value="<?php echo $country['code']; ?>"<?=((!is_null($buyerData) && $buyerData['location']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
                                         <?php } ?>
@@ -188,7 +163,7 @@
                                     </div>
                                 </div> <!-- end col -->
                                 
-                                <div class="col-xl-4" style="/* background: black; */">           
+                                <div class="col-xl-4">           
                                     <a href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers" class="btn-reset">Reset</a>
                                 </div> <!-- end col -->
                             </div>
@@ -245,12 +220,6 @@
                                 </center>
                             </div>
                         </div>
-
-                        <!-- <div class="row totalBoxStyle">
-                            <div class="col-xl-12">
-                                <span><?php echo "Total :".$total; ?> </span>
-                            </div>
-                        </div> -->
                     </div> <!-- container -->
 
                 </div> <!-- content -->
@@ -355,7 +324,7 @@
                 // More options
                 $(".content-table").on("click", ".more-options", function(e) {
                     e.preventDefault();
-                    
+
                     // show/hide more options
                     let optionBox = $(this).closest(".more-options-col").find(".more-options-box");
                     if (optionBox.hasClass("more-options-visible")) {
