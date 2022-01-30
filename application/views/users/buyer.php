@@ -206,7 +206,7 @@
                                         <th class="table-col-medium">Country</th>
                                         <th class="table-col-small"></th>
                                     </tr>
-                                    <?php foreach ($buyers as $value){ ?>
+                                    <?php foreach ($buyers as $key=>$value){ ?>
                                     <tr>
                                         <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
                                         <td> 
@@ -225,7 +225,13 @@
                                         <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
                                         <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
                                         <td><?php echo $value['country']; ?></td>
-                                        <td><a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a></td>
+                                        <td class="more-options-col">
+                                            <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
+                                            <div class="more-options-box" style="display: none;">
+                                                <p><a class="option-chat" href="#">Chat User</a></p>
+                                                <p><a class="option-disable" href="#">Disable User</a></p>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <?php } ?>
                                 </table>
@@ -285,6 +291,10 @@
         <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
+                    
+                let optionBox = $(".more-options-visible");
+                if (optionBox.length)
+                    optionBox.slideToggle("fast").removeClass("more-options-visible");
             });
 
             $(document).ready(function () {
@@ -334,9 +344,32 @@
                     $(".form-filter").submit();
                 }
 
+                $(".content-table").on("click", "td input[type='checkbox']", function(){
+                    $("#checkAll").prop("checked", false);
+                    
+                    let optionBox = $(".more-options-visible");
+                    if (optionBox.length)
+                        optionBox.slideToggle("fast").removeClass("more-options-visible");
+                });
+
                 // More options
-                $(".more-options").click(function() {
-                    alert("still in progress ...");
+                $(".content-table").on("click", ".more-options", function(e) {
+                    e.preventDefault();
+                    
+                    // show/hide more options
+                    let optionBox = $(this).closest(".more-options-col").find(".more-options-box");
+                    if (optionBox.hasClass("more-options-visible")) {
+                        $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                    } else {
+                        // show/hide Chat user option
+                        let checkCount = $(".content-table").find("td input[type='checkbox']:checked").length;
+                        (checkCount <= 1) 
+                            ? optionBox.find(".option-chat").show()
+                            : optionBox.find(".option-chat").hide();
+
+                        $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                        optionBox.slideToggle("fast").addClass("more-options-visible");
+                    }
                 });
 
                 // Load More Custom AJAX Pagination
@@ -351,7 +384,9 @@
                     $(".btn-load").show();
                 }
 
-                $(".btn-load").click(function() {
+                $(".btn-load").click(function(e) {
+                    e.preventDefault();
+
                     // toggle spinner & button
                     $(".spinner").show();
                     $(".btn-load").hide();

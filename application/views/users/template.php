@@ -8,5 +8,11 @@
   <td class ="userNameColorChange">{full_name}</td>
   <td>{location}</td>
   <td>{country}</td>
-  <td><a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a></td>
+  <td class="more-options-col">
+    <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
+    <div class="more-options-box" style="display: none;">
+      <p><a class="option-chat" href="#">Chat User</a></p>
+      <p><a class="option-disable" href="#">Disable User</a></p>
+    </div>
+  </td>
 </tr>
