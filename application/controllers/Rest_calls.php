@@ -60,11 +60,12 @@ class Rest_calls extends REST_Controller
                         $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + 
                                             ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
 
-                        $raw_start = $this->post('preferred_dilivery_date')." ".$this->post('preferred_dilivery_start_time');
+                        $raw_start = $this->post('preferred_dilivery_date')." ".$this->post('preferred_dilivery_start_time').":00";
                         error_log("raw start: ".$raw_start);
+                        error_log("raw start time: ".strtotime($raw_start));
                     
                         $pref_date = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date')));
-                        $pref_delivery_start = $this->mongo_db->converToMongodttime(date("m/d/Y H:i", $raw_start));
+                        $pref_delivery_start = $this->mongo_db->converToMongodttime(date("m/d/Y H:i:s", strtotime($raw_start)));
                         $pref_delivery_end = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time')));
                         $prod_delivery_date = $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date')));
 
