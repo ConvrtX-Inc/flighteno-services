@@ -61,7 +61,7 @@ class Rest_calls extends REST_Controller
                                             ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
 
                         $pref_date = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date')));
-                        $pref_delivery_start = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_start_time')));
+                        $pref_delivery_start = $this->mongo_db->converToMongodttime(date("m/d/Y H:i",$this->post('preferred_dilivery_date')." ".$this->post('preferred_dilivery_start_time')));
                         $pref_delivery_end = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time')));
                         $prod_delivery_date = $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date')));
 
