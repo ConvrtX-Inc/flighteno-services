@@ -186,8 +186,42 @@ h1, h2, h3, h4, h5, h6 {
   height: 3rem;
 }
 
+.more-options {
+  display: inline-block;
+  padding: 0 15px;
+  position: absolute;
+  right: 5px;
+}
+
 .more-options img {
   height: 20px;
+}
+
+.more-options-col {
+  position: relative;
+}
+
+.more-options-box {
+  z-index: 2;
+  position: absolute;
+  top: 80px;
+  right: 0;
+  background: #FFFFFF;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.23);
+  border-radius: 19px;
+  width: 180px;
+  height: auto;
+  padding: 10px 25px;
+}
+
+.more-options-box p {
+  margin: 0;
+}
+
+.more-options-box a {
+  color: black;
+  display: block;
+  line-height: 2.5em;
 }
 
 .userNameColorChange {

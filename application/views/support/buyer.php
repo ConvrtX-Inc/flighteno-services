@@ -139,67 +139,42 @@
                         <!-- start page title -->
                         <div class="row">
                             <div class="col-12 mt-3 mb-2">
-                                <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
+                                <h4 class="page-title styleHeader titleStyle">Support</h4>
                                 <p class="titleStyle2">Buyer</p>
                             </div>  
                         </div>
-                
-                        <?php $buyerData = $this->session->userdata('buyerUsersFilter'); ?>
-                        <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
-                            <div class="row filter-row">
-                                <div class="col-xl-3">  
-                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
-                                        <option value="" selected>Select Country</option>
-                                        <?php foreach ($getAllCountries as $country) {?>
-                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($buyerData) && $buyerData['location']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div> <!-- end col -->
-                                
-                                <div class="col-xl-4">   
-                                    <div class="inner-addon left-addon filter-search">
-                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
-                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search"  name="full_name"  value="<?=(!empty($buyerData['full_name']) ? $buyerData['full_name'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
-                                
-                                <div class="col-xl-4">           
-                                    <a href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers" class="btn-reset">Reset</a>
-                                </div> <!-- end col -->
-                            </div>
 
-                        </form>
-
-                        <div class = "row mt-3 mb-5">
+                        <div class = "row mb-5">
                             <div class="col-12">
                                 <table class="content-table">
                                     <tr>
                                         <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
                                         <th class="table-col-profile">Select All</th>
                                         <th class="table-col-name">Name</th>
-                                        <th class="table-col-large">Area</th>
-                                        <th class="table-col-medium">Country</th>
+                                        <th class="table-col-large">Subject</th>
+                                        <th class="table-col-medium">Order No.</th>
                                         <th class="table-col-small"></th>
                                     </tr>
-                                    <?php foreach ($buyers as $key=>$value){ ?>
+                                    <?php foreach ($buyer_res as $key=>$value){ ?>
                                     <tr>
                                         <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
                                         <td> 
                                             <center>
-                                                <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
+                                                <?php $profile_image = json_decode(json_encode($value["profileData"]))[0]->profile_image; ?>
+                                                <?php if(empty($profile_image) || $profile_image == ''|| is_null($profile_image) ){ 
                                                     
                                                     $imageSource = SURL.'assets/images/male.png';;
                                                 }else{
 
-                                                    $imageSource = $value['profile_image'];
+                                                    $imageSource = $profile_image;
                                                 } ?>
                                                                             
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </center>
                                         </td>
-                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
-                                        <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
-                                        <td><?php echo $value['country']; ?></td>
+                                        <td class ="userNameColorChange"><?php echo json_decode(json_encode($value["profileData"]))[0]->full_name; ?></td>
+                                        <td><?php echo empty($value['subject']) || is_null($value['subject']) ? 'N/A' : $value['subject']; ?></td>
+                                        <td><?php echo $value['order_number']; ?></td>
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
@@ -346,6 +321,10 @@
                 let currentIndex = <?php echo $index; ?>;
                 let per_page = <?php echo $per_page; ?>;
                 let total = <?php echo $total; ?>;
+
+                console.log(currentIndex)
+                console.log(per_page)
+                console.log(total)
 
                 if (per_page >= total) {
                     $(".last-page").show();

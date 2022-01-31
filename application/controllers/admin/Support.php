@@ -19,12 +19,12 @@ class Support extends CI_Controller {
         $db  =  $this->mongo_db->customQuery();
 
         $findArray['profile_status'] = 'buyer';
-        $buyerComplains    =  $db->support->find($findArray);
+        $buyerComplains    =  $db->ticket->find($findArray);
         $buyerComplainsRes =  iterator_to_array($buyerComplains);
   
         $config['base_url'] = SURL . 'index.php/admin/Support/index';
         $config['total_rows'] = count($buyerComplainsRes);
-        $config['per_page'] = 20;
+        $config['per_page'] = 2;
         $config['num_links'] = 4;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
@@ -104,20 +104,32 @@ class Support extends CI_Controller {
                 ]
             ],
             [ 
-                '$skip' =>  $page
+                '$skip' =>  intval($page)
             ],
-            [
-                '$limit' => $config['per_page'] 
-            ],
-
             [ 
                 '$sort'=> [ 'created_date' => -1]
+            ],
+            [
+                '$limit' => intval($config['per_page']) 
             ]
         ];
-        $buyerData        =  $db->support->aggregate($aggregateQuery);
+        $buyerData        =  $db->ticket->aggregate($aggregateQuery);
         $supportBuyerRes  =  iterator_to_array($buyerData);
         
         $data['buyer_res']    =  $supportBuyerRes;
+        $data['total']        =  count($buyerComplainsRes);
+
+        // to be used in loadMore function
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
+        $data['findArray'] = $findArray;
+
+        $test = $supportBuyerRes[0]["profileData"];
+        // var_dump("<pre>".json_encode($supportBuyerRes[0])."</pre>");
+        // var_dump(json_encode($test));
+        // var_dump(json_decode(json_encode($supportBuyerRes[0]["profileData"]))[0]->profile_image);
+        // exit();
+        
         $this->load->view('support/buyer', $data);
     }//end
 

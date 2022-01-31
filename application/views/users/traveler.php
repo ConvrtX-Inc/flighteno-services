@@ -25,19 +25,10 @@
         <!-- DROP DOWN STYLE -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
-
-            .userNameColorChange{
-
-                color: black;
-            }
-            .filters_style {
-                border-radius: 25px;
-                border: 2px solid #e9ecef;
-                width: 100%;
-                height: 41px;
-            }
-
             table {
                 border-collapse: collapse;
                 width: 100%;
@@ -55,29 +46,6 @@
                 color: black;
                 font-weight : bold
             }
-            .search{
-                color: black;
-            }
-            /* pagination */
-
-            .pagination a {
-                color: black;
-                float: left;
-                padding: 8px 16px;
-                text-decoration: none;
-            }
-
-            .pagination a.active {
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 5px;
-            }
-
-            .pagination a:hover:not(.active) {
-                background-color: #ddd;
-                border-radius: 5px;
-            }
-
 
             .button{
               	border-radius: 25px;
@@ -139,21 +107,21 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
+                    
+                        <!-- start page title -->
                         <div class="row">
-                            <div class="col-12 mt-3">
+                            <div class="col-12 mt-3 mb-2">
                                 <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
                                 <p class="titleStyle2">Traveler</p>
                             </div> 
                         </div> 
 
-                    <?php $travelerData = $this->session->userdata('travelerUsersFilter'); ?>
-                        <!-- start page title -->
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/users/traveler">
-                            <div class="row">
-                                <div class="col-xl-4">  
-                                    <!-- <label>Exchange: </label> -->
-                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Select country...">
+                        <?php $travelerData = $this->session->userdata('travelerUsersFilter'); ?>
+                        <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/traveler">
+                            <div class="row filter-row">
+                                <div class="col-xl-3">  
+                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
                                         <option value="" selected>Select Country</option>
                                         <?php foreach ($getAllCountries as $country) {?>
                                             <option value="<?php echo $country['code'];?>"<?=((!is_null($travelerData) && $travelerData['location'] == $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
@@ -161,51 +129,69 @@
                                     </select>
                                 </div> <!-- end col -->
                                 
-                                <div class="col-xl-4">           
-                                    <input type="text" id ="full_name" class="form-control filters_style" placeholder="Enter full name"  name="full_name"  value="<?=(!empty($travelerData['full_name']) ? $travelerData['full_name'] : "")?>" autocomplete="off" />
+                                <div class="col-xl-4">       
+                                    <div class="inner-addon left-addon filter-search">
+                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
+                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search"  name="full_name"  value="<?=(!empty($travelerData['full_name']) ? $travelerData['full_name'] : "")?>" />
+                                    </div>
                                 </div> 
                                 
-                                <div class="col-xl-4">           
-                                    <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/users/resetFilterTravelers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                <div class="col-xl-4">
+                                    <a href="<?php echo base_url();?>index.php/admin/users/resetFilterTravelers" class="btn-reset">Reset</a>
                                 </div> <!-- end col -->
                             </div>
                         </form>
 
-                        <div class = "row mt-4">
-                            <table>
-                                <tr>
-                                    <th><input type="checkbox" id="checkAll" /></th>
-                                    <th>Select All</th>
-                                    <th>Name</th>
-                                    <th>Area</th>
-                                    <th>Country</th>
-                                </tr>
-                                <?php foreach ($traveler as $value){ ?>
+                        <div class = "row mt-3 mb-5">
+                            <div class="col-12">
+                                <table class="content-table">
                                     <tr>
-                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                        <td>
-                                            <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
-                                                
-                                                $imageSource = SURL.'assets/images/male.png';;
-                                            }else{
-
-                                                $imageSource = $value['profile_image'];
-                                            } ?>
-                                   
-                                            <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                        </td>
-                                        <td class= "userNameColorChange"><?php echo $value['full_name']; ?></td>
-                                        <td><?php echo $value['location']; ?></td>
-                                        <td><?php echo $value['country']; ?></td>
+                                        <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                        <th class="table-col-profile">Select All</th>
+                                        <th class="table-col-name">Name</th>
+                                        <th class="table-col-large">Area</th>
+                                        <th class="table-col-medium">Country</th>
+                                        <th class="table-col-small"></th>
                                     </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination"><?php echo $links; ?></div>
-                        </div>
+                                    <?php foreach ($traveler as $key=>$value){ ?>
+                                    <tr>
+                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td> 
+                                            <center>
+                                                <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
+                                                    
+                                                    $imageSource = SURL.'assets/images/male.png';;
+                                                }else{
 
-                        <!-- end row -->                       
+                                                    $imageSource = $value['profile_image'];
+                                                } ?>
+                                                                            
+                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                            </center>
+                                        </td>
+                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
+                                        <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
+                                        <td><?php echo $value['country']; ?></td>
+                                        <td class="more-options-col">
+                                            <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
+                                            <div class="more-options-box" style="display: none;">
+                                                <p><a class="option-chat" href="#">Chat User</a></p>
+                                                <p><a class="option-disable" href="#">Disable User</a></p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php } ?>
+                                </table>
+
+                                <center>
+                                    <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
+                                    <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <a href="#" class="mt-4 btn-load" style="display: none;">Load more</a>
+                                </center>
+                            </div>
+                        </div>                 
                     </div> <!-- container -->
 
                 </div> <!-- content -->
@@ -244,9 +230,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 
         <script>
-
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
+                    
+                let optionBox = $(".more-options-visible");
+                if (optionBox.length)
+                    optionBox.slideToggle("fast").removeClass("more-options-visible");
             });
 
             $(document).ready(function () {
@@ -280,5 +269,99 @@
                 });
             });
         </script>
+
+<script>
+            $(function() {
+                $(".form-filter select.form-control").change(function() {
+                    filterSubmit();
+                });
+
+                $(".form-filter input.form-control").keypress(function(e) {
+                    if(e.which == 13) {
+                        filterSubmit();
+                    }
+                });
+                
+                const filterSubmit = () => {
+                    $(".form-filter").submit();
+                }
+
+                $(".content-table").on("click", "td input[type='checkbox']", function(){
+                    $("#checkAll").prop("checked", false);
+                    
+                    let optionBox = $(".more-options-visible");
+                    if (optionBox.length)
+                        optionBox.slideToggle("fast").removeClass("more-options-visible");
+                });
+
+                // More options
+                $(".content-table").on("click", ".more-options", function(e) {
+                    e.preventDefault();
+
+                    // show/hide more options
+                    let optionBox = $(this).closest(".more-options-col").find(".more-options-box");
+                    if (optionBox.hasClass("more-options-visible")) {
+                        $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                    } else {
+                        // show/hide Chat user option
+                        let checkCount = $(".content-table").find("td input[type='checkbox']:checked").length;
+                        (checkCount <= 1) 
+                            ? optionBox.find(".option-chat").show()
+                            : optionBox.find(".option-chat").hide();
+
+                        $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                        optionBox.slideToggle("fast").addClass("more-options-visible");
+                    }
+                });
+
+                // Load More Custom AJAX Pagination
+                const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
+                let currentIndex = <?php echo $index; ?>;
+                let per_page = <?php echo $per_page; ?>;
+                let total = <?php echo $total; ?>;
+
+                if (per_page >= total) {
+                    $(".last-page").show();
+                } else {
+                    $(".btn-load").show();
+                }
+
+                $(".btn-load").click(function(e) {
+                    e.preventDefault();
+
+                    // toggle spinner & button
+                    $(".spinner").show();
+                    $(".btn-load").hide();
+
+                    // prepare data parameters
+                    let data = {
+                        index: currentIndex,
+                        per_page: per_page,
+                        total: total,
+                        findArray: JSON.stringify(<?php echo json_encode($findArray); ?>)
+                    };
+
+                    // load more data
+                    $.get(url, data, function(response) {
+                        // append new data in the table
+                        $(".content-table tr:last").after(response);
+
+                        // update data index
+                        currentIndex = currentIndex + per_page;
+
+                        // toggle spinner & load more button
+                        $(".spinner").hide();
+
+                        if(total - per_page <= currentIndex) {
+                            $(".btn-load").hide();
+                            $(".last-page").show();
+                        } else {
+                            $(".btn-load").show();
+                        }
+                    });
+                });
+            });
+        </script>
+        
     </body>
 </html>
