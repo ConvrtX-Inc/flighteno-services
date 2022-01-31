@@ -49,6 +49,21 @@
                 text-align: left;
                 padding: 8px;
             }
+            .table thead tr, .table tbody tr {
+                border-bottom: 1px solid #dddddd;
+            }
+            .table tbody tr:last-child { border-bottom: none; }
+            
+            .checkInput {
+                border: 2px solid #898A8D;
+                box-sizing: border-box;
+                border-radius: 4px;
+            }
+            .checkInput:checked {
+                accent-color: #69C200;
+                border-radius: 4px;
+                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+            }
 
             .customStyle{
                 font-size : 15px;
@@ -149,67 +164,92 @@
 
                     <?php $travelerTransactionsFilter = $this->session->userdata('travelerTransactionsFilter'); ?>
                         <!-- start page title -->
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
+                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
                             <div class="row">
                                 <div class="col-xl-3">
-                                    <label>From:</label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($travelerTransactionsFilter['start_date']) ? $travelerTransactionsFilter['start_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">From:</label>
+                                        <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                        value="<?=(!empty($travelerTransactionsFilter['start_date']) ? $travelerTransactionsFilter['start_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
-                                    <label> To:</label>
-                                  <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($travelerTransactionsFilter['end_date']) ? $travelerTransactionsFilter['end_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">To:</label>
+                                        <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
+                                        value="<?=(!empty($travelerTransactionsFilter['end_date']) ? $travelerTransactionsFilter['end_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
-                                    <label>Price:</label>
-                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($travelerTransactionsFilter['price']) ? $travelerTransactionsFilter['price'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">To:</label>
+                                        <input type="input" class="form-control filters_style" placeholder="0"  name="price" 
+                                        value="<?=(!empty($travelerTransactionsFilter['price']) ? $travelerTransactionsFilter['price'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
+                                
+                                <!--<div class="col-xl-2">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <input type="input" class="form-control filters_style" placeholder="Search"  name="search" value="<?=(!empty($buyerTransactionsFilter['search']) ? $buyerTransactionsFilter['search'] : "")?>" />
+                                        </div>
+                                    </div>
+                                </div>-->
 
-                                <div class="col-xl-3">
-                                    <label style="display: block;">Search</label>
-                                    <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterTravelers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                <div class="col-xl-3 mt-1">
+                                    <div class="form-group">
+                                        <label style="display: block;">Search</label>
+                                        <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
+                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterTravelers">Reset</a>
+                                        <i class="glyphicon glyphicon-calendar"></i> 
+                                    </div>
                                 </div> <!-- end col -->
 
                             </div>
                         </form>
 
                         <div class = "row mt-4">
-                            <table>
-                                <tr>
-                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>OrderId</th>
-                                    <th>Amount</th>
-                                </tr>
-                                <?php foreach ($traveler_res as $value){?>
-                                <tr>
-                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                    <td>
-                                        <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
-                                            
-                                            $imageSource = SURL.'assets/images/male.png';;
-                                            
-                                        }else{
+                            <div class="col">
+                                <table class="table table-borderless" id="travTable" style="width:100% !important">
+                                    <thead>
+                                        <tr>
+                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                            <th>Select All</th>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Order ID</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($traveler_res as $value){?>
+                                        <tr>
+                                            <td><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
+                                            <td>
+                                                <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
+                                                    
+                                                    $imageSource = SURL.'assets/images/male.png';;
+                                                    
+                                                }else{
 
-                                            $imageSource = $value['profileData'][0]['profile_image'];
-                                        
-                                        } ?>
+                                                    $imageSource = $value['profileData'][0]['profile_image'];
+                                                
+                                                } ?>
 
-                                        <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                    </td>
-                                    <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
-                                    <td><?php  $orderDate = $value['created_date']->toDateTime()->format("Y-m-d H:i:s"); echo $orderDate; ?></td>
-                                    <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
-                                    <td style = "font-weight:bold"><?php echo $value['price']; ?></td>
-                                </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                            </td>
+                                            <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
+                                            <td><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                            <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
+                                            <td style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    </tbody>
+                                </table>
+                                <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+                            </div>
                         </div>                    
                     </div> <!-- container -->
 
@@ -247,6 +287,21 @@
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
+        </script>
+        <script type="text/javascript">
+            $(function(){
+                $('#travTable').DataTable({
+                    dom: '',
+                    ordering: false,
+                    //columnDefs: [
+                    //    {
+                    //        targets: [ 4 ],
+                    //        visible: false,
+                    //        searchable: false
+                    //    },
+                    //]
+                });
+            })
         </script>
     </body>
 </html>

@@ -27,12 +27,16 @@ class Trasection extends CI_Controller {
       
       $findArray['created_date'] = ['$gte' => $startDate, '$lte' => $endDate];
     }
-    
-    if(!empty($filterDataBuyer['price'])){
-      /* FLIGHT-31 fix */
-      $findArray['price'] = intval($filterDataBuyer['price']);
-    }}
-   
+
+      if(!empty($filterDataBuyer['price'])){
+        /* FLIGHT-31 fix */
+        $findArray['price'] = intval($filterDataBuyer['price']);
+      }
+      if(!empty($filterDataBuyer['search'])){
+        $findArray['full_name'] = $filterDataBuyer['search'];
+      }
+    }
+
     $findArray['type'] = 'buyer';
     
     $buyer_trasections    =  $db->payment_details->find($findArray);
@@ -70,7 +74,7 @@ class Trasection extends CI_Controller {
       $page = ($page-1) * $config['per_page'];
     }
     $data["links"] = $this->pagination->create_links();
-
+    
     $getData = [
       [
         '$match' => $findArray
@@ -84,7 +88,7 @@ class Trasection extends CI_Controller {
           'buyer_id'      =>  '$buyer_id',
           'traveler_id'   =>  '$raveler_id',
           'order_id'      =>  '$order_id',
-          'price'         =>  '$price',
+          'price'         =>  '$price'
         ]
       ],
 
@@ -131,7 +135,7 @@ class Trasection extends CI_Controller {
     $buyer_trasec     =  $db->payment_details->aggregate($getData);
     $buyerRes_trasec  =  iterator_to_array($buyer_trasec);
 
-    // echo "<pre>";print_r($buyerRes_trasec);exit;
+    //echo "<pre>";print_r($buyerRes_trasec);exit;
 
     $data['buyers_payment']    =  $buyerRes_trasec;
     $this->load->view('trasection/buyer', $data);
@@ -139,26 +143,31 @@ class Trasection extends CI_Controller {
   public function trasectionTraveler(){
     $this->Mod_login->is_user_login();
     $db  =  $this->mongo_db->customQuery();
+    
     if( $this->input->post() ){
-
       $filterData['travelerTransactionsFilter'] = $this->input->post();
       $this->session->set_userdata($filterData);
     }
    
     $filterData = $this->session->userdata('travelerTransactionsFilter');
-if(!is_null($filterData)){
-    if($filterData['start_date'] !="" && $filterData['end_date'] != ""){
-      $startDate = $this->mongo_db->converToMongodttime($filterData['start_date']);
-      $endDate   = $this->mongo_db->converToMongodttime($filterData['end_date']);
-      $findArray['created_date'] = ['$gte' => $startDate,  '$lte' => $endDate];
-    }   
+    
+    if(!is_null($filterData)) {
+      if($filterData['start_date'] !="" && $filterData['end_date'] != ""){
+          $startDate = $this->mongo_db->converToMongodttime($filterData['start_date']);
+          $endDate   = $this->mongo_db->converToMongodttime($filterData['end_date']);
+          $findArray['created_date'] = ['$gte' => $startDate,  '$lte' => $endDate];
+      }   
+      //if(!empty($filterData['price']) ){
+      //  $findArray['price'] = $filterData['price'];
+      //}
+      if(!empty($filterData['price'])){
+        $findArray['price'] = intval($filterData['price']);
+      }
+      //echo "<pre>";print_r($findArray);exit;
+  }
 
-    if(!empty($filterData['price']) ){
-
-      $findArray['price'] = $filterData['price'];
-    }}
-
-    $findArray['status'] = 'traveler';
+    //$findArray['status'] = 'traveler';
+    $findArray['type'] = 'traveler';
     
     $buyer    =  $db->payment_details->find($findArray);
     $buyerRes =  iterator_to_array($buyer);

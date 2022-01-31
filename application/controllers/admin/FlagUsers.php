@@ -27,6 +27,8 @@ class FlagUsers extends CI_Controller {
         if(!is_null($flagBuyerUsers)){
         if($flagBuyerUsers['start_date'] !="" && $flagBuyerUsers['end_date'] != ""){
 
+            //echo "<pre>";print_r($flagBuyerUsers['daterange']);exit;
+
             $startDate = $this->mongo_db->converToMongodttime($flagBuyerUsers['start_date']);
             $endDate   = $this->mongo_db->converToMongodttime($flagBuyerUsers['end_date']);
             $findArray['created_date'] = ['$gte' => $startDate,  '$lte' => $endDate];
@@ -164,7 +166,8 @@ class FlagUsers extends CI_Controller {
     public function resetFilterTravel(){
         
         $this->session->unset_userdata('flagTravelerUser');
-        $this->resetFilterBuyers();
+        //$this->resetFilterBuyers();
+        $this->flagTraveler();
     }
 
     
