@@ -317,14 +317,10 @@
                 });
 
                 // Load More Custom AJAX Pagination
-                const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
+                const url = "<?php echo SURL ?>index.php/admin/Support/loadMore";
                 let currentIndex = <?php echo $index; ?>;
                 let per_page = <?php echo $per_page; ?>;
                 let total = <?php echo $total; ?>;
-
-                console.log(currentIndex)
-                console.log(per_page)
-                console.log(total)
 
                 if (per_page >= total) {
                     $(".last-page").show();

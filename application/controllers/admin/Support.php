@@ -10,7 +10,7 @@ class Support extends CI_Controller {
         error_reporting(1);
 		$this->load->model('Mod_isValidUser');
 		$this->load->model('Mod_login');
-        
+        $this->load->library('parser');
 	}
 
 
@@ -104,10 +104,10 @@ class Support extends CI_Controller {
                 ]
             ],
             [ 
-                '$skip' =>  intval($page)
+                '$sort'=> [ 'created_date' => -1]
             ],
             [ 
-                '$sort'=> [ 'created_date' => -1]
+                '$skip' =>  intval($page)
             ],
             [
                 '$limit' => intval($config['per_page']) 
@@ -123,12 +123,6 @@ class Support extends CI_Controller {
         $data['index'] = $page;
         $data['per_page'] = $config['per_page'];
         $data['findArray'] = $findArray;
-
-        $test = $supportBuyerRes[0]["profileData"];
-        // var_dump("<pre>".json_encode($supportBuyerRes[0])."</pre>");
-        // var_dump(json_encode($test));
-        // var_dump(json_decode(json_encode($supportBuyerRes[0]["profileData"]))[0]->profile_image);
-        // exit();
         
         $this->load->view('support/buyer', $data);
     }//end
@@ -626,4 +620,104 @@ class Support extends CI_Controller {
             }
         }
     }//end
+
+    public function loadMore() {
+        // prepare data
+        $index = intval($_GET['index']);
+        $per_page = intval($_GET['per_page']);
+        $total = $_GET['total'];
+        $findArray = json_decode(stripslashes($_GET['findArray']));
+
+        $db = $this->mongo_db->customQuery();
+
+        $condition = array('sort'=>array('created_date'=> -1));
+        $condition = array('limit' => $per_page, 'skip' =>  $index + $per_page);
+
+        $aggregateQuery = [
+            [
+                '$match' => $findArray
+            ],
+
+            [
+                '$project' => [
+
+                    '_id'           =>   ['$toString' => '$_id'],
+                    'order_number'  =>  '$order_number',
+                    'subject'       =>  '$subject',
+                    'message'       =>  '$message',
+                    'image'         =>  '$image',
+                    'admin_id'      =>  '$admin_id',
+                    'created_date'  =>  '$created_date',
+                    'status'        =>  '$status',
+                    'video'         =>  '$video',
+                ]
+            ],
+            [
+                '$lookup' => [
+                    'from' => 'users',
+                    'let' => [
+                        'admin_id' =>  ['$toObjectId' => '$admin_id'],
+                    ],
+                    'pipeline' => [
+                        [
+                            '$match' => [
+                            '$expr' => [
+                                '$eq' => [
+                                '$_id',
+                                '$$admin_id'
+                                ]
+                            ],
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                        '_id'             =>  ['$toString' => '$_id'],
+                        'profile_image'   =>  '$profile_image',
+                        'full_name'       =>  '$full_name'
+                        ]
+                    ],
+        
+                    ],
+                    'as' => 'profileData'
+                ]
+            ],
+            [ 
+                '$sort'=> [ 'created_date' => -1]
+            ],
+            [ 
+                '$skip' =>  $index + $per_page
+            ],
+            [
+                '$limit' => $per_page
+            ]
+        ];
+
+        $more_data =  $db->ticket->aggregate($aggregateQuery);
+        $more_data_res = iterator_to_array($more_data);
+
+        $temp = '';
+
+        // loop data and create string template
+        foreach ($more_data_res as $res) {
+            $template_data = array();
+            $profile_image = json_decode(json_encode($res["profileData"]))[0]->profile_image;
+
+            // fix conditional data for template usage
+            if (empty($profile_image) || $profile_image == ''|| is_null($profile_image)) {                               
+                $template_data['profile_image'] = SURL.'assets/images/male.png';
+            } else {
+                $template_data['profile_image'] = $profile_image;
+            }
+
+            $template_data['_id'] = $res['_id'];
+            $template_data['full_name'] = json_decode(json_encode($res["profileData"]))[0]->full_name;
+            $template_data['subject'] = $res['subject'];
+            $template_data['order_number'] = $res['order_number'];
+
+            $temp .= $this->parser->parse('support/template', $template_data, TRUE);
+        }
+
+        echo $temp;
+        exit;
+    }
 }
