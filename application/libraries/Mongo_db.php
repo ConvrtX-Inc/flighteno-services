@@ -151,14 +151,14 @@ Class Mongo_db {
 
             require 'mongodb_class/autoload.php'; // include Composer's autoloader
 
-            $url = 'mongodb+srv://admin-convrtx:bwuSme9s7ZgUyOr3@flightenocluster.irdgi.mongodb.net/flighteno?retryWrites=true&w=majority';
-            // $url = 'mongodb://127.0.0.1:27017/';
+            //$url = 'mongodb+srv://admin-convrtx:bwuSme9s7ZgUyOr3@flightenocluster.irdgi.mongodb.net/flighteno?retryWrites=true&w=majority';
+            $url = 'mongodb://127.0.0.1:27017/';
 
             $this->connect = new MongoDB\Client($url);
 
             $this->db = $this->connect->{$this->database};
-
-            // var_dump($this->db);
+            
+            //var_dump($this->db);
             // exit();
 
         } catch (MongoConnectionException $e) {

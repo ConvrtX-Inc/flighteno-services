@@ -17,6 +17,9 @@
         <link href="<?php echo SURL;?>assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
         <link href="<?php echo SURL;?>assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
         
+        <!-- bootstrap-daterangepicker -->
+        <link href="<?php echo SURL;?>assets/libs/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+        
         <!-- App css -->
         <link href="<?php echo SURL;?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -47,6 +50,22 @@
                 border-bottom: 1px solid #dddddd;
                 text-align: left;
                 padding: 8px;
+            }
+
+            .table thead tr, .table tbody tr {
+                border-bottom: 1px solid #dddddd;
+            }
+            .table tbody tr:last-child { border-bottom: none; }
+
+            .checkInput {
+                border: 2px solid #898A8D;
+                box-sizing: border-box;
+                border-radius: 4px;
+            }
+            .checkInput:checked {
+                accent-color: #69C200;
+                border-radius: 4px;
+                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
             }
 
             .styleHeader{
@@ -148,37 +167,58 @@
                         <!-- start page title -->
                 
                         <?php $flagTravelerUser = $this->session->userdata('flagTravelerUser'); ?>
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
+                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
                             <div class="row"> 
                                
                                 <div class="col-xl-3">
-                                    <label>From: </label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($flagTravelerUser['start_date']) ? $flagTravelerUser['start_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">From:</label>
+                                        <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                        value="<?=(!empty($flagTravelerUser['start_date']) ? $flagTravelerUser['start_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
-                                    <label>To: </label>
-                                    <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($flagTravelerUser['end_date']) ? $flagTravelerUser['end_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">To:</label>
+                                        <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
+                                        value="<?=(!empty($flagTravelerUser['end_date']) ? $flagTravelerUser['end_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
-                                <div class="col-xl-3">           
-                                    <label>Search by name: </label>
-                                    <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search name"  name="full_name"  value="<?=(!empty($flagTravelerUser['full_name']) ? $flagTravelerUser['full_name'] : "")?>" autocomplete="off" />
+                                <!--<div class="col-xl-3">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <input class="form-control filters_style"
+                                            value="<?=(!empty($flagTravelerUser['daterange']) ? $flagTravelerUser['daterange'] : "")?>"
+                                            type="text" name="daterange" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>-->
+
+                                <div class="col-xl-3"> 
+                                    <div class="form-group">
+                                        <label class="col-form-label">Search by Name</label>
+                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search Name"  name="full_name" 
+                                        value="<?=(!empty($flagTravelerUser['full_name']) ? $flagTravelerUser['full_name'] : "")?>" autocomplete="off" />
+                                    </div>
                                 </div> 
 
-                                <div class="col-xl-3" style= "margin-top: 1.8%">
-                                    <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterTravel">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                <div class="col-xl-3 mt-1">
+                                    <div class="form-group">
+                                        <label style="display: block;">Search</label>
+                                        <button type="submit" class="form-control filters_style_input filter button">Filter</button>
+                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterTravel">Reset</a>
+                                        <i class="glyphicon glyphicon-calendar"></i> 
+                                    </div>
                                 </div> <!-- end col -->
-
                             </div>
                         </form>
 
                         <div class = "row mt-4">
-                            <table>
+                        <table class="table table-borderless" id="travTable" style="width:100% !important">
                                 <tr>
-                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                    <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
                                     <th>Select All</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
@@ -187,7 +227,7 @@
                                 </tr>
                                 <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
                                     <tr>
-                                        <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" /></td>
+                                        <td><input class="checkInput" type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" /></td>
                                         <td>
                                             <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
                                                 
@@ -245,6 +285,13 @@
         <!-- Jvector map -->
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.min.js"></script>
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.usa.js"></script>
+        
+        <!-- Moment -->
+        <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
+        
+        <!--bootstrap-daterangepicker-->
+        <script src="<?php echo SURL;?>assets/libs/bootstrap-daterangepicker/daterangepicker.js"></script>
+
         <!-- Datatable js -->
         <script src="<?php echo SURL;?>assets/libs/datatables/jquery.dataTables.min.js"></script>
         <script src="<?php echo SURL;?>assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
@@ -277,6 +324,35 @@
                 }
                 });
             });
+        </script>
+        <script type="text/javascript">
+            $(function(){
+
+                /*$('input[name="daterange"]').daterangepicker({
+                    autoApply: true
+                });
+
+                <?php if(empty($flagBuyerUsers['daterange'])){ ?>
+                    $('input[name="daterange"]').val('');
+                    $('input[name="daterange"]').attr("placeholder","Select dates");
+                <?php }?>
+
+                $('input[name="daterange"]').on('apply.daterangepicker', function(){
+                    let dateRange = $(this).val()
+                    const dates = dateRange.split('-');
+
+                    let startDate=dates[0].trim();
+                    let endDate=dates[1].trim();
+
+                    $('#start_date').val(startDate);
+                    $('#end_date').val(endDate);
+                });*/
+
+                $('#travTable').DataTable({
+                    dom: '',
+                    ordering: false,
+                });
+            })
         </script>
     </body>
 </html>

@@ -25,7 +25,6 @@
 
 
         <style>
-
             .userNameColorChange{
 
                 color: black;
@@ -45,6 +44,22 @@
                 border-bottom: 1px solid #dddddd;
                 text-align: left;
                 padding: 8px;
+            }
+
+            .table thead tr, .table tbody tr {
+                border-bottom: 1px solid #dddddd;
+            }
+            .table tbody tr:last-child { border-bottom: none; }
+
+            .checkInput {
+                border: 2px solid #898A8D;
+                box-sizing: border-box;
+                border-radius: 4px;
+            }
+            .checkInput:checked {
+                accent-color: #69C200;
+                border-radius: 4px;
+                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
             }
 
             .customStyle{
@@ -146,67 +161,95 @@
 
                     <?php $buyerTransactionsFilter = $this->session->userdata('buyerTransactionsFilter'); ?>
                         <!-- start page title -->
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
+                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
                             <div class="row">
                                 <div class="col-xl-3">
-                                    <label>From: </label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">From: </label>
+                                        <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                        value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
-                                    <label> To:</label>
-                                    <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">To:</label>
+                                        <input type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
+                                        value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
-                                    <label>Price:</label>
-                                    <input type="input" class="form-control filters_style" placeholder="Enter price"  name="price"  value="<?=(!empty($buyerTransactionsFilter['price']) ? $buyerTransactionsFilter['price'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">Price:</label>
+                                        <input type="input" class="form-control filters_style" placeholder="0"  name="price" 
+                                        value="<?=(!empty($buyerTransactionsFilter['price']) ? $buyerTransactionsFilter['price'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
-                                <div class="col-xl-3">
-                                    <label style="display: block;">Search</label>
-                                    <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                <!--<div class="col-xl-2">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <input type="input" class="form-control filters_style" placeholder="Search"  name="search" value="<?=(!empty($buyerTransactionsFilter['search']) ? $buyerTransactionsFilter['search'] : "")?>" />
+                                        </div>
+                                    </div>
+                                </div>-->
+
+                                <div class="col-xl-3 mt-1">
+                                    <div class="form-group">
+                                        <label style="display: block;">Search</label>
+                                        <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
+                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </div>
                                 </div> <!-- end col -->
 
                             </div>
                         </form>
 
-                        <div class = "row mt-4">
-                            <table>
-                                <tr>
-                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                    <th>Select All</th>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>OrderId</th>
-                                    <th>Amount</th>
-                                </tr>
-                                <?php foreach ($buyers_payment as $value){?>
-                                <tr>
-                                    <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                    <td>
-                                        <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
-                                            
-                                            $imageSource = SURL.'assets/images/male.png';;
-                                            
-                                        }else{
+                        <div class = "row mt-2">
+                            <div class="col">
+                                <table class="table table-borderless" id="buyersTable" style="width:100% !important">
+                                    <thead>
+                                        <tr>
+                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                            <th>Select All</th>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Order ID</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($buyers_payment as $value){?>
+                                            <tr>
+                                                <td><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
+                                                <td>
+                                                    <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
+                                                        
+                                                        $imageSource = SURL.'assets/images/male.png';;
+                                                        
+                                                    }else{
 
-                                            $imageSource = $value['profileData'][0]['profile_image'];
-                                        
-                                        } ?>
+                                                        $imageSource = $value['profileData'][0]['profile_image'];
+                                                    
+                                                    } ?>
 
-                                        <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                    </td>
-                                    <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
-                                    <td><?php  $orderDate = $value['created_date']->toDateTime()->format("Y-m-d H:i:s"); echo $orderDate; ?></td>
-                                    <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
-                                    <td style = "font-weight:bold"><?php echo $value['price']; ?></td>
-                                </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+                                                    <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                                </td>
+                                                <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
+                                                <td><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                                <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
+                                                <td style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                                <div class="dt-more-container">
+                                    <button id="btn-example-load-more" style="display:none">Load More</button>
+                                </div>
+                                <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+                            </div>
                         </div>                    
                     </div> <!-- container -->
 
@@ -238,12 +281,54 @@
         <script src="<?php echo SURL;?>assets/libs/datatables/responsive.bootstrap4.min.js"></script>
         <!-- Dashboard Init JS -->
         <script src="<?php echo SURL;?>assets/js/pages/dashboard.init.js"></script>
+
+        <!--dataTables page load more-->
+        <script src="<?php echo SURL;?>assets/libs/jquery-datatables-pageLoadMore/js/dataTables.pageLoadMore.min.js"></script>
+
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
         <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
+        </script>
+        <script type="text/javascript">
+            $(function(){
+                var table = $('#buyersTable').DataTable({
+                    //dom: "<'row float-left mb-2'<'col-sm-8 toolbar'><'col-sm-4' f>>rt",
+                    dom: '',
+                    //language: {
+                        //search: '<span class="fa fa-search form-control-feedback"></span>',
+                    //    search: '',
+                    //    searchPlaceholder: "Search"
+                    //},
+                    //autoWidth: false
+                    ordering: false,
+                    //columnDefs: [
+                    //    {
+                    //        targets: [ 4 ],
+                    //        visible: false,
+                    //        searchable: false
+                    //    },
+                    //],
+                    drawCallback: function(){
+                        // If there is some more data
+                        if($('#btn-example-load-more').is(':visible')){
+                            // Scroll to the "Load more" button
+                            $('html, body').animate({
+                            scrollTop: $('#btn-example-load-more').offset().top
+                            }, 1000);
+                        }
+
+                        // Show or hide "Load more" button based on whether there is more data available
+                        $('#btn-example-load-more').toggle(this.api().page.hasMore());
+                    }      
+                });
+                $('#btn-example-load-more').on('click', function(){  
+                    // Load more data
+                    table.page.loadMore();
+                });
+            })
         </script>
     </body>
 </html>

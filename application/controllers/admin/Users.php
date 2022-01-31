@@ -118,7 +118,7 @@ class Users extends CI_Controller {
 
         $config['base_url'] = SURL . 'index.php/admin/users/traveler';
         $config['total_rows'] = count($travelerCount);
-        $config['per_page'] = 10;
+        $config['per_page'] = 2;
         $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
@@ -160,6 +160,12 @@ class Users extends CI_Controller {
         $data['traveler']    =  $travelerRes;
         $data['total']       =  count($travelerCount);
         $data['getAllCountries'] = getCountry();
+
+        // to be used in loadMore function
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
+        $data['findArray'] = $findArray;
+        
         $this->load->view('users/traveler', $data);
     }
 

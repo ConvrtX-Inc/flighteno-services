@@ -16,6 +16,9 @@
         <!-- DataTables -->
         <link href="<?php echo SURL;?>assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
         <link href="<?php echo SURL;?>assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
+
+        <!-- bootstrap-daterangepicker -->
+        <link href="<?php echo SURL;?>assets/libs/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
         
         <!-- App css -->
         <link href="<?php echo SURL;?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -50,6 +53,22 @@
                 border-bottom: 1px solid #dddddd;
                 text-align: left;
                 padding: 8px;
+            }
+            
+            .table thead tr, .table tbody tr {
+                border-bottom: 1px solid #dddddd;
+            }
+            .table tbody tr:last-child { border-bottom: none; }
+
+            .checkInput {
+                border: 2px solid #898A8D;
+                box-sizing: border-box;
+                border-radius: 4px;
+            }
+            .checkInput:checked {
+                accent-color: #69C200;
+                border-radius: 4px;
+                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
             }
 
             .styleHeader{
@@ -148,72 +167,100 @@
                         </div>
 
                         <?php $flagBuyerUsers = $this->session->userdata('flagBuyerUsers'); ?>
-                        <form method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
+                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
                             <div class="row">
+                               
                                 <div class="col-xl-3">
-                                    <label>From: </label>
-                                    <input type="date" class="form-control filters_style" placeholder="start date" name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">From:</label>
+                                        <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" 
+                                        name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
 
                                 <div class="col-xl-3">
-                                    <label>To: </label>
-                                  <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">To:</label>
+                                        <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  
+                                        name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
+                                    </div>
                                 </div> <!-- end col -->
+
+                                <!--<div class="col-xl-3">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <input class="form-control filters_style"
+                                            value="<?=(!empty($flagBuyerUsers['daterange']) ? $flagBuyerUsers['daterange'] : "")?>"
+                                            type="text" name="daterange" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>-->
 
                                 <div class="col-xl-3">           
-                                    <label>Search by name: </label>
-                                    <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search name"  name="full_name"  value="<?=(!empty($flagBuyerUsers['full_name']) ? $flagBuyerUsers['full_name'] : "")?>" autocomplete="off" />
+                                    <div class="form-group">
+                                        <label class="col-form-label">Search by Name</label>
+                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search Name"  
+                                        name="full_name" value="<?=(!empty($flagBuyerUsers['full_name']) ? $flagBuyerUsers['full_name'] : "")?>" autocomplete="off" />
+                                    </div>
                                 </div> 
 
-                                <div class="col-xl-3" style= "margin-top: 1.8%">
-                                    <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                    <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
-                                    <i class="glyphicon glyphicon-calendar"></i> 
+                                <div class="col-xl-3 mt-1">
+                                    <div class="form-group">
+                                        <label style="display: block;">Search</label>
+                                        <button type="submit" class="form-control filters_style_input filter button">Filter</button>
+                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </div>
                                 </div> <!-- end col -->
 
                             </div>
                         </form>
-                        <div class = "row mt-4">
-                            <table>
-                                <tr>
-                                    <th><input type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                    <th>Select All</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Location</th>
-                                    <th>Flag</th>
-                                </tr>
+                        <div class = "row mt-2">
+                            <div class="col">
+                                <table class="table table-borderless" id="buyersTable" style="width:100% !important">
+                                    <thead>
+                                        <tr>
+                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
+                                            <th>Select All</th>
+                                            <th>Full Name</th>
+                                            <th>Email</th>
+                                            <th>Location</th>
+                                            <th>Flag</th>
+                                        </tr>
+                                    </thead>
+                                    <body>
+                                        <?php foreach($flagUsers as $buyerFlag) { ?>
+                                            <tr>
+                                                <td><input class="checkInput" type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" /></td>
+                                                <td>
+                                                    <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
+                                                        
+                                                        $imageSource = SURL.'assets/images/male.png';;
+                                                    }else{
 
-                                <?php foreach($flagUsers as $buyerFlag) { ?>
-                                    <tr>
-                                        <td><input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" /></td>
-                                        <td>
-                                            <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
-                                                
-                                                $imageSource = SURL.'assets/images/male.png';;
-                                            }else{
+                                                        $imageSource = $buyerFlag['profile_image'];
+                                                    } ?>
+                                                    <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                                </td>
+                                                <td class="userNameColorChange"> <?php echo $buyerFlag['full_name'];?> </td>
+                                                <td> <?php echo $buyerFlag['email_address'];?> </td>
+                                                <td> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
+                                                <td>
+                                                <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
+                                                        
+                                                        <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                    <?php }else{ ?>
 
-                                                $imageSource = $buyerFlag['profile_image'];
-                                            } ?>
-                                            <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                        </td>
-                                        <td class="userNameColorChange"> <?php echo $buyerFlag['full_name'];?> </td>
-                                        <td> <?php echo $buyerFlag['email_address'];?> </td>
-                                        <td> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
-                                        <td>
-                                        <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
-                                                
-                                                <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                            <?php }else{ ?>
-
-                                                <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                            <?php }
-                                            ?>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination" ><?php  echo $this->pagination->create_links(); ?></div>
+                                                        <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                    <?php }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    </body>
+                                </table>
+                                <div class="pagination" ><?php  echo $this->pagination->create_links(); ?></div>
+                            </div>
                         </div>
 
                         <!-- end page title --> 
@@ -242,6 +289,13 @@
         <!-- Jvector map -->
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.min.js"></script>
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.usa.js"></script>
+
+        <!-- Moment -->
+        <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
+
+        <!--bootstrap-daterangepicker-->
+        <script src="<?php echo SURL;?>assets/libs/bootstrap-daterangepicker/daterangepicker.js"></script>
+
         <!-- Datatable js -->
         <script src="<?php echo SURL;?>assets/libs/datatables/jquery.dataTables.min.js"></script>
         <script src="<?php echo SURL;?>assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
@@ -274,6 +328,36 @@
                 }
                 });
             });
+        </script>
+        <script type="text/javascript">
+            $(function(){
+
+                /*$('input[name="daterange"]').daterangepicker({
+                    autoApply: true
+                });
+
+                <?php if(empty($flagBuyerUsers['daterange'])){ ?>
+                    $('input[name="daterange"]').val('');
+                    $('input[name="daterange"]').attr("placeholder","Select dates");
+                <?php }?>
+
+                $('input[name="daterange"]').on('apply.daterangepicker', function(){
+                    //alert($(this).val());
+                    let dateRange = $(this).val()
+                    const dates = dateRange.split('-');
+
+                    let startDate=dates[0].trim();
+                    let endDate=dates[1].trim();
+
+                    $('#start_date').val(startDate);
+                    $('#end_date').val(endDate);
+                });*/
+
+                $('#buyersTable').DataTable({
+                    dom: '',
+                    ordering: false,
+                });
+            })
         </script>
     </body>
 </html>
