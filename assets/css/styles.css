@@ -191,6 +191,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 15px;
   position: absolute;
   right: 5px;
+  top: calc(50% - 10px);
 }
 
 .more-options img {

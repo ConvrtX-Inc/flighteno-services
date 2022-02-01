@@ -127,17 +127,17 @@ class Support extends CI_Controller {
         $this->load->view('support/buyer', $data);
     }//end
 
-    public function travelerSupport(){
+    public function traveler(){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
-
+    
         $findArray['profile_status'] = 'traveler';
-        $buyer_trasections    =  $db->support->find($findArray);
-        $buyerRes_trasections =  iterator_to_array($buyer_trasections);
-  
-        $config['base_url'] = SURL . 'index.php/admin/Support/travelerSupport';
-        $config['total_rows'] = count($buyerRes_trasections);
-        $config['per_page'] = 20;
+        $travelerComplains    =  $db->ticket->find($findArray);
+        $travelerComplainsRes =  iterator_to_array($travelerComplains);
+    
+        $config['base_url'] = SURL . 'index.php/admin/Support/traveler';
+        $config['total_rows'] = count($travelerComplainsRes);
+        $config['per_page'] = 2;
         $config['num_links'] = 4;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
@@ -158,33 +158,33 @@ class Support extends CI_Controller {
         $config['cur_tag_close'] = '</b></a></li>';
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
-  
+    
         $this->pagination->initialize($config);
         $page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
-  
+    
         if($page !=0) 
         {
           $page = ($page-1) * $config['per_page'];
         }
         $data["links"] = $this->pagination->create_links();
-
+    
         $aggregateQuery = [
             [
                 '$match' => $findArray
             ],
-
+    
             [
                 '$project' => [
-
+    
                     '_id'           =>   ['$toString' => '$_id'],
                     'order_number'  =>  '$order_number',
                     'subject'       =>  '$subject',
                     'message'       =>  '$message',
-                    'imageUrl'      =>  '$imageUrl',
+                    'image'         =>  '$image',
                     'admin_id'      =>  '$admin_id',
                     'created_date'  =>  '$created_date',
                     'status'        =>  '$status',
-                    'videoUrl'      =>  '$videoUrl',
+                    'video'         =>  '$video',
                 ]
             ],
             [
@@ -217,20 +217,26 @@ class Support extends CI_Controller {
                 ]
             ],
             [ 
-                '$skip' =>  $page
+                '$sort'=> [ 'created_date' => -1]
+            ],
+            [ 
+                '$skip' =>  intval($page)
             ],
             [
-                '$limit' => $config['per_page'] 
-            ],
-
-            [ 
-                '$sort'=> [ 'created_date' => -1]
+                '$limit' => intval($config['per_page']) 
             ]
         ];
-        $supportTraveler     =  $db->support->aggregate($aggregateQuery);
-        $supportTravelerRes  =  iterator_to_array($supportTraveler);
+        $travelerData        =  $db->ticket->aggregate($aggregateQuery);
+        $supporttravelerRes  =  iterator_to_array($travelerData);
         
-        $data['traveler_res']    =  $supportTravelerRes;
+        $data['traveler_res']    =  $supporttravelerRes;
+        $data['total']        =  count($travelerComplainsRes);
+    
+        // to be used in loadMore function
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
+        $data['findArray'] = $findArray;
+        
         $this->load->view('support/traveler', $data);
     }//end
 
@@ -376,7 +382,7 @@ class Support extends CI_Controller {
         $tickets    = $db->ticket->aggregate($getTickets);
         $ticketData = iterator_to_array($tickets);
         $data['tickets'] = $ticketData;
-        $this->load->view('support/support', $data);
+        $this->load->view('support/tickets', $data);
     }//end
     
     public function getMessages(){
