@@ -51,6 +51,9 @@ h1, h2, h3, h4, h5, h6 {
 * Content styles
 * --------------------
 */
+body {
+  background-color: #f8f8f8;
+}
 
 .main-container {
   background: #EEEEEE;
@@ -256,4 +259,112 @@ h1, h2, h3, h4, h5, h6 {
 .btn-load:hover,
 .btn-reset:hover {
   color: #FFFFFF;
+}
+
+
+/* Ticket content styles */
+.tickets-list,
+.tickets-messages {
+  background: #FFFFFF;
+  box-shadow: 0px 10px 40px rgb(0 0 0 / 3%);
+  border-radius: 20px;
+  height: 75vh;
+}
+
+.tickets-list-tabs {
+  display: flex;
+}
+
+.tickets-list-tabs a {
+  flex: 1 1 0px;
+  text-align: center;
+  border-bottom: 2px solid #C4C4C4;
+  color: #898A8D;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: -0.02em;
+  transition: all 0.2s ease-in-out;
+  padding: 30px 0;
+}
+
+.tickets-list-tabs a:hover {
+  color: #000000;
+}
+
+.tickets-list-tabs a.active {
+  border-color: #E12082;
+  color: #000000;
+}
+
+.tickets-list-main {
+  padding: 20px 15px;
+}
+
+.tickets-list-user {
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 25px 20px;
+}
+
+.tickets-list-user.active {
+  background: #EEEEEE;
+}
+
+.tickets-list-user .tickets-list-user-left,
+.tickets-list-user .tickets-list-user-right {
+  width: 20% !important;
+}
+
+.tickets-list-user .tickets-list-user-middle {
+  width: 60% !important;
+}
+
+.tickets-list-user .this-image {
+  padding-right: 10px;
+}
+
+.tickets-list-user .this-user {
+  color: #09110E;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.tickets-list-user .this-preview {
+  color: #09110E;
+  opacity: 0.4;
+  font-size: 14px;
+  line-height: 1.2;
+  margin-bottom: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.tickets-list-user-right {
+  text-align: right;
+}
+
+.tickets-list-user .this-time {
+  color: #09110E;
+  opacity: 0.4;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.tickets-list-user .this-unread {
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 25px;
+  background: #E1467D;
+  border-radius: 100%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  text-align: center;
 }
