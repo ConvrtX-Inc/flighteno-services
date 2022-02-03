@@ -21,21 +21,23 @@ class Users extends CI_Controller {
             $this->session->set_userdata($postData);
         }
         $searchData = $this->session->userdata('buyerUsersFilter');
-	if(!is_null($searchData)){
-        // if($searchData['location'] != "" && !$is_null($searchData)){
-
-        //     $findArray['country'] = $searchData['location'];
-        // }
-        
-        /* FLIGHT-28 Fix */
-        if (!empty($searchData['location'])) {
-            $findArray['country'] = $searchData['location'];
+        if(!is_null($searchData)){
+            if (!empty($searchData['filter_type'])) {
+                if ($searchData['filter_type'] == 'country') {
+                    // search by country
+                    $findArray['country'] = $searchData['country'];
+                } elseif ($searchData['filter_type'] == 'location') {
+                    // search by location/area
+                    $findArray['location']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                } else {
+                    // search by full name
+                    $findArray['full_name']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                }
+            } else {
+                $findArray['location'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                $findArray['full_name'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+            }
         }
-        
-        if($searchData['full_name'] != ""){
-
-            $findArray['full_name']  = [ '$regex' => $searchData['full_name'], '$options' => 'si']; 
-        }}
 
         $findArray['profile_status'] = 'buyer';
        

@@ -148,22 +148,30 @@
                         <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
                             <div class="row filter-row">
                                 <div class="col-xl-3">  
-                                    <select id="select-state" name="location" class="form-control filters_style" placeholder="Location">
-                                        <option value="" selected>Select Country</option>
-                                        <?php foreach ($getAllCountries as $country) {?>
-                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($buyerData) && $buyerData['location']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
-                                        <?php } ?>
+                                    <select name="filter_type" class="form-control filters_style" placeholder="Select filter">
+                                        <option value="name" <?=((is_null($buyerData) || $buyerData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
+                                        <option value="location" <?=((!is_null($buyerData) && $buyerData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
+                                        <option value="country" <?=((!is_null($buyerData) && $buyerData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
                                     </select>
                                 </div> <!-- end col -->
                                 
                                 <div class="col-xl-4">   
                                     <div class="inner-addon left-addon filter-search">
                                         <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
-                                        <input type="text" id ="full_name" class="form-control filters_style" placeholder="Search"  name="full_name"  value="<?=(!empty($buyerData['full_name']) ? $buyerData['full_name'] : "")?>" />
+                                        <input type="text" id ="filter_search" class="form-control filters_style" placeholder="Search"  name="filter_search"  value="<?=(!empty($buyerData['filter_search']) ? $buyerData['filter_search'] : "")?>"/>
                                     </div>
+                                    
+                                    <select name="country" class="form-control filters_style" placeholder="Select Country">
+                                        <option value="" selected>Select Country</option>
+                                        <?php foreach ($getAllCountries as $country) {?>
+                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($buyerData) && $buyerData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
+                                        <?php } ?>
+                                    </select>
                                 </div> <!-- end col -->
                                 
                                 <div class="col-xl-4">           
+                                    <button id="filter_submit" type="submit" hidden>Submit</button>
+                                    <a href="#" class="btn-submit">Filter</a>
                                     <a href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers" class="btn-reset">Reset</a>
                                 </div> <!-- end col -->
                             </div>
@@ -219,10 +227,16 @@
 
                                 <div class="mt-4"><?php  echo $this->pagination->create_links(); ?></div>
                                 <?php
-                                $start = $index + 1;
+                                $start = ($total > 0)? $index + 1 : 0;
                                 $end = ($total - $per_page >= $start)? $index + $per_page : $total;
                                 ?>
-                                <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
+                                <?php if($start == 0) { ?>
+                                    <center><p style="font-size: 16px;">No results found.</p></center>
+                                <?php
+                                } else { ?>
+                                    <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
+                                <?php
+                                } ?>
 
                                 <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
@@ -270,60 +284,106 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 
-        <script>
-            $("#checkAll").click(function(){
-                $('input:checkbox').not(this).prop('checked', this.checked);
-                    
-                let optionBox = $(".more-options-visible");
-                if (optionBox.length)
-                    optionBox.slideToggle("fast").removeClass("more-options-visible");
-            });
-
-            $(document).ready(function () {
-                $('select').selectize({
-                    sortField: 'text'
-                });
-            });
-            $(document).ready(function () {
-                $(".selectize-input").addClass("filters_style");
-                $(".selectize-dropdown").addClass("filters_style");
-             
-            });
-        </script>
-
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
             <script>
-            $(function() {
-                availableTags = [];
-                $.ajax({
-                'url': '<?php echo SURL ?>index.php/admin/users/getFullNames',
-                'type': 'POST',
-                'data': "",
-                'success': function (response) {
-                    availableTags = JSON.parse(response);
-                    $("#full_name").autocomplete({
-                    source: availableTags
-                    });
-                }
-                });
-            });
+            // $(function() {
+            //     availableTags = [];
+            //     $.ajax({
+            //     'url': '<?php echo SURL ?>index.php/admin/users/getFullNames',
+            //     'type': 'POST',
+            //     'data': "",
+            //     'success': function (response) {
+            //         availableTags = JSON.parse(response);
+            //         $("#filter_search").autocomplete({
+            //         source: availableTags
+            //         });
+            //     }
+            //     });
+            // });
         </script>
 
         <script>
             $(function() {
-                $(".form-filter select.form-control").change(function() {
-                    filterSubmit();
+                $("#checkAll").click(function(){
+                    $('input:checkbox').not(this).prop('checked', this.checked);
+                        
+                    let optionBox = $(".more-options-visible");
+                    if (optionBox.length)
+                        optionBox.slideToggle("fast").removeClass("more-options-visible");
+                });
+
+                const field_filter_search_container = $(".filter-search");
+                const field_filter_search = $("input[name='filter_search']");
+                const field_country = $("select[name='country']");
+
+                let type_selectize = $("select[name='filter_type']").selectize();
+                let country_selectize = $("select[name='country']").selectize({ sortField: 'text' });
+                let country_selectize_box = country_selectize.siblings(".selectize-control");
+                let country_selectize_box_dropdown = country_selectize_box.first(".selectize-input");
+                let country_selectize_control = country_selectize[0].selectize;
+
+                const filter_type = "<?php 
+                if (!is_null($buyerData) && !empty($buyerData['filter_type'])) 
+                    echo $buyerData['filter_type']; 
+                else 
+                    echo '';
+                ?>";
+
+                if (filter_type == "country") {
+                    country_selectize_box.removeClass("d-none");
+                    field_filter_search_container.addClass("d-none");
+                    field_country.attr("required", true);
+                } else {
+                    country_selectize_box.addClass("d-none");
+                    field_filter_search_container.removeClass("d-none");
+                    field_filter_search.attr("required", true);
+                }
+
+                $(".selectize-input").addClass("filters_style");
+
+                $(".form-filter select[name='filter_type']").change(function() {
+                    resetFilterValues();
+
+                    const selected = $(this).val();
+                    if (selected == "country") {
+                        country_selectize_box.removeClass("d-none");
+                        field_filter_search_container.addClass("d-none");
+                        field_country.attr("required", true);
+                    } else {
+                        country_selectize_box.addClass("d-none");
+                        field_filter_search_container.removeClass("d-none");
+                        field_filter_search.attr("required", true);
+                    }
                 });
 
                 $(".form-filter input.form-control").keypress(function(e) {
                     if(e.which == 13) {
-                        filterSubmit();
+                        $("#filter_submit").click();
                     }
                 });
-                
-                const filterSubmit = () => {
-                    $(".form-filter").submit();
+
+                $(".btn-submit").click(function(e) {
+                    e.preventDefault();
+
+                    const filter_type = $("select[name='filter_type']").val();
+                    const country = $("select[name='country']").val();
+                    
+                    if (filter_type == "country" && !country) {
+                        country_selectize_box_dropdown.addClass("focus input-active dropdown-active");
+                        return;
+                    }
+
+                    $("#filter_submit").click();
+                });
+
+                // reset filter values
+                function resetFilterValues() {
+                    field_filter_search.val("");
+                    field_filter_search.attr("required", false);
+                    field_country.val("");
+                    field_country.attr("required", false);
+                    country_selectize_control.clear();
                 }
 
                 $(".content-table").on("click", "td input[type='checkbox']", function(){
