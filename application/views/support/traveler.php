@@ -185,14 +185,27 @@
                                     </tr>
                                     <?php } ?>
                                 </table>
-                                
-                                <center>
+
+                                <div class="mt-4"><?php  echo $this->pagination->create_links(); ?></div>
+                                <?php
+                                $start = ($total > 0)? $index + 1 : 0;
+                                $end = ($total - $per_page >= $start)? $index + $per_page : $total;
+                                ?>
+                                <?php if($start == 0) { ?>
+                                    <center><p style="font-size: 16px;">No results found.</p></center>
+                                <?php
+                                } else { ?>
+                                    <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
+                                <?php
+                                } ?>
+
+                                <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
                                     <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                     <a href="#" class="mt-4 btn-load" style="display: none;">Load more</a>
-                                </center>
+                                </center> -->
                             </div>
                         </div>
                     </div> <!-- container -->
@@ -240,54 +253,13 @@
                 if (optionBox.length)
                     optionBox.slideToggle("fast").removeClass("more-options-visible");
             });
-
-            $(document).ready(function () {
-                $('select').selectize({
-                    sortField: 'text'
-                });
-            });
-            $(document).ready(function () {
-                $(".selectize-input").addClass("filters_style");
-                $(".selectize-dropdown").addClass("filters_style");
-             
-            });
         </script>
 
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-            <script>
-            $(function() {
-                availableTags = [];
-                $.ajax({
-                'url': '<?php echo SURL ?>index.php/admin/users/getFullNames',
-                'type': 'POST',
-                'data': "",
-                'success': function (response) {
-                    availableTags = JSON.parse(response);
-                    $("#full_name").autocomplete({
-                    source: availableTags
-                    });
-                }
-                });
-            });
-        </script>
 
         <script>
             $(function() {
-                $(".form-filter select.form-control").change(function() {
-                    filterSubmit();
-                });
-
-                $(".form-filter input.form-control").keypress(function(e) {
-                    if(e.which == 13) {
-                        filterSubmit();
-                    }
-                });
-                
-                const filterSubmit = () => {
-                    $(".form-filter").submit();
-                }
-
                 $(".content-table").on("click", "td input[type='checkbox']", function(){
                     $("#checkAll").prop("checked", false);
                     
@@ -316,6 +288,7 @@
                     }
                 });
 
+                /*
                 // Load More Custom AJAX Pagination
                 const url = "<?php echo SURL ?>index.php/admin/Support/loadMore";
                 let currentIndex = <?php echo $index; ?>;
@@ -362,6 +335,7 @@
                         }
                     });
                 });
+                */
             });
         </script>
 

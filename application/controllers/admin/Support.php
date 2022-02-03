@@ -24,8 +24,8 @@ class Support extends CI_Controller {
   
         $config['base_url'] = SURL . 'index.php/admin/Support/index';
         $config['total_rows'] = count($buyerComplainsRes);
-        $config['per_page'] = 2;
-        $config['num_links'] = 4;
+        $config['per_page'] = 10;
+        $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
@@ -33,12 +33,14 @@ class Support extends CI_Controller {
         $config["first_tag_close"] = '</li>';
         $config["last_tag_open"] = '<li>';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = 'Next<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
+        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -137,8 +139,8 @@ class Support extends CI_Controller {
     
         $config['base_url'] = SURL . 'index.php/admin/Support/traveler';
         $config['total_rows'] = count($travelerComplainsRes);
-        $config['per_page'] = 2;
-        $config['num_links'] = 4;
+        $config['per_page'] = 10;
+        $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
@@ -146,12 +148,14 @@ class Support extends CI_Controller {
         $config["first_tag_close"] = '</li>';
         $config["last_tag_open"] = '<li>';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = 'Next<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
+        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -265,12 +269,14 @@ class Support extends CI_Controller {
         $config["first_tag_close"]  =   '</li>';
         $config["last_tag_open"]    =   '<li>';
         $config["last_tag_close"]   =   '</li>';
-        $config['next_link']        =   'Next<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link']        =   '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open']    =   '<li>';
         $config['next_tag_close']   =   '</li>';
-        $config['prev_link']        =   '<i class="fa fa-long-arrow-left"></i>Previous';
+        $config['prev_link']        =   '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open']    =   '<li>';
         $config['prev_tag_close']   =   '</li>';
+        $config['first_link']       =   '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link']        =   '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open']    =   '<ul class="pagination">';
         $config['full_tag_close']   =   '</ul>';
         $config['cur_tag_open']     =   '<li class="active"><a href="#"><b>';
