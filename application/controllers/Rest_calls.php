@@ -177,6 +177,8 @@ class Rest_calls extends REST_Controller
                 if ($this->post()) {
 
                     $url = $this->post('url');
+                    file_put_contents("php://stderr", "URL: ".$url."\n");
+
                     $result = strpos($url, 'https://www.ebay.com');
                     if ($result !== false) {
                         $html = file_get_html($url);
