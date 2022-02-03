@@ -261,8 +261,48 @@ body {
   color: #FFFFFF;
 }
 
+.pagination a {
+  border-radius: 5px;
+  color: black;
+  float: left;
+  margin: 0 2px;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination li:first-child a {
+  margin-left: 0;
+}
+
+.pagination .active a {
+  color: #fff;
+  background: #E02681;
+  border-radius: 5px;
+}
+
+.pagination li:not(.active) a:hover {
+  background: #ddd;
+  border-radius: 5px;
+}
+
 
 /* Ticket content styles */
+@media (min-width: 1400px) {
+  .col-xxl-4 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 33.33333%;
+    flex: 0 0 33.33333%;
+    max-width: 33.33333%;
+  }
+  .col-xxl-8 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 66.66667%;
+    flex: 0 0 66.66667%;
+    max-width: 66.66667%;
+  }
+}
+
 .tickets-list,
 .tickets-messages {
   background: #FFFFFF;
@@ -310,7 +350,6 @@ body {
   background: #EEEEEE;
 }
 
-.tickets-list-user .tickets-list-user-left,
 .tickets-list-user .tickets-list-user-right {
   width: 20% !important;
 }
@@ -319,8 +358,13 @@ body {
   width: 60% !important;
 }
 
-.tickets-list-user .this-image {
+.tickets-list-user .tickets-list-user-left {
   padding-right: 10px;
+}
+
+.tickets-list-user .this-image,
+.tickets-messages .this-image {
+  max-width: 55px;
 }
 
 .tickets-list-user .this-user {

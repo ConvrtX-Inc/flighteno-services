@@ -211,13 +211,26 @@
                                     <?php } ?>
                                 </table>
                                 
-                                <center>
+                                <!-- 
+                                    FLIGHT-29 fix
+                                    As suggested, removed 'Load more' pagination.
+                                    Added the usual table pagination of numbers.
+                                -->
+
+                                <div class="mt-4"><?php  echo $this->pagination->create_links(); ?></div>
+                                <?php
+                                $start = $index + 1;
+                                $end = ($total - $per_page >= $start)? $index + $per_page : $total;
+                                ?>
+                                <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
+
+                                <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
                                     <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                     <a href="#" class="mt-4 btn-load" style="display: none;">Load more</a>
-                                </center>
+                                </center> -->
                             </div>
                         </div>
                     </div> <!-- container -->
@@ -341,6 +354,12 @@
                     }
                 });
 
+                /*
+                * FLIGHT-29 fix
+                * Removed 'Load more' pagination.
+                */
+                
+                /*
                 // Load More Custom AJAX Pagination
                 const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
                 let currentIndex = <?php echo $index; ?>;
@@ -387,6 +406,7 @@
                         }
                     });
                 });
+                */
             });
         </script>
 
