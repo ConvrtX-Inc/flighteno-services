@@ -144,27 +144,27 @@
                             </div>  
                         </div>
                 
-                        <?php $buyerData = $this->session->userdata('buyerUsersFilter'); ?>
+                        <?php $thisData = $this->session->userdata('buyerUsersFilter'); ?>
                         <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
                             <div class="row filter-row">
                                 <div class="col-xl-3">  
                                     <select name="filter_type" class="form-control filters_style" placeholder="Select filter">
-                                        <option value="name" <?=((is_null($buyerData) || $buyerData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
-                                        <option value="location" <?=((!is_null($buyerData) && $buyerData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
-                                        <option value="country" <?=((!is_null($buyerData) && $buyerData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
+                                        <option value="name" <?=((is_null($thisData) || $thisData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
+                                        <option value="location" <?=((!is_null($thisData) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
+                                        <option value="country" <?=((!is_null($thisData) && $thisData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
                                     </select>
                                 </div> <!-- end col -->
                                 
                                 <div class="col-xl-4">   
                                     <div class="inner-addon left-addon filter-search">
                                         <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
-                                        <input type="text" id ="filter_search" class="form-control filters_style" placeholder="Search"  name="filter_search"  value="<?=(!empty($buyerData['filter_search']) ? $buyerData['filter_search'] : "")?>"/>
+                                        <input type="text" id ="filter_search" class="form-control filters_style" placeholder="Search"  name="filter_search"  value="<?=(!empty($thisData['filter_search']) ? $thisData['filter_search'] : "")?>"/>
                                     </div>
                                     
                                     <select name="country" class="form-control filters_style" placeholder="Select Country">
                                         <option value="" selected>Select Country</option>
                                         <?php foreach ($getAllCountries as $country) {?>
-                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($buyerData) && $buyerData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
+                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($thisData) && $thisData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
                                         <?php } ?>
                                     </select>
                                 </div> <!-- end col -->
@@ -286,7 +286,7 @@
 
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-            <script>
+        <script>
             // $(function() {
             //     availableTags = [];
             //     $.ajax({
@@ -324,8 +324,8 @@
                 let country_selectize_control = country_selectize[0].selectize;
 
                 const filter_type = "<?php 
-                if (!is_null($buyerData) && !empty($buyerData['filter_type'])) 
-                    echo $buyerData['filter_type']; 
+                if (!is_null($thisData) && !empty($thisData['filter_type'])) 
+                    echo $thisData['filter_type']; 
                 else 
                     echo '';
                 ?>";
@@ -370,7 +370,7 @@
                     const country = $("select[name='country']").val();
                     
                     if (filter_type == "country" && !country) {
-                        country_selectize_box_dropdown.addClass("focus input-active dropdown-active");
+                        alert("Please select a country.");
                         return;
                     }
 

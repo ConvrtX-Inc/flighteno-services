@@ -15,11 +15,12 @@ class Users extends CI_Controller {
     public function index(){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
-        if( $this->input->post() ){
 
+        if( $this->input->post() ){
             $postData['buyerUsersFilter'] = $this->input->post(); 
             $this->session->set_userdata($postData);
         }
+
         $searchData = $this->session->userdata('buyerUsersFilter');
         if(!is_null($searchData)){
             if (!empty($searchData['filter_type'])) {
@@ -102,21 +103,31 @@ class Users extends CI_Controller {
         $db  =  $this->mongo_db->customQuery();
 
         if( $this->input->post() ){
-
             $postData['travelerUsersFilter'] = $this->input->post(); 
             $this->session->set_userdata($postData);
         }
-        $searchDataTraveler = $this->session->userdata('travelerUsersFilter');
-        if(!is_null($searchDataTraveler)){
-        if(!empty($searchDataTraveler['location']) ){
-            $findArray['country'] =    $searchDataTraveler['location'];
-        }
         
-        if($searchDataTraveler['full_name'] != ""){
+        $searchData = $this->session->userdata('travelerUsersFilter');
+        if(!is_null($searchData)){
+            if (!empty($searchData['filter_type'])) {
+                if ($searchData['filter_type'] == 'country') {
+                    // search by country
+                    $findArray['country'] = $searchData['country'];
+                } elseif ($searchData['filter_type'] == 'location') {
+                    // search by location/area
+                    $findArray['location']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                } else {
+                    // search by full name
+                    $findArray['full_name']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                }
+            } else {
+                $findArray['location'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                $findArray['full_name'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+            }
+        }
 
-            $findArray['full_name']  = [ '$regex' => $searchDataTraveler['full_name'], '$options' => 'si']; 
-        }}
         $findArray['profile_status'] = 'traveler';
+
         $traveler      =  $db->users->find($findArray);
         $travelerCount =  iterator_to_array($traveler);
 
