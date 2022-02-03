@@ -25,6 +25,12 @@
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+        
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style>
 
@@ -157,7 +163,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Flag users</h4>
@@ -168,7 +174,7 @@
                 
                         <?php $flagTravelerUser = $this->session->userdata('flagTravelerUser'); ?>
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
-                            <div class="row"> 
+                            <div class="row filter-row"> 
                                
                                 <div class="col-xl-3">
                                     <div class="form-group">
@@ -207,19 +213,19 @@
                                 <div class="col-xl-3 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterTravel">Reset</a>
+                                        <button type="submit" class="btn btn-submit">Filter</button>
+                                        <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterTravel">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i> 
                                     </div>
                                 </div> <!-- end col -->
                             </div>
                         </form>
 
-                        <div class = "row mt-4">
-                        <table class="table table-borderless" id="travTable" style="width:100% !important">
+                        <div class = "row mt-2">
+                            <table class="content-table">
                                 <tr>
-                                    <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                    <th>Select All</th>
+                                    <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                    <th class="table-col-profile">Select All</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
                                     <th>Location</th>
@@ -227,8 +233,8 @@
                                 </tr>
                                 <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
                                     <tr>
-                                        <td><input class="checkInput" type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" /></td>
-                                        <td>
+                                            <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" id="check<?php echo $travelerUsers['_id']; ?>"/><label for="check<?php echo $travelerUsers['_id']; ?>"></label></td>
+                                            <td>
                                             <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
                                                 
                                                 $imageSource = SURL.'assets/images/male.png';

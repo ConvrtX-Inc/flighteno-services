@@ -29,6 +29,12 @@
         <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001"/>
         </svg> -->
 
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
 
             .userNameColorChange{
@@ -158,7 +164,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right:4%">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right:4%">
                         <div class="row">           
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Flag users</h4>
@@ -168,7 +174,7 @@
 
                         <?php $flagBuyerUsers = $this->session->userdata('flagBuyerUsers'); ?>
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
-                            <div class="row">
+                            <div class="row filter-row">
                                
                                 <div class="col-xl-3">
                                     <div class="form-group">
@@ -207,8 +213,8 @@
                                 <div class="col-xl-3 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
+                                        <button type="submit" class="btn btn-sm btn-submit">Filter</button>
+                                        <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </div>
                                 </div> <!-- end col -->
@@ -217,11 +223,11 @@
                         </form>
                         <div class = "row mt-2">
                             <div class="col">
-                                <table class="table table-borderless" id="buyersTable" style="width:100% !important">
+                                <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                            <th>Select All</th>
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
                                             <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Location</th>
@@ -231,7 +237,7 @@
                                     <body>
                                         <?php foreach($flagUsers as $buyerFlag) { ?>
                                             <tr>
-                                                <td><input class="checkInput" type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" /></td>
+                                                <td><input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" id="check<?php echo $buyerFlag['_id']; ?>"/><label for="check<?php echo $buyerFlag['_id']; ?>"></label></td>
                                                 <td>
                                                     <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
                                                         

@@ -23,6 +23,11 @@
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style>
             .userNameColorChange{
@@ -151,7 +156,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left:4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left:4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Transaction</h4>
@@ -162,7 +167,7 @@
                     <?php $buyerTransactionsFilter = $this->session->userdata('buyerTransactionsFilter'); ?>
                         <!-- start page title -->
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
-                            <div class="row">
+                            <div class="row filter-row">
                                 <div class="col-xl-3">
                                     <div class="form-group">
                                         <label class="col-form-label">From: </label>
@@ -198,8 +203,9 @@
                                 <div class="col-xl-3 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
+                                        <!--<input type="submit" class="btn btn-submit" value="Filter" />-->
+                                        <button type="submit" class="btn btn-submit">Filter</button>
+                                        <a class= "btn-reset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </div>
                                 </div> <!-- end col -->
@@ -209,11 +215,11 @@
 
                         <div class = "row mt-2">
                             <div class="col">
-                                <table class="table table-borderless" id="buyersTable" style="width:100% !important">
+                                <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th class="text-left"><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"> Select All</th>
-                                            <th class="text-center"></th>
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Order ID</th>
@@ -223,7 +229,7 @@
                                     <tbody>
                                         <?php foreach ($buyers_payment as $value){?>
                                             <tr>
-                                                <td class="text-left"><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
+                                                <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
                                                 <td class="text-center">
                                                     <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
                                                         
@@ -245,7 +251,7 @@
                                         <?php } ?>
                                     </tbody>
                                 </table>
-                                <div class="pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
+                                <div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
                             </div>
                         </div>                    
                     </div> <!-- container -->

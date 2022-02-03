@@ -23,6 +23,11 @@
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style>
 
@@ -154,7 +159,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left:4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left:4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Transaction</h4>
@@ -165,7 +170,7 @@
                     <?php $travelerTransactionsFilter = $this->session->userdata('travelerTransactionsFilter'); ?>
                         <!-- start page title -->
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
-                            <div class="row">
+                            <div class="row filter-row">
                                 <div class="col-xl-3">
                                     <div class="form-group">
                                         <label class="col-form-label">From:</label>
@@ -201,8 +206,9 @@
                                 <div class="col-xl-3 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterTravelers">Reset</a>
+                                        <!--<input type="submit" class="btn btn-submit" value="Filter" />-->
+                                        <button type="submit" class="btn btn-submit">Filter</button>
+                                        <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterTravelers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i> 
                                     </div>
                                 </div> <!-- end col -->
@@ -212,22 +218,22 @@
 
                         <div class = "row mt-4">
                             <div class="col">
-                                <table class="table table-borderless" id="travTable" style="width:100% !important">
+                                <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                            <th>Select All</th>
-                                            <th>Name</th>
-                                            <th>Date</th>
-                                            <th>Order ID</th>
-                                            <th>Amount</th>
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
+                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Order ID</th>
+                                            <th class="text-center">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     <?php foreach ($traveler_res as $value){?>
                                         <tr>
-                                            <td><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                            <td>
+                                            <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                            <td class="text-center">
                                                 <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
                                                     
                                                     $imageSource = SURL.'assets/images/male.png';;
@@ -240,10 +246,10 @@
 
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </td>
-                                            <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
-                                            <td><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
-                                            <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
-                                            <td style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
+                                            <td class= "userNameColorChange text-center"><?php echo $value['profileData'][0]['full_name']; ?></td>
+                                            <td class="text-center"><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                            <td class="text-center" style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
+                                            <td class="text-center" style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
                                         </tr>
                                     <?php } ?>
                                     </tbody>
