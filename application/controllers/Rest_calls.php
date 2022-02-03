@@ -427,6 +427,7 @@ class Rest_calls extends REST_Controller
                     'Geometry' => $userLocationData['loc'],
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
+                    'country_code' => (string)$this->post('country_code'),
                 ];
 
                 $getRatting = $this->Mod_rating->getUserAvgRatting((string)$checkStatus->getInsertedId());
@@ -831,6 +832,7 @@ class Rest_calls extends REST_Controller
                         'Geometry' => $userLocationData['loc'],
                         'country' => $userLocationData['country'],
                         'Postal Code' => $userLocationData['postal'],
+                        'country_code' => (string)$this->post('country_code'),
                     ];
 
                     $getRatting = $this->Mod_rating->getUserAvgRatting((string)$admin_id);
