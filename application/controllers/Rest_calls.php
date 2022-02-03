@@ -183,16 +183,27 @@ class Rest_calls extends REST_Controller
                         $name = $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
 
 
-                        $data = $html->find("div.fs_imgc", 0);  //get all images
+                       /* $data = $html->find("div.fs_imgc", 0);  //get all images
                         preg_match('@src="([^"]+)"@', $data, $match);
                         $img_src = array_pop($match);
+                        */
+
+                        //Fix to get true image
+                        $img_true_url = $html->find("img[id=icImg]", 0);
+                        preg_match('@src="([^"]+)"@', $img_true_url, $match_img_url);
+                        $img_src_highres = array_pop($match_img_url);
+                        /*
+                        file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
+                        file_put_contents("php://stderr", "img tag:".$img_true_url."\n");
+                        file_put_contents("php://stderr", "img source:".$img_src_highres."\n");
+                        */
 
                         $price = str_replace("US $", "", $price);
                         $price = str_replace("(including shipping)", "", $price);
                         $price = str_replace("$", "", $price);
                         $reponseArray = [
                             'url' => $this->post('url'),
-                            'product_image' => $img_src,
+                            'product_image' => $img_src_highres,
                             'price' => (float)$price,
                             'name' => $name
                         ];
