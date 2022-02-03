@@ -208,9 +208,10 @@ class Rest_calls extends REST_Controller
 
                         //Fix to get true image
                         $img_true_url = $html->find("img[id=icImg]", 0);
+                        preg_match('@src="([^"]+)"@', $data, $match_img_url);
                         file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
-                        file_put_contents("php://stderr", "encode:".json_encode($img_true_url)."\n");
-                        file_put_contents("php://stderr", "not encoded:".$img_true_url."\n");
+                        file_put_contents("php://stderr", "img tag:".$img_true_url."\n");
+                        file_put_contents("php://stderr", "img source:".$img_true_url."\n");
 
                         $price = str_replace("US $", "", $price);
                         $price = str_replace("(including shipping)", "", $price);
