@@ -7,6 +7,7 @@
         <meta content="Flighteno" name="description" />
         <meta content="Coderthemes" name="author" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
         <!-- App favicon -->
         <link rel="shortcut icon" href="<?php echo SURL;?>assets/images/favicon.png">
 
@@ -46,6 +47,13 @@
                 color: black;
                 font-weight : bold
             }
+
+            .styleShow{
+                color       : black;
+                font-weight : bold;
+                margin-left : -11%;
+            }
+
 
             .button{
               	border-radius: 25px;
@@ -89,9 +97,29 @@
             body{
                 background-color: #f8f8f8;
             }
+
+            .totalBoxStyle{
+                background-color: #57b0af;
+                border: none;
+                color: white;
+                padding: 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                width: auto;
+                font-size: 20px;
+                border-radius: 27px;
+                font-weight: bold;
+                text-align: center;
+            }
         </style>
     </head>
+
     <body>
+
         <!-- Begin page -->
         <div id="wrapper">
 
@@ -108,79 +136,45 @@
                 <div class="content">
                     <!-- Start Content-->
                     <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
-                    
                         <!-- start page title -->
                         <div class="row">
                             <div class="col-12 mt-3 mb-2">
-                                <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
-                                <p class="titleStyle2">Traveler</p>
-                            </div> 
-                        </div> 
+                                <h4 class="page-title styleHeader titleStyle">Support</h4>
+                                <p class="titleStyle2">Buyer</p>
+                            </div>  
+                        </div>
 
-                        <?php $thisData = $this->session->userdata('travelerUsersFilter'); ?>
-                        <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/traveler">
-                            <div class="row filter-row">
-                                <div class="col-xl-3">  
-                                    <select name="filter_type" class="form-control filters_style" placeholder="Select filter">
-                                        <option value="name" <?=((is_null($thisData) || $thisData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
-                                        <option value="location" <?=((!is_null($thisData) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
-                                        <option value="country" <?=((!is_null($thisData) && $thisData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
-                                    </select>
-                                </div> <!-- end col -->
-                                
-                                <div class="col-xl-4">   
-                                    <div class="inner-addon left-addon filter-search">
-                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
-                                        <input type="text" id ="filter_search" class="form-control filters_style" placeholder="Search"  name="filter_search"  value="<?=(!empty($thisData['filter_search']) ? $thisData['filter_search'] : "")?>"/>
-                                    </div>
-                                    
-                                    <select name="country" class="form-control filters_style" placeholder="Select Country">
-                                        <option value="" selected>Select Country</option>
-                                        <?php foreach ($getAllCountries as $country) {?>
-                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($thisData) && $thisData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div> <!-- end col -->
-                                
-                                <div class="col-xl-4">           
-                                    <button id="filter_submit" type="submit" hidden>Submit</button>
-                                    <a href="#" class="btn-submit">Filter</a>
-                                    <a href="<?php echo base_url();?>index.php/admin/users/resetFilterTravelers" class="btn-reset">Reset</a>
-                                </div> <!-- end col -->
-                            </div>
-
-                        </form>
-
-                        <div class = "row mt-3 mb-5">
+                        <div class = "row mb-5">
                             <div class="col-12">
                                 <table class="content-table">
                                     <tr>
                                         <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
                                         <th class="table-col-profile">Select All</th>
                                         <th class="table-col-name">Name</th>
-                                        <th class="table-col-large">Area</th>
-                                        <th class="table-col-medium">Country</th>
+                                        <th class="table-col-large">Subject</th>
+                                        <th class="table-col-medium">Order No.</th>
                                         <th class="table-col-small"></th>
                                     </tr>
-                                    <?php foreach ($traveler as $key=>$value){ ?>
+                                    <?php foreach ($buyer_res as $key=>$value){ ?>
                                     <tr>
                                         <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
                                         <td> 
                                             <center>
-                                                <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
+                                                <?php $profile_image = json_decode(json_encode($value["profileData"]))[0]->profile_image; ?>
+                                                <?php if(empty($profile_image) || $profile_image == ''|| is_null($profile_image) ){ 
                                                     
                                                     $imageSource = SURL.'assets/images/male.png';;
                                                 }else{
 
-                                                    $imageSource = $value['profile_image'];
+                                                    $imageSource = $profile_image;
                                                 } ?>
                                                                             
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </center>
                                         </td>
-                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
-                                        <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
-                                        <td><?php echo Users::findCountryByCode($value['country']); ?>
+                                        <td class ="userNameColorChange"><?php echo json_decode(json_encode($value["profileData"]))[0]->full_name; ?></td>
+                                        <td><?php echo empty($value['subject']) || is_null($value['subject']) ? 'N/A' : $value['subject']; ?></td>
+                                        <td><?php echo $value['order_number']; ?></td>
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
@@ -191,12 +185,6 @@
                                     </tr>
                                     <?php } ?>
                                 </table>
-                                
-                                <!-- 
-                                    FLIGHT-29 fix
-                                    As suggested, removed 'Load more' pagination.
-                                    Added the usual table pagination of numbers.
-                                -->
 
                                 <div class="mt-4"><?php  echo $this->pagination->create_links(); ?></div>
                                 <?php
@@ -210,7 +198,7 @@
                                     <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
                                 <?php
                                 } ?>
-
+                                
                                 <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
                                     <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
@@ -219,7 +207,7 @@
                                     <a href="#" class="mt-4 btn-load" style="display: none;">Load more</a>
                                 </center> -->
                             </div>
-                        </div>                 
+                        </div>
                     </div> <!-- container -->
 
                 </div> <!-- content -->
@@ -253,112 +241,25 @@
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
 
-         <!-- APPLY SEARCH OPTIN IN DROP dOWN -->
-         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- APPLY SEARCH OPTIN IN DROP dOWN -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+
+        <script>
+            $("#checkAll").click(function(){
+                $('input:checkbox').not(this).prop('checked', this.checked);
+                    
+                let optionBox = $(".more-options-visible");
+                if (optionBox.length)
+                    optionBox.slideToggle("fast").removeClass("more-options-visible");
+            });
+        </script>
 
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-            // $(function() {
-            //     availableTags = [];
-            //     $.ajax({
-            //     'url': '<?php echo SURL ?>index.php/admin/users/getFullNames',
-            //     'type': 'POST',
-            //     'data': "",
-            //     'success': function (response) {
-            //         availableTags = JSON.parse(response);
-            //         $("#full_name").autocomplete({
-            //         source: availableTags
-            //         });
-            //     }
-            //     });
-            // });
-        </script>
 
         <script>
             $(function() {
-                $("#checkAll").click(function(){
-                    $('input:checkbox').not(this).prop('checked', this.checked);
-                        
-                    let optionBox = $(".more-options-visible");
-                    if (optionBox.length)
-                        optionBox.slideToggle("fast").removeClass("more-options-visible");
-                });
-
-                const field_filter_search_container = $(".filter-search");
-                const field_filter_search = $("input[name='filter_search']");
-                const field_country = $("select[name='country']");
-
-                let type_selectize = $("select[name='filter_type']").selectize();
-                let country_selectize = $("select[name='country']").selectize({ sortField: 'text' });
-                let country_selectize_box = country_selectize.siblings(".selectize-control");
-                let country_selectize_box_dropdown = country_selectize_box.first(".selectize-input");
-                let country_selectize_control = country_selectize[0].selectize;
-
-                const filter_type = "<?php 
-                if (!is_null($thisData) && !empty($thisData['filter_type'])) 
-                    echo $thisData['filter_type']; 
-                else 
-                    echo '';
-                ?>";
-
-                if (filter_type == "country") {
-                    country_selectize_box.removeClass("d-none");
-                    field_filter_search_container.addClass("d-none");
-                    field_country.attr("required", true);
-                } else {
-                    country_selectize_box.addClass("d-none");
-                    field_filter_search_container.removeClass("d-none");
-                    field_filter_search.attr("required", true);
-                }
-
-                $(".selectize-input").addClass("filters_style");
-
-                $(".form-filter select[name='filter_type']").change(function() {
-                    resetFilterValues();
-
-                    const selected = $(this).val();
-                    if (selected == "country") {
-                        country_selectize_box.removeClass("d-none");
-                        field_filter_search_container.addClass("d-none");
-                        field_country.attr("required", true);
-                    } else {
-                        country_selectize_box.addClass("d-none");
-                        field_filter_search_container.removeClass("d-none");
-                        field_filter_search.attr("required", true);
-                    }
-                });
-
-                $(".form-filter input.form-control").keypress(function(e) {
-                    if(e.which == 13) {
-                        $("#filter_submit").click();
-                    }
-                });
-
-                $(".btn-submit").click(function(e) {
-                    e.preventDefault();
-
-                    const filter_type = $("select[name='filter_type']").val();
-                    const country = $("select[name='country']").val();
-                    
-                    if (filter_type == "country" && !country) {
-                        alert("Please select a country.");
-                        return;
-                    }
-
-                    $("#filter_submit").click();
-                });
-
-                // reset filter values
-                function resetFilterValues() {
-                    field_filter_search.val("");
-                    field_filter_search.attr("required", false);
-                    field_country.val("");
-                    field_country.attr("required", false);
-                    country_selectize_control.clear();
-                }
-
                 $(".content-table").on("click", "td input[type='checkbox']", function(){
                     $("#checkAll").prop("checked", false);
                     
@@ -388,13 +289,8 @@
                 });
 
                 /*
-                * FLIGHT-29 fix
-                * Removed 'Load more' pagination.
-                */
-
-                /*
                 // Load More Custom AJAX Pagination
-                const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
+                const url = "<?php echo SURL ?>index.php/admin/Support/loadMore";
                 let currentIndex = <?php echo $index; ?>;
                 let per_page = <?php echo $per_page; ?>;
                 let total = <?php echo $total; ?>;
@@ -442,6 +338,6 @@
                 */
             });
         </script>
-        
+
     </body>
 </html>
