@@ -200,11 +200,13 @@ class Rest_calls extends REST_Controller
 
                         $name = $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
 
+                        /*
                         $data = $html->find("div.fs_imgc", 0);  //get all images
                         preg_match('@src="([^"]+)"@', $data, $match);
                         $img_src = array_pop($match);
                         file_put_contents("php://stderr", "SCRAPED IMAGE #1\n");
                         file_put_contents("php://stderr", $img_src."\n");
+                        */
 
                         //Fix to get true image
                         $img_true_url = $html->find("img[id=icImg]", 0);
@@ -219,7 +221,7 @@ class Rest_calls extends REST_Controller
                         $price = str_replace("$", "", $price);
                         $reponseArray = [
                             'url' => $this->post('url'),
-                            'product_image' => $img_src,
+                            'product_image' => $img_src_highres,
                             'price' => (float)$price,
                             'name' => $name
                         ];
