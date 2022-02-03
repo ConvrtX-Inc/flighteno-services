@@ -377,6 +377,7 @@ class Rest_calls extends REST_Controller
                 'Geometry' => $userLocationData['loc'],
                 'country' => $userLocationData['country'],
                 'Postal Code' => $userLocationData['postal'],
+                'country_code' => (string)$this->post('country_code'),
             ];
 
             $checkStatus = $db->users->insertOne($signupData);
@@ -770,6 +771,7 @@ class Rest_calls extends REST_Controller
                     'Geometry' => $userLocationData['loc'],
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
+                    'country_code' => (string)$this->post('country_code'),
                 ];
 
                 $where['email_address'] = (string)$this->post('email_address');
