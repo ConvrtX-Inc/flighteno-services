@@ -7,7 +7,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
         <!-- App favicon -->
-        <link rel="shortcut icon" href="<?php echo SURL;?>assets/images/logo2.png">
+        <link rel="shortcut icon" href="<?php echo SURL;?>assets/images/favicon.png">
+
         <!-- jvectormap -->
         <link href="<?php echo SURL;?>assets/libs/jqvmap/jqvmap.min.css" rel="stylesheet" />
 
@@ -18,6 +19,9 @@
         <link href="<?php echo SURL;?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />      
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style> 
 
@@ -33,7 +37,7 @@
             }
             /* .container{max-width:1170px; margin:auto;} */
             img{ max-width:100%; }
-            .messaging { padding: 0 0 20px 0; width: 100%}
+            .messaging { width: 100%}
             .inbox_people {
                 background: #f8f8f8 none repeat scroll 0 0;
                 float: left;
@@ -286,14 +290,81 @@
             <?php include('includes/sidebar.php');?>
 
             <div class="content-page">
-                <div class="content" style="margin-top:2%;">
+                <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid">
-                        <div class="col-12 mt-3">
-                            <h4 class="page-title styleHeader titleStyle">Messages<h4>
-                        </div> 
-                        <div class="row" >
-                            <!-- <h3 class=" text-center">Messaging</h3> -->
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
+                        <div class="row">
+                            <div class="col-12 mt-3 mb-3">
+                                <h4 class="page-title styleHeader titleStyle">Messages</h4>
+                            </div> 
+                        </div>
+                        <div class="row mb-5 tickets-container">
+                            <div class="col-5">
+                                <div class="tickets-list">
+                                    <div class="tickets-list-tabs">
+                                         <a href="#" class="active">Buyers</a>
+                                         <a href="#">Travelers</a>
+                                    </div>
+
+                                    <div class="tickets-list-main">
+                                        <div class="tickets-list-user d-flex justify-content-start align-items-center active">
+                                            <div class="tickets-list-user-left">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                            </div>
+
+                                            <div class="tickets-list-user-middle">
+                                                <h5 class="this-user">Margarette Smith</h5>
+                                                <p class="this-preview">Shipping Complaint</p>
+                                            </div>
+
+                                            <div class="tickets-list-user-right align-self-start">
+                                                <h6 class="this-time">5 mins ago</h6>
+                                                <span class="this-unread">2</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tickets-list-user d-flex justify-content-start align-items-center">
+                                            <div class="tickets-list-user-left">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                            </div>
+
+                                            <div class="tickets-list-user-middle">
+                                                <h5 class="this-user">Margarette Smith</h5>
+                                                <p class="this-preview">What time was our meeting? I want to re-schedule if possible.</p>
+                                            </div>
+
+                                            <div class="tickets-list-user-right align-self-start">
+                                                <h6 class="this-time">12 hrs ago</h6>
+                                                <span class="this-unread">29</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tickets-list-user d-flex justify-content-start align-items-center">
+                                            <div class="tickets-list-user-left">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                            </div>
+
+                                            <div class="tickets-list-user-middle">
+                                                <h5 class="this-user">Margarette Smith</h5>
+                                                <p class="this-preview">I am trying to create a sample data from your previous message.</p>
+                                            </div>
+
+                                            <div class="tickets-list-user-right align-self-start">
+                                                <h6 class="this-time">3 days ago</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-7">
+                                <div class="tickets-messages">
+                                    messages
+                                </div>
+                            </div>
+
+                            <p class="mt-5 mb-5">end ....</p>
+
                             <div class="messaging ">
                                 <div class="inbox_msg filters_style">
 
