@@ -10,7 +10,7 @@ class Support extends CI_Controller {
         error_reporting(1);
 		$this->load->model('Mod_isValidUser');
 		$this->load->model('Mod_login');
-        
+        $this->load->library('parser');
 	}
 
 
@@ -24,8 +24,8 @@ class Support extends CI_Controller {
   
         $config['base_url'] = SURL . 'index.php/admin/Support/index';
         $config['total_rows'] = count($buyerComplainsRes);
-        $config['per_page'] = 2;
-        $config['num_links'] = 4;
+        $config['per_page'] = 10;
+        $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
@@ -33,12 +33,14 @@ class Support extends CI_Controller {
         $config["first_tag_close"] = '</li>';
         $config["last_tag_open"] = '<li>';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = 'Next<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
+        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -104,10 +106,10 @@ class Support extends CI_Controller {
                 ]
             ],
             [ 
-                '$skip' =>  intval($page)
+                '$sort'=> [ 'created_date' => -1]
             ],
             [ 
-                '$sort'=> [ 'created_date' => -1]
+                '$skip' =>  intval($page)
             ],
             [
                 '$limit' => intval($config['per_page']) 
@@ -123,28 +125,22 @@ class Support extends CI_Controller {
         $data['index'] = $page;
         $data['per_page'] = $config['per_page'];
         $data['findArray'] = $findArray;
-
-        $test = $supportBuyerRes[0]["profileData"];
-        // var_dump("<pre>".json_encode($supportBuyerRes[0])."</pre>");
-        // var_dump(json_encode($test));
-        // var_dump(json_decode(json_encode($supportBuyerRes[0]["profileData"]))[0]->profile_image);
-        // exit();
         
         $this->load->view('support/buyer', $data);
     }//end
 
-    public function travelerSupport(){
+    public function traveler(){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
-
+    
         $findArray['profile_status'] = 'traveler';
-        $buyer_trasections    =  $db->support->find($findArray);
-        $buyerRes_trasections =  iterator_to_array($buyer_trasections);
-  
-        $config['base_url'] = SURL . 'index.php/admin/Support/travelerSupport';
-        $config['total_rows'] = count($buyerRes_trasections);
-        $config['per_page'] = 20;
-        $config['num_links'] = 4;
+        $travelerComplains    =  $db->ticket->find($findArray);
+        $travelerComplainsRes =  iterator_to_array($travelerComplains);
+    
+        $config['base_url'] = SURL . 'index.php/admin/Support/traveler';
+        $config['total_rows'] = count($travelerComplainsRes);
+        $config['per_page'] = 10;
+        $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
@@ -152,45 +148,47 @@ class Support extends CI_Controller {
         $config["first_tag_close"] = '</li>';
         $config["last_tag_open"] = '<li>';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = 'Next<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
+        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
         $config['cur_tag_close'] = '</b></a></li>';
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
-  
+    
         $this->pagination->initialize($config);
         $page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
-  
+    
         if($page !=0) 
         {
           $page = ($page-1) * $config['per_page'];
         }
         $data["links"] = $this->pagination->create_links();
-
+    
         $aggregateQuery = [
             [
                 '$match' => $findArray
             ],
-
+    
             [
                 '$project' => [
-
+    
                     '_id'           =>   ['$toString' => '$_id'],
                     'order_number'  =>  '$order_number',
                     'subject'       =>  '$subject',
                     'message'       =>  '$message',
-                    'imageUrl'      =>  '$imageUrl',
+                    'image'         =>  '$image',
                     'admin_id'      =>  '$admin_id',
                     'created_date'  =>  '$created_date',
                     'status'        =>  '$status',
-                    'videoUrl'      =>  '$videoUrl',
+                    'video'         =>  '$video',
                 ]
             ],
             [
@@ -223,20 +221,26 @@ class Support extends CI_Controller {
                 ]
             ],
             [ 
-                '$skip' =>  $page
+                '$sort'=> [ 'created_date' => -1]
+            ],
+            [ 
+                '$skip' =>  intval($page)
             ],
             [
-                '$limit' => $config['per_page'] 
-            ],
-
-            [ 
-                '$sort'=> [ 'created_date' => -1]
+                '$limit' => intval($config['per_page']) 
             ]
         ];
-        $supportTraveler     =  $db->support->aggregate($aggregateQuery);
-        $supportTravelerRes  =  iterator_to_array($supportTraveler);
+        $travelerData        =  $db->ticket->aggregate($aggregateQuery);
+        $supporttravelerRes  =  iterator_to_array($travelerData);
         
-        $data['traveler_res']    =  $supportTravelerRes;
+        $data['traveler_res']    =  $supporttravelerRes;
+        $data['total']        =  count($travelerComplainsRes);
+    
+        // to be used in loadMore function
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
+        $data['findArray'] = $findArray;
+        
         $this->load->view('support/traveler', $data);
     }//end
 
@@ -265,12 +269,14 @@ class Support extends CI_Controller {
         $config["first_tag_close"]  =   '</li>';
         $config["last_tag_open"]    =   '<li>';
         $config["last_tag_close"]   =   '</li>';
-        $config['next_link']        =   'Next<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link']        =   '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open']    =   '<li>';
         $config['next_tag_close']   =   '</li>';
-        $config['prev_link']        =   '<i class="fa fa-long-arrow-left"></i>Previous';
+        $config['prev_link']        =   '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open']    =   '<li>';
         $config['prev_tag_close']   =   '</li>';
+        $config['first_link']       =   '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link']        =   '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open']    =   '<ul class="pagination">';
         $config['full_tag_close']   =   '</ul>';
         $config['cur_tag_open']     =   '<li class="active"><a href="#"><b>';
@@ -382,7 +388,7 @@ class Support extends CI_Controller {
         $tickets    = $db->ticket->aggregate($getTickets);
         $ticketData = iterator_to_array($tickets);
         $data['tickets'] = $ticketData;
-        $this->load->view('support/support', $data);
+        $this->load->view('support/tickets', $data);
     }//end
     
     public function getMessages(){
@@ -626,4 +632,104 @@ class Support extends CI_Controller {
             }
         }
     }//end
+
+    public function loadMore() {
+        // prepare data
+        $index = intval($_GET['index']);
+        $per_page = intval($_GET['per_page']);
+        $total = $_GET['total'];
+        $findArray = json_decode(stripslashes($_GET['findArray']));
+
+        $db = $this->mongo_db->customQuery();
+
+        $condition = array('sort'=>array('created_date'=> -1));
+        $condition = array('limit' => $per_page, 'skip' =>  $index + $per_page);
+
+        $aggregateQuery = [
+            [
+                '$match' => $findArray
+            ],
+
+            [
+                '$project' => [
+
+                    '_id'           =>   ['$toString' => '$_id'],
+                    'order_number'  =>  '$order_number',
+                    'subject'       =>  '$subject',
+                    'message'       =>  '$message',
+                    'image'         =>  '$image',
+                    'admin_id'      =>  '$admin_id',
+                    'created_date'  =>  '$created_date',
+                    'status'        =>  '$status',
+                    'video'         =>  '$video',
+                ]
+            ],
+            [
+                '$lookup' => [
+                    'from' => 'users',
+                    'let' => [
+                        'admin_id' =>  ['$toObjectId' => '$admin_id'],
+                    ],
+                    'pipeline' => [
+                        [
+                            '$match' => [
+                            '$expr' => [
+                                '$eq' => [
+                                '$_id',
+                                '$$admin_id'
+                                ]
+                            ],
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                        '_id'             =>  ['$toString' => '$_id'],
+                        'profile_image'   =>  '$profile_image',
+                        'full_name'       =>  '$full_name'
+                        ]
+                    ],
+        
+                    ],
+                    'as' => 'profileData'
+                ]
+            ],
+            [ 
+                '$sort'=> [ 'created_date' => -1]
+            ],
+            [ 
+                '$skip' =>  $index + $per_page
+            ],
+            [
+                '$limit' => $per_page
+            ]
+        ];
+
+        $more_data =  $db->ticket->aggregate($aggregateQuery);
+        $more_data_res = iterator_to_array($more_data);
+
+        $temp = '';
+
+        // loop data and create string template
+        foreach ($more_data_res as $res) {
+            $template_data = array();
+            $profile_image = json_decode(json_encode($res["profileData"]))[0]->profile_image;
+
+            // fix conditional data for template usage
+            if (empty($profile_image) || $profile_image == ''|| is_null($profile_image)) {                               
+                $template_data['profile_image'] = SURL.'assets/images/male.png';
+            } else {
+                $template_data['profile_image'] = $profile_image;
+            }
+
+            $template_data['_id'] = $res['_id'];
+            $template_data['full_name'] = json_decode(json_encode($res["profileData"]))[0]->full_name;
+            $template_data['subject'] = $res['subject'];
+            $template_data['order_number'] = $res['order_number'];
+
+            $temp .= $this->parser->parse('support/template', $template_data, TRUE);
+        }
+
+        echo $temp;
+        exit;
+    }
 }

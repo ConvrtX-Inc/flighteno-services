@@ -15,27 +15,30 @@ class Users extends CI_Controller {
     public function index(){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
-        if( $this->input->post() ){
 
+        if( $this->input->post() ){
             $postData['buyerUsersFilter'] = $this->input->post(); 
             $this->session->set_userdata($postData);
         }
+
         $searchData = $this->session->userdata('buyerUsersFilter');
-	if(!is_null($searchData)){
-        // if($searchData['location'] != "" && !$is_null($searchData)){
-
-        //     $findArray['country'] = $searchData['location'];
-        // }
-        
-        /* FLIGHT-28 Fix */
-        if (!empty($searchData['location'])) {
-            $findArray['country'] = $searchData['location'];
+        if(!is_null($searchData)){
+            if (!empty($searchData['filter_type'])) {
+                if ($searchData['filter_type'] == 'country') {
+                    // search by country
+                    $findArray['country'] = $searchData['country'];
+                } elseif ($searchData['filter_type'] == 'location') {
+                    // search by location/area
+                    $findArray['location']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                } else {
+                    // search by full name
+                    $findArray['full_name']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                }
+            } else {
+                $findArray['location'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                $findArray['full_name'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+            }
         }
-        
-        if($searchData['full_name'] != ""){
-
-            $findArray['full_name']  = [ '$regex' => $searchData['full_name'], '$options' => 'si']; 
-        }}
 
         $findArray['profile_status'] = 'buyer';
        
@@ -44,7 +47,7 @@ class Users extends CI_Controller {
 
         $config['base_url'] = SURL . 'index.php/admin/users/index';
         $config['total_rows'] = count($buyerCount);
-        $config['per_page'] = 2;
+        $config['per_page'] = 10;
         $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
@@ -53,12 +56,14 @@ class Users extends CI_Controller {
         $config["first_tag_close"] = '</li>';
         $config["last_tag_open"] = '<li>';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = 'Next Page<i class="fa fa-long-arrow-right"></i>';
+        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous Page';
+        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -98,27 +103,37 @@ class Users extends CI_Controller {
         $db  =  $this->mongo_db->customQuery();
 
         if( $this->input->post() ){
-
             $postData['travelerUsersFilter'] = $this->input->post(); 
             $this->session->set_userdata($postData);
         }
-        $searchDataTraveler = $this->session->userdata('travelerUsersFilter');
-        if(!is_null($searchDataTraveler)){
-        if(!empty($searchDataTraveler['location']) ){
-            $findArray['country'] =    $searchDataTraveler['location'];
-        }
-        
-        if($searchDataTraveler['full_name'] != ""){
 
-            $findArray['full_name']  = [ '$regex' => $searchDataTraveler['full_name'], '$options' => 'si']; 
-        }}
+        $searchData = $this->session->userdata('travelerUsersFilter');
+        if(!is_null($searchData)){
+            if (!empty($searchData['filter_type'])) {
+                if ($searchData['filter_type'] == 'country') {
+                    // search by country
+                    $findArray['country'] = $searchData['country'];
+                } elseif ($searchData['filter_type'] == 'location') {
+                    // search by location/area
+                    $findArray['location']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                } else {
+                    // search by full name
+                    $findArray['full_name']  = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                }
+            } else {
+                $findArray['location'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+                $findArray['full_name'] = [ '$regex' => $searchData['filter_search'], '$options' => 'si'];
+            }
+        }
+
         $findArray['profile_status'] = 'traveler';
+
         $traveler      =  $db->users->find($findArray);
         $travelerCount =  iterator_to_array($traveler);
 
         $config['base_url'] = SURL . 'index.php/admin/users/traveler';
         $config['total_rows'] = count($travelerCount);
-        $config['per_page'] = 2;
+        $config['per_page'] = 10;
         $config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
@@ -127,14 +142,14 @@ class Users extends CI_Controller {
         $config["first_tag_close"] = '</li>';
         $config["last_tag_open"] = '<li>';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = '&raquo;';
+        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '&laquo;';
+        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
-        $config['first_link'] = 'First';
-        $config['last_link'] = 'Last';
+        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
+        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -225,5 +240,14 @@ class Users extends CI_Controller {
 
         echo $temp;
         exit;
+    }
+
+    public static function findCountryByCode($code) {
+        $countries = getCountry();
+        foreach ($countries as $country) {
+            if ( $country["code"] == $code ) {
+                return $country["name"];
+            }
+        }
     }
 }
