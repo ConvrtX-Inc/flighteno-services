@@ -212,19 +212,19 @@
                                 <table class="table table-borderless" id="buyersTable" style="width:100% !important">
                                     <thead>
                                         <tr>
-                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                            <th>Select All</th>
-                                            <th>Name</th>
-                                            <th>Date</th>
-                                            <th>Order ID</th>
-                                            <th>Amount</th>
+                                            <th class="text-left"><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"> Select All</th>
+                                            <th class="text-center"></th>
+                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Order ID</th>
+                                            <th class="text-center">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($buyers_payment as $value){?>
                                             <tr>
-                                                <td><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                                <td>
+                                                <td class="text-left"><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
+                                                <td class="text-center">
                                                     <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
                                                         
                                                         $imageSource = SURL.'assets/images/male.png';;
@@ -237,18 +237,15 @@
 
                                                     <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                                 </td>
-                                                <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
-                                                <td><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
-                                                <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
-                                                <td style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
+                                                <td class= "userNameColorChange text-center"><?php echo $value['profileData'][0]['full_name']; ?></td>
+                                                <td class="text-center"><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                                <td class="text-center" style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
+                                                <td class="text-center" style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
                                 </table>
-                                <div class="dt-more-container">
-                                    <button id="btn-example-load-more" style="display:none">Load More</button>
-                                </div>
-                                <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+                                <div class="pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
                             </div>
                         </div>                    
                     </div> <!-- container -->
@@ -311,23 +308,23 @@
                     //        searchable: false
                     //    },
                     //],
-                    drawCallback: function(){
+                    //drawCallback: function(){
                         // If there is some more data
-                        if($('#btn-example-load-more').is(':visible')){
+                    //    if($('#btn-example-load-more').is(':visible')){
                             // Scroll to the "Load more" button
-                            $('html, body').animate({
-                            scrollTop: $('#btn-example-load-more').offset().top
-                            }, 1000);
-                        }
+                    //        $('html, body').animate({
+                    //        scrollTop: $('#btn-example-load-more').offset().top
+                    //        }, 1000);
+                    //    }
 
                         // Show or hide "Load more" button based on whether there is more data available
-                        $('#btn-example-load-more').toggle(this.api().page.hasMore());
-                    }      
-                });
-                $('#btn-example-load-more').on('click', function(){  
+                    //    $('#btn-example-load-more').toggle(this.api().page.hasMore());
+                    //}      
+                //});
+                //$('#btn-example-load-more').on('click', function(){  
                     // Load more data
-                    table.page.loadMore();
-                });
+                //    table.page.loadMore();
+                //});
             })
         </script>
     </body>

@@ -184,7 +184,7 @@
 
                                 <div class="col-xl-3">
                                     <div class="form-group">
-                                        <label class="col-form-label">To:</label>
+                                        <label class="col-form-label">Price:</label>
                                         <input type="input" class="form-control filters_style" placeholder="0"  name="price" 
                                         value="<?=(!empty($travelerTransactionsFilter['price']) ? $travelerTransactionsFilter['price'] : "")?>" />
                                     </div>
@@ -248,7 +248,7 @@
                                     <?php } ?>
                                     </tbody>
                                 </table>
-                                <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+                                <div class="pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
                             </div>
                         </div>                    
                     </div> <!-- container -->
