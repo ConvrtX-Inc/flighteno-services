@@ -207,7 +207,7 @@ class Rest_calls extends REST_Controller
                         file_put_contents("php://stderr", $img_src."\n");
 
                         //Fix to get true image
-                        $img_true_url = $html->find("div.icImg", 0);
+                        $img_true_url = $html->find("div[id=icImg]", 0);
                         file_put_contents("php://stderr", "SCRAPED IMAGE #2\n");
                         file_put_contents("php://stderr", $img_true_url."\n");
 
