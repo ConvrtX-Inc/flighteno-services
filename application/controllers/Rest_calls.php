@@ -211,7 +211,7 @@ class Rest_calls extends REST_Controller
                         preg_match('@src="([^"]+)"@', $img_true_url, $match_img_url);
                         file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
                         file_put_contents("php://stderr", "img tag:".$img_true_url."\n");
-                        file_put_contents("php://stderr", "img source:".$img_true_url."\n");
+                        file_put_contents("php://stderr", "img source:".$match_img_url."\n");
 
                         $price = str_replace("US $", "", $price);
                         $price = str_replace("(including shipping)", "", $price);
