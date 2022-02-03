@@ -106,7 +106,7 @@ class Users extends CI_Controller {
             $postData['travelerUsersFilter'] = $this->input->post(); 
             $this->session->set_userdata($postData);
         }
-        
+
         $searchData = $this->session->userdata('travelerUsersFilter');
         if(!is_null($searchData)){
             if (!empty($searchData['filter_type'])) {
@@ -240,5 +240,14 @@ class Users extends CI_Controller {
 
         echo $temp;
         exit;
+    }
+
+    public static function findCountryByCode($code) {
+        $countries = getCountry();
+        foreach ($countries as $country) {
+            if ( $country["code"] == $code ) {
+                return $country["name"];
+            }
+        }
     }
 }

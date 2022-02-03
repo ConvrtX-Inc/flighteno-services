@@ -180,7 +180,7 @@
                                         </td>
                                         <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
                                         <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
-                                        <td><?php echo $value['country']; ?></td>
+                                        <td><?php echo Users::findCountryByCode($value['country']); ?>
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
