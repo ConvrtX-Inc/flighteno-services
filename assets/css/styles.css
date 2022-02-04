@@ -60,6 +60,7 @@ body {
   border: 1px solid #DFDFDF;
   box-sizing: border-box;
   border-radius: 30px;
+  overflow-x: hidden;
 }
 
 /* Filters */
@@ -273,14 +274,70 @@ body {
   color: #FFFFFF;
 }
 
-.pagination a {
+.pagination-container {
+  background: #E14A7D;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  width: 109%;
+  margin-left: -4.5%;
+  padding: 20px 4.5%;
+  margin-top: 8rem;
+}
+
+.pagination-container form {
+  display: inline-block;
+}
+
+.pagination-container #per_page {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+
+  appearance: none;
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  background-image: url("../images/select-arrow-white.png");
+  background-repeat: no-repeat;
+  background-position: 100% center;
+  background-size: 8px;
+  padding: 0 10px;
+}
+
+.pagination-container #per_page:focus {
+  outline: none;
+}
+
+.pagination-container #per_page option {
+  color: #18243c;
+}
+
+.pagination-container .pagination-msg {
+  margin-left: 60px;
+  margin-right: 20px;
+}
+
+.pagination {
+  margin-bottom: 0;
+}
+
+.pagination a,
+.pagination .link-disabled {
   border-radius: 5px;
-  color: black;
+  color: #fff;
   float: left;
   margin: 0 2px;
-  padding: 8px 16px;
+  padding: 0 10px;
   text-decoration: none;
   transition: all 0.2s ease-in-out;
+}
+
+.pagination .link-disabled {
+  opacity: 40%;
 }
 
 .pagination li:first-child a {
@@ -291,12 +348,13 @@ body {
   color: #fff;
   background: #E02681;
   border-radius: 5px;
+  display: none;
 }
 
-.pagination li:not(.active) a:hover {
+/* .pagination li:not(.active) a:hover {
   background: #ddd;
   border-radius: 5px;
-}
+} */
 
 
 /* Ticket content styles */
@@ -423,4 +481,51 @@ body {
   width: 25px;
   height: 25px;
   text-align: center;
+}
+
+.color-pink {
+  color: #E1467D;
+}
+
+.text-small {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.underlined {
+  text-decoration: underline;
+}
+
+.tickets-messages-info .this-top {
+  padding: 25px 40px;
+}
+
+.tickets-messages-info .this-top p {
+  color: #C7C7C7;
+  font-weight: 500;
+}
+
+.tickets-messages-info .this-top .order-info p {
+  font-weight: 600;
+}
+
+.tickets-messages-info .this-top .user-info .this-left {
+  margin-right: 10px;
+}
+
+.tickets-messages-info .this-top .user-info .this-user {
+  color: #09110E;
+  font-size: 18px;
+  margin: 0;
+}
+
+.tickets-messages-info .this-bottom {
+  border-top: 1px solid #EAEAEA;
+  border-bottom: 1px solid #EAEAEA;
+}
+
+.tickets-messages-info .this-bottom p {
+  font-size: 17px;
+  font-weight: 500;
+  padding: 10px 40px;
 }
