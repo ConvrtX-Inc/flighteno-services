@@ -175,8 +175,11 @@
                             </div>  
                         </div>
 
-                        <?php $flagBuyerUsers = $this->session->userdata('flagBuyerUsers'); ?>
-                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
+                    <?php $flagBuyerUsers = $this->session->userdata('flagBuyerUsers'); ?>
+                        
+                        <div id="divError"></div>
+                        
+                        <form id="formFilter" class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
                             <div class="row filter-row">
                                
                                 <div class="col-xl-5">
@@ -184,7 +187,7 @@
                                         <div class="col-xl-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">From:</label>
-                                                <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" 
+                                                <input id="inputFrom" type="date" class="form-control filters_style" placeholder="start date" 
                                                 name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
                                             </div>
                                         </div> <!-- end col -->
@@ -192,7 +195,7 @@
                                         <div class="col-xl-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">To:</label>
-                                                <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  
+                                                <input id="inputTo" type="date" class="form-control filters_style" placeholder="end date"  
                                                 name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
                                             </div>
                                         </div> <!-- end col -->
@@ -220,7 +223,7 @@
                                 <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <button type="submit" class="btn btn-sm btn-submit">Filter</button>
+                                        <button id="btnFilter" type="button" class="btn btn-sm btn-submit">Filter</button>
                                         <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </div>
@@ -343,6 +346,15 @@
             });
         </script>
         <script type="text/javascript">
+            function setError(error){
+                var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                            +error+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+                                '<span aria-hidden="true">&times;</span>'
+                            '</button>'
+                        '</div>';
+                return errorAlert;
+            }
             $(function(){
 
                 /*$('input[name="daterange"]').daterangepicker({
@@ -365,6 +377,31 @@
                     $('#start_date').val(startDate);
                     $('#end_date').val(endDate);
                 });*/
+
+                $('#divError').html('');
+
+                $('#btnFilter').click(function(){
+                    let datefrom = $('#inputFrom').val();
+                    let dateto = $('#inputTo').val();
+
+                    if(!!datefrom || !!dateto){
+                        if(datefrom===''){
+                            $('#divError').html(setError('Invalid value date from'));
+                            return;
+                        }
+                        if(dateto===''){
+                            $('#divError').html(setError('Invalid value date to'));
+                            return;
+                        }
+
+                        if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
+                            $('#divError').html(setError('Date from must be greater than date to'));
+                            return;
+                        }
+                    }
+
+                    $('#formFilter').submit();
+                })
 
                 $('#buyersTable').DataTable({
                     dom: '',

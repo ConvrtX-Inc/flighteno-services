@@ -168,15 +168,18 @@
                         </div>
 
                     <?php $buyerTransactionsFilter = $this->session->userdata('buyerTransactionsFilter'); ?>
+
+                        <div id="divError"></div>
+
                         <!-- start page title -->
-                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
+                        <form id="formFilter" class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
                             <div class="row filter-row">
                                 <div class="col-xl-5">
                                     <div class="row">
                                         <div class="col-xl-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">From: </label>
-                                                <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                                <input id="inputFrom" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
                                                 value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
                                             </div>
                                         </div> <!-- end col -->
@@ -184,7 +187,7 @@
                                         <div class="col-xl-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">To:</label>
-                                                <input type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
+                                                <input id="inputTo" type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
                                                 value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
                                             </div>
                                         </div> <!-- end col -->
@@ -211,8 +214,8 @@
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
                                         <!--<input type="submit" class="btn btn-submit" value="Filter" />-->
-                                        <button type="submit" class="btn btn-submit">Filter</button>
-                                        <a class= "btn-reset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
+                                        <button id="btnFilter" type="button" class="btn btn-submit">Filter</button>
+                                        <a class= "btn btn-reset" href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </div>
                                 </div> <!-- end col -->
@@ -297,13 +300,63 @@
 
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
+
+        <!-- Moment js -->
+        <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
+
         <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
         </script>
         <script type="text/javascript">
+            function setError(error){
+                var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                            +error+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+                                '<span aria-hidden="true">&times;</span>'
+                            '</button>'
+                        '</div>';
+                return errorAlert;
+            }
             $(function(){
+
+                //$('#inputFrom').tooltip('disable');
+                $('#divError').html('');
+
+                $('#btnFilter').click(function(){
+                    let datefrom = $('#inputFrom').val();
+                    let dateto = $('#inputTo').val();
+
+                    //console.log('date from', datefrom);
+                    //console.log('date to', dateto);
+                    if(!!datefrom || !!dateto){
+                        if(datefrom===''){
+                            //console.log('Invalid value date from', datefrom);
+                            //document.querySelector('#inputFrom').setAttribute('title', 'Invalid value date from');
+                            //$('#inputFrom').tooltip('enable');
+                            //$('#inputFrom').tooltip('show')
+                            $('#divError').html(setError('Invalid value date from'));
+                            return;
+                        }
+                        if(dateto===''){
+                            //console.log('Invalid value date to', dateto);
+                            $('#divError').html(setError('Invalid value date to'));
+                            return;
+                        }
+                        ///console.log('date from as date',new Date(datefrom))
+                        //console.log('date to as date', new Date(dateto))
+                        
+                        if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
+                            //console.log('Date from must be greater than date to');
+                            $('#divError').html(setError('Date from must be greater than date to'));
+                            return;
+                        }
+                    }
+
+                    $('#formFilter').submit();
+                })
+
                 var table = $('#buyersTable').DataTable({
                     //dom: "<'row float-left mb-2'<'col-sm-8 toolbar'><'col-sm-4' f>>rt",
                     dom: '',
@@ -337,7 +390,7 @@
                 //$('#btn-example-load-more').on('click', function(){  
                     // Load more data
                 //    table.page.loadMore();
-                //});
+                });
             })
         </script>
     </body>

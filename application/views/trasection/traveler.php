@@ -171,15 +171,18 @@
                         </div>
 
                     <?php $travelerTransactionsFilter = $this->session->userdata('travelerTransactionsFilter'); ?>
+                        
+                        <div id="divError"></div>
+
                         <!-- start page title -->
-                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
+                        <form id="formFilter" class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">
                             <div class="row filter-row">
                                 <div class="col-xl-5">
                                     <div class="row">
                                         <div class="col-xl-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">From:</label>
-                                                <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                                <input id="inputFrom" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
                                                 value="<?=(!empty($travelerTransactionsFilter['start_date']) ? $travelerTransactionsFilter['start_date'] : "")?>" />
                                             </div>
                                         </div> <!-- end col -->
@@ -187,7 +190,7 @@
                                         <div class="col-xl-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">To:</label>
-                                                <input type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
+                                                <input id="inputTo" type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
                                                 value="<?=(!empty($travelerTransactionsFilter['end_date']) ? $travelerTransactionsFilter['end_date'] : "")?>" />
                                             </div>
                                         </div> <!-- end col -->
@@ -214,8 +217,8 @@
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
                                         <!--<input type="submit" class="btn btn-submit" value="Filter" />-->
-                                        <button type="submit" class="btn btn-submit">Filter</button>
-                                        <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterTravelers">Reset</a>
+                                        <button id="btnFilter" type="button" class="btn btn-submit">Filter</button>
+                                        <a class= "btn btn-reset" href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterTravelers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i> 
                                     </div>
                                 </div> <!-- end col -->
@@ -296,13 +299,52 @@
         <script src="<?php echo SURL;?>assets/js/pages/dashboard.init.js"></script>
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
+        
+        <!-- Moment js -->
+        <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
+        
         <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
         </script>
         <script type="text/javascript">
+            function setError(error){
+                var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                            +error+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+                                '<span aria-hidden="true">&times;</span>'
+                            '</button>'
+                        '</div>';
+                return errorAlert;
+            }
             $(function(){
+
+                $('#divError').html('');
+
+                $('#btnFilter').click(function(){
+                    let datefrom = $('#inputFrom').val();
+                    let dateto = $('#inputTo').val();
+
+                    if(!!datefrom || !!dateto){
+                        if(datefrom===''){
+                            $('#divError').html(setError('Invalid value date from'));
+                            return;
+                        }
+                        if(dateto===''){
+                            $('#divError').html(setError('Invalid value date to'));
+                            return;
+                        }
+                        
+                        if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
+                            $('#divError').html(setError('Date from must be greater than date to'));
+                            return;
+                        }
+                    }
+
+                    $('#formFilter').submit();
+                })
+
                 $('#travTable').DataTable({
                     dom: '',
                     ordering: false,
