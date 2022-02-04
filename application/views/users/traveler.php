@@ -122,9 +122,9 @@
                             <div class="row filter-row">
                                 <div class="col-xl-3">  
                                     <select name="filter_type" class="form-control filters_style" placeholder="Select filter">
-                                        <option value="name" <?=((is_null($thisData) || $thisData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
-                                        <option value="location" <?=((!is_null($thisData) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
-                                        <option value="country" <?=((!is_null($thisData) && $thisData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
+                                        <option value="name" <?=((is_null($thisData) || !isset($thisData['filter_type']) || $thisData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
+                                        <option value="location" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
+                                        <option value="country" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
                                     </select>
                                 </div> <!-- end col -->
                                 
@@ -137,7 +137,7 @@
                                     <select name="country" class="form-control filters_style" placeholder="Select Country">
                                         <option value="" selected>Select Country</option>
                                         <?php foreach ($getAllCountries as $country) {?>
-                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($thisData) && $thisData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
+                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($thisData) && isset($thisData['country']) && $thisData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
                                         <?php } ?>
                                     </select>
                                 </div> <!-- end col -->
@@ -151,7 +151,7 @@
 
                         </form>
 
-                        <div class = "row mt-3 mb-5">
+                        <div class = "row mt-3">
                             <div class="col-12">
                                 <table class="content-table">
                                     <tr>
@@ -196,20 +196,34 @@
                                     FLIGHT-29 fix
                                     As suggested, removed 'Load more' pagination.
                                     Added the usual table pagination of numbers.
+                                    02/04/2022: Updated pagination as per figma design.
                                 -->
 
-                                <div class="mt-4"><?php  echo $this->pagination->create_links(); ?></div>
-                                <?php
-                                $start = ($total > 0)? $index + 1 : 0;
-                                $end = ($total - $per_page >= $start)? $index + $per_page : $total;
-                                ?>
-                                <?php if($start == 0) { ?>
-                                    <center><p style="font-size: 16px;">No results found.</p></center>
-                                <?php
-                                } else { ?>
-                                    <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
-                                <?php
-                                } ?>
+                                <?=($total === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
+
+                                <?php $thisPagination = $this->session->userdata('paginationData'); ?>
+                                <div class="pagination-container d-flex justify-content-end align-items-center">
+                                    <span class="rows-per-page">
+                                        Rows per page:
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/users/traveler">
+                                            <select name="per_page" id="per_page">
+                                                <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
+                                                <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
+                                                <option value="12" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "12") ? "selected" : "")?>>12</option>
+                                                <option value="20" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "20") ? "selected" : "")?>>20</option>
+                                                <option value="50" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "50") ? "selected" : "")?>>50</option>
+                                            </select>
+                                        </form>
+                                    </span>
+                                    
+                                    <?php
+                                    $start = ($total > 0)? $index + 1 : 0;
+                                    $end = ($total - $per_page >= $start)? $index + $per_page : $total;
+                                    $pagination_msg = $start.'-'.$end.' of '.$total;
+                                    ?>
+                                    <span class="pagination-msg"><?=$pagination_msg?></span>
+                                    <?=$links?>
+                                </div>
 
                                 <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
@@ -440,6 +454,10 @@
                     });
                 });
                 */
+
+                $("#per_page").change(function() {
+                    $("form.form-per-page").submit();
+                });
             });
         </script>
         
