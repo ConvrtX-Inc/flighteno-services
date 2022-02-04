@@ -106,12 +106,16 @@ class Users extends CI_Controller {
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
 
-        if( $this->input->post() ){
-            $postData['travelerUsersFilter'] = $this->input->post(); 
-            $this->session->set_userdata($postData);
+        if ($this->input->post()) {
+            if (isset($_POST['per_page'])) {
+                $this->session->set_userdata('paginationData', $_POST);
+            } else {
+                $this->session->set_userdata('travelerUsersFilter', $_POST);
+            }
         }
 
         $searchData = $this->session->userdata('travelerUsersFilter');
+        $paginationData = $this->session->userdata('paginationData');
         if(!is_null($searchData)){
             if (!empty($searchData['filter_type'])) {
                 if ($searchData['filter_type'] == 'country') {
@@ -137,23 +141,23 @@ class Users extends CI_Controller {
 
         $config['base_url'] = SURL . 'index.php/admin/users/traveler';
         $config['total_rows'] = count($travelerCount);
-        $config['per_page'] = 10;
-        $config['num_links'] = 5;
+        $config['per_page'] = !empty($paginationData['per_page'])? intval($paginationData['per_page']) : 3;
+        $config['num_links'] = 0;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
-        $config["first_tag_open"] = '<li>';
+        $config["first_tag_open"] = '<li class="d-none">';
         $config["first_tag_close"] = '</li>';
-        $config["last_tag_open"] = '<li>';
+        $config["last_tag_open"] = '<li class="d-none">';
         $config["last_tag_close"] = '</li>';
-        $config['next_link'] = '<i class="fas fa-angle-right"></i>';
+        $config['next_link'] = '<i class="fas fa-chevron-right"></i>';
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '<i class="fas fa-angle-left"></i>';
+        $config['prev_link'] = '<i class="fas fa-chevron-left"></i>';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
-        $config['first_link'] = '<i class="fas fa-angle-double-left"></i>';
-        $config['last_link'] = '<i class="fas fa-angle-double-right"></i>';
+        $config['first_link'] = '';
+        $config['last_link'] = '';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
