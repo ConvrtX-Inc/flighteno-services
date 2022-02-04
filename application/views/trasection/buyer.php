@@ -138,6 +138,9 @@
             body{
                 background-color: #f8f8f8;
             }
+            #sidebar-menu ul li a.active{
+                border-right-color: transparent;
+            }
         </style>
     </head>
     <body>
@@ -168,22 +171,26 @@
                         <!-- start page title -->
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
                             <div class="row filter-row">
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">From: </label>
-                                        <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
-                                        value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
+                                <div class="col-xl-5">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">From: </label>
+                                                <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                                value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
 
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">To:</label>
-                                        <input type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
-                                        value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">To:</label>
+                                                <input type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
+                                                value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
                                     </div>
-                                </div> <!-- end col -->
-
+                                </div>
+                                
                                 <div class="col-xl-3">
                                     <div class="form-group">
                                         <label class="col-form-label">Price:</label>
@@ -200,7 +207,7 @@
                                     </div>
                                 </div>-->
 
-                                <div class="col-xl-3 mt-1">
+                                <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
                                         <!--<input type="submit" class="btn btn-submit" value="Filter" />-->

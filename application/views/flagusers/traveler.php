@@ -144,6 +144,9 @@
             body{
                 background-color: #f8f8f8;
             }
+            #sidebar-menu ul li a.active{
+                border-right-color: transparent;
+            }
         </style>
     </head>
     <body>
@@ -176,21 +179,25 @@
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
                             <div class="row filter-row"> 
                                
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">From:</label>
-                                        <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
-                                        value="<?=(!empty($flagTravelerUser['start_date']) ? $flagTravelerUser['start_date'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
+                                <div class="col-xl-5">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">From:</label>
+                                                <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                                value="<?=(!empty($flagTravelerUser['start_date']) ? $flagTravelerUser['start_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
 
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">To:</label>
-                                        <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
-                                        value="<?=(!empty($flagTravelerUser['end_date']) ? $flagTravelerUser['end_date'] : "")?>" />
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">To:</label>
+                                                <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
+                                                value="<?=(!empty($flagTravelerUser['end_date']) ? $flagTravelerUser['end_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
                                     </div>
-                                </div> <!-- end col -->
+                                </div>
 
                                 <!--<div class="col-xl-3">
                                     <div class="form-group row">
@@ -210,7 +217,7 @@
                                     </div>
                                 </div> 
 
-                                <div class="col-xl-3 mt-1">
+                                <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
                                         <button type="submit" class="btn btn-submit">Filter</button>
@@ -222,48 +229,50 @@
                         </form>
 
                         <div class = "row mt-2">
-                            <table class="content-table">
-                                <tr>
-                                    <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                    <th class="table-col-profile">Select All</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Location</th>
-                                    <th>Flag</th>
-                                </tr>
-                                <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
+                            <div class="col">
+                                <table class="content-table">
                                     <tr>
-                                            <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" id="check<?php echo $travelerUsers['_id']; ?>"/><label for="check<?php echo $travelerUsers['_id']; ?>"></label></td>
-                                            <td>
-                                            <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
-                                                
-                                                $imageSource = SURL.'assets/images/male.png';
-                                            }else{
-
-                                                $imageSource = $travelerUsers['profile_image'];
-                                            } ?>
-                                            <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                        </td>
-                                        <td class= "userNameColorChange"><?php echo $travelerUsers['full_name']; ?></td>
-                                        <td><?php echo $travelerUsers['email_address']; ?></td>
-                                        <td><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
-                                        <td>
-                                            <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
-                                                
-                                                <!-- $class = 'fas'; -->
-                                                <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                            <?php }else{ ?>
-
-                                                <!-- $class = 'far'; -->
-                                                <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                            <?php }
-                                            ?>
-                                            <!-- <span><i class="<?php echo $class; ?> fa-flag fa-3x"></i></span> -->
-                                        </td>
+                                        <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                        <th class="table-col-profile">Select All</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Location</th>
+                                        <th>Flag</th>
                                     </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination" ><?php  echo $this->pagination->create_links(); ?></div>
+                                    <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
+                                        <tr>
+                                                <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" id="check<?php echo $travelerUsers['_id']; ?>"/><label for="check<?php echo $travelerUsers['_id']; ?>"></label></td>
+                                                <td>
+                                                <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
+                                                    
+                                                    $imageSource = SURL.'assets/images/male.png';
+                                                }else{
+
+                                                    $imageSource = $travelerUsers['profile_image'];
+                                                } ?>
+                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                            </td>
+                                            <td class= "userNameColorChange"><?php echo $travelerUsers['full_name']; ?></td>
+                                            <td><?php echo $travelerUsers['email_address']; ?></td>
+                                            <td><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
+                                            <td>
+                                                <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
+                                                    
+                                                    <!-- $class = 'fas'; -->
+                                                    <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                <?php }else{ ?>
+
+                                                    <!-- $class = 'far'; -->
+                                                    <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                <?php }
+                                                ?>
+                                                <!-- <span><i class="<?php echo $class; ?> fa-flag fa-3x"></i></span> -->
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </table>
+                                <div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
+                            </div>
                         </div>
                         <!-- end page title --> 
 

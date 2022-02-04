@@ -143,6 +143,9 @@
             body{
                 background-color: #f8f8f8;
             }
+            #sidebar-menu ul li a.active{
+                border-right-color: transparent;
+            }
         </style>
 
     </head>
@@ -176,21 +179,25 @@
                         <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
                             <div class="row filter-row">
                                
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">From:</label>
-                                        <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" 
-                                        name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
+                                <div class="col-xl-5">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">From:</label>
+                                                <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" 
+                                                name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
 
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">To:</label>
-                                        <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  
-                                        name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">To:</label>
+                                                <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  
+                                                name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
                                     </div>
-                                </div> <!-- end col -->
+                                </div>
 
                                 <!--<div class="col-xl-3">
                                     <div class="form-group row">
@@ -210,7 +217,7 @@
                                     </div>
                                 </div> 
 
-                                <div class="col-xl-3 mt-1">
+                                <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
                                         <button type="submit" class="btn btn-sm btn-submit">Filter</button>
@@ -265,7 +272,7 @@
                                         <?php } ?>
                                     </body>
                                 </table>
-                                <div class="pagination" ><?php  echo $this->pagination->create_links(); ?></div>
+                                <div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
                             </div>
                         </div>
 

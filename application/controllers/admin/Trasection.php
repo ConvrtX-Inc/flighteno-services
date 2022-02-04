@@ -45,7 +45,7 @@ class Trasection extends CI_Controller {
     $config['base_url'] = SURL . 'index.php/admin/Trasection/index';
     $config['total_rows'] = count($buyerRes_trasections);
     //$config['per_page'] = 20;
-    $config['per_page'] = 5;
+    $config['per_page'] = 10;
     $config['num_links'] = 4;
     $config['use_page_numbers'] = TRUE;
     $config['uri_segment'] = 4;
@@ -174,8 +174,8 @@ class Trasection extends CI_Controller {
     $buyerRes =  iterator_to_array($buyer);
     $config['base_url'] = SURL . 'index.php/admin/Trasection/index';
     $config['total_rows'] = count($buyerRes);
-    $config['per_page'] = 20;
-    //$config['per_page'] = 5;
+    //$config['per_page'] = 20;
+    $config['per_page'] = 10;
     $config['num_links'] = 5;
     $config['use_page_numbers'] = TRUE;
     $config['uri_segment'] = 4;
