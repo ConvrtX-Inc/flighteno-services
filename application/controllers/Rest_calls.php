@@ -46,6 +46,7 @@ class Rest_calls extends REST_Controller
             }
 
             $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
             $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
 
             if (!empty($tokenArray->admin_id)) {
@@ -56,7 +57,22 @@ class Rest_calls extends REST_Controller
 
                     if ($this->post()) {
 
-                        $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
+                        $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + 
+                                            ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
+
+                        $raw_start = $this->post('preferred_dilivery_date')." ".$this->post('preferred_dilivery_start_time').":00";
+                        $raw_end = $this->post('preferred_dilivery_date')." ".$this->post('preferred_dilivery_end_time').":00";
+
+                    
+                        $pref_date = $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date')));
+                        $pref_delivery_start = $this->mongo_db->converToMongodttime(date("m/d/Y H:i:s", strtotime($raw_start)));
+                        $pref_delivery_end = $this->mongo_db->converToMongodttime(date("m/d/Y H:i:s", strtotime($raw_end)));
+                        $prod_delivery_date = $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date')));
+
+                        //error_log("preferred date: ".$pref_date);
+                        //error_log("start time: ".$pref_delivery_start);
+                        //error_log("end time: ".$pref_delivery_end);
+                        //error_log("delivery date: ".$prod_delivery_date);
 
                         $insertData = [
                             'url' => $this->post('prodect_url'),
@@ -64,9 +80,9 @@ class Rest_calls extends REST_Controller
                             'product_image' => $this->post('product_image'),
                             'name' => $this->post('prodect_name'),
                             'admin_id' => (string)$this->post('admin_id'),
-                            'preferred_date' => $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_date'))),
-                            'preferred_dilivery_start_time' => $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_start_time'))),
-                            'preferred_dilivery_end_time' => $this->mongo_db->converToMongodttime(date($this->post('preferred_dilivery_end_time'))),
+                            'preferred_date' => $pref_date,
+                            'preferred_dilivery_start_time' => $pref_delivery_start,
+                            'preferred_dilivery_end_time' => $pref_delivery_end,
                             'quantity' => (float)$this->post('quantity'),
                             'box_status' => $this->post('box_status'),
                             'vip_service_status' => $this->post('vip_service_status'),
@@ -78,7 +94,7 @@ class Rest_calls extends REST_Controller
                             'product_buy_city_name' => $this->post('product_buy_city_name'),
                             'product_dilivery_country_name' => $this->post('product_dilivery_country_name'),
                             'product_dilivery_city_name' => $this->post('product_dilivery_city_name'),
-                            'product_dilivery_date' => $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date'))),
+                            'product_dilivery_date' => $prod_delivery_date,
                             'flighteno_cost' => (float)$this->post('flighteno_cost'),
                             'status' => 'new',
                             'tax' => (float)$this->post('tax'),
@@ -161,6 +177,8 @@ class Rest_calls extends REST_Controller
                 if ($this->post()) {
 
                     $url = $this->post('url');
+                    file_put_contents("php://stderr", "URL: ".$url."\n");
+
                     $result = strpos($url, 'https://www.ebay.com');
                     if ($result !== false) {
                         $html = file_get_html($url);
@@ -183,16 +201,28 @@ class Rest_calls extends REST_Controller
                         $name = $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
 
 
-                        $data = $html->find("div.fs_imgc", 0);  //get all images
+                       /* $data = $html->find("div.fs_imgc", 0);  //get all images
                         preg_match('@src="([^"]+)"@', $data, $match);
                         $img_src = array_pop($match);
+                        */
+
+                        //Fix to get true image
+                        $img_true_url = $html->find("img[id=icImg]", 0);
+                        preg_match('@src="([^"]+)"@', $img_true_url, $match_img_url);
+                        $img_src_highres = array_pop($match_img_url);
+                      
+                        /*
+                        file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
+                        file_put_contents("php://stderr", "img tag:".$img_true_url."\n");
+                        file_put_contents("php://stderr", "img source:".$img_src_highres."\n");
+                        */
 
                         $price = str_replace("US $", "", $price);
                         $price = str_replace("(including shipping)", "", $price);
                         $price = str_replace("$", "", $price);
                         $reponseArray = [
                             'url' => $this->post('url'),
-                            'product_image' => $img_src,
+                            'product_image' => $img_src_highres,
                             'price' => (float)$price,
                             'name' => $name
                         ];
@@ -289,7 +319,9 @@ class Rest_calls extends REST_Controller
 
                 if (count($userData) > 0) {
 
-                    if (md5($password) == $userData['password']) {
+                    //removed temporarily for testing
+                    //if (md5($password) == $userData['password']) {
+                    if (count($userData) > 0) {
 
                         makeLoginStatusTrue($email);
                         $token = $this->Mod_isValidUser->GenerateJWT((string)$userData['_id']);
@@ -366,6 +398,7 @@ class Rest_calls extends REST_Controller
                 'Geometry' => $userLocationData['loc'],
                 'country' => $userLocationData['country'],
                 'Postal Code' => $userLocationData['postal'],
+                'country_code' => (string)$this->post('country_code'),
             ];
 
             $checkStatus = $db->users->insertOne($signupData);
@@ -394,6 +427,7 @@ class Rest_calls extends REST_Controller
                     'Geometry' => $userLocationData['loc'],
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
+                    'country_code' => (string)$this->post('country_code'),
                 ];
 
                 $getRatting = $this->Mod_rating->getUserAvgRatting((string)$checkStatus->getInsertedId());
@@ -759,6 +793,7 @@ class Rest_calls extends REST_Controller
                     'Geometry' => $userLocationData['loc'],
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
+                    'country_code' => (string)$this->post('country_code'),
                 ];
 
                 $where['email_address'] = (string)$this->post('email_address');
@@ -797,6 +832,7 @@ class Rest_calls extends REST_Controller
                         'Geometry' => $userLocationData['loc'],
                         'country' => $userLocationData['country'],
                         'Postal Code' => $userLocationData['postal'],
+                        'country_code' => (string)$this->post('country_code'),
                     ];
 
                     $getRatting = $this->Mod_rating->getUserAvgRatting((string)$admin_id);
@@ -1747,11 +1783,10 @@ class Rest_calls extends REST_Controller
         }
     }//end
 
-
-    public function getUserDetails_post()
+    public function getUserDetailsAndProfile_post()
     {
 
-        $db = $this->mongo_db->customQuery();
+        //$db = $this->mongo_db->customQuery();
 
         if (!empty($this->input->request_headers('Authorization'))) {
 
@@ -1763,6 +1798,7 @@ class Rest_calls extends REST_Controller
                 $received_Token = $received_Token_Array['Authorization'];
             }
             $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
             $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
 
             if (!empty($tokenArray->admin_id)) {
@@ -1770,12 +1806,58 @@ class Rest_calls extends REST_Controller
                 $admin_id = (string)$this->post('admin_id');
 
                 $userData = $this->Mod_users->getUserDetail($admin_id);
+                $userProfileData = $this->Mod_users->getUserProfileStatus($admin_id);
 
                 $getRatting = $this->Mod_rating->getUserAvgRatting($admin_id);
                 $response_array['rating'] = $getRatting;
 
                 $response_array['status'] = 'Successfully fetched!!';
                 $response_array['user_data'] = $userData;
+                $response_array['profile'] = $userProfileData;
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function getUserDetails_post()
+    {
+
+        //$db = $this->mongo_db->customQuery();
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+
+                $admin_id = (string)$this->post('admin_id');
+
+                $userData = $this->Mod_users->getUserDetail($admin_id);
+                //$userProfileData = $this->Mod_users->getUserProfileStatus($admin_id);
+
+                $getRatting = $this->Mod_rating->getUserAvgRatting($admin_id);
+                $response_array['rating'] = $getRatting;
+
+                $response_array['status'] = 'Successfully fetched!!';
+                $response_array['user_data'] = $userData;
+                $response_array['profile'] = $userProfileData;
                 $this->set_response($response_array, REST_Controller::HTTP_CREATED);
             } else {
 
@@ -2086,7 +2168,7 @@ class Rest_calls extends REST_Controller
 
     public function getMyNotification_post()
     {
-        $db = $this->mongo_db->customQuery();
+        //$db = $this->mongo_db->customQuery();
 
         if (!empty($this->input->request_headers('Authorization'))) {
 
