@@ -25,6 +25,12 @@
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+        
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style>
 
@@ -138,6 +144,9 @@
             body{
                 background-color: #f8f8f8;
             }
+            #sidebar-menu ul li a.active{
+                border-right-color: transparent;
+            }
         </style>
     </head>
     <body>
@@ -157,7 +166,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Flag users</h4>
@@ -166,25 +175,32 @@
                         </div>
                         <!-- start page title -->
                 
-                        <?php $flagTravelerUser = $this->session->userdata('flagTravelerUser'); ?>
-                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
-                            <div class="row"> 
-                               
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">From:</label>
-                                        <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
-                                        value="<?=(!empty($flagTravelerUser['start_date']) ? $flagTravelerUser['start_date'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
+                    <?php $flagTravelerUser = $this->session->userdata('flagTravelerUser'); ?>
+                        
+                        <div id="divError"></div>
 
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">To:</label>
-                                        <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
-                                        value="<?=(!empty($flagTravelerUser['end_date']) ? $flagTravelerUser['end_date'] : "")?>" />
+                        <form id="formFilter" class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
+                            <div class="row filter-row"> 
+                               
+                                <div class="col-xl-5">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">From:</label>
+                                                <input id="inputFrom" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                                value="<?=(!empty($flagTravelerUser['start_date']) ? $flagTravelerUser['start_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
+
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">To:</label>
+                                                <input id="inputTo" type="date" class="form-control filters_style" placeholder="end date"  name="end_date" 
+                                                value="<?=(!empty($flagTravelerUser['end_date']) ? $flagTravelerUser['end_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
                                     </div>
-                                </div> <!-- end col -->
+                                </div>
 
                                 <!--<div class="col-xl-3">
                                     <div class="form-group row">
@@ -204,60 +220,86 @@
                                     </div>
                                 </div> 
 
-                                <div class="col-xl-3 mt-1">
+                                <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterTravel">Reset</a>
+                                        <button id="btnFilter" type="button" class="btn btn-submit">Filter</button>
+                                        <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterTravel">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i> 
                                     </div>
                                 </div> <!-- end col -->
                             </div>
                         </form>
 
-                        <div class = "row mt-4">
-                        <table class="table table-borderless" id="travTable" style="width:100% !important">
-                                <tr>
-                                    <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                    <th>Select All</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Location</th>
-                                    <th>Flag</th>
-                                </tr>
-                                <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
+                        <div class = "row mt-2">
+                            <div class="col">
+                                <table class="content-table">
                                     <tr>
-                                        <td><input class="checkInput" type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" /></td>
-                                        <td>
-                                            <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
-                                                
-                                                $imageSource = SURL.'assets/images/male.png';
-                                            }else{
-
-                                                $imageSource = $travelerUsers['profile_image'];
-                                            } ?>
-                                            <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                        </td>
-                                        <td class= "userNameColorChange"><?php echo $travelerUsers['full_name']; ?></td>
-                                        <td><?php echo $travelerUsers['email_address']; ?></td>
-                                        <td><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
-                                        <td>
-                                            <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
-                                                
-                                                <!-- $class = 'fas'; -->
-                                                <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                            <?php }else{ ?>
-
-                                                <!-- $class = 'far'; -->
-                                                <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                            <?php }
-                                            ?>
-                                            <!-- <span><i class="<?php echo $class; ?> fa-flag fa-3x"></i></span> -->
-                                        </td>
+                                        <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                        <th class="table-col-profile">Select All</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Location</th>
+                                        <th>Flag</th>
                                     </tr>
-                                <?php } ?>
-                            </table>
-                            <div class="pagination" ><?php  echo $this->pagination->create_links(); ?></div>
+                                    <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
+                                        <tr>
+                                                <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" id="check<?php echo $travelerUsers['_id']; ?>"/><label for="check<?php echo $travelerUsers['_id']; ?>"></label></td>
+                                                <td>
+                                                <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
+                                                    
+                                                    $imageSource = SURL.'assets/images/male.png';
+                                                }else{
+
+                                                    $imageSource = $travelerUsers['profile_image'];
+                                                } ?>
+                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                            </td>
+                                            <td class= "userNameColorChange"><?php echo $travelerUsers['full_name']; ?></td>
+                                            <td><?php echo $travelerUsers['email_address']; ?></td>
+                                            <td><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
+                                            <td>
+                                                <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
+                                                    
+                                                    <!-- $class = 'fas'; -->
+                                                    <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                <?php }else{ ?>
+
+                                                    <!-- $class = 'far'; -->
+                                                    <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                <?php }
+                                                ?>
+                                                <!-- <span><i class="<?php echo $class; ?> fa-flag fa-3x"></i></span> -->
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </table>
+                                <?=($total_rows === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
+                                <?php $thisPagination = $this->session->userdata('paginationData'); ?>
+                                <div class="pagination-container d-flex justify-content-end align-items-center">
+                                    <span class="rows-per-page">
+                                        Rows per page:
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/flagTraveler">
+                                            <select name="per_page" id="per_page">
+                                                <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
+                                                <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
+                                                <option value="12" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "12") ? "selected" : "")?>>12</option>
+                                                <option value="20" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "20") ? "selected" : "")?>>20</option>
+                                                <option value="50" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "50") ? "selected" : "")?>>50</option>
+                                            </select>
+                                        </form>
+                                    </span>
+                                    
+                                    <?php
+                                    $start = ($total_rows > 0)? $index + 1 : 0;
+                                    $end = ($total_rows - $per_page >= $start)? $index + $per_page : $total_rows;
+                                    $pagination_msg = $start.'-'.$end.' of '.$total_rows;
+                                    ?>
+                                    <span class="pagination-msg"><?=$pagination_msg?></span>
+                                    <?=$links?>
+                                </div>
+                                <!--<div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>-->
+                            </div>
                         </div>
                         <!-- end page title --> 
 
@@ -326,6 +368,15 @@
             });
         </script>
         <script type="text/javascript">
+            function setError(error){
+                var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                            +error+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+                                '<span aria-hidden="true">&times;</span>'
+                            '</button>'
+                        '</div>';
+                return errorAlert;
+            }
             $(function(){
 
                 /*$('input[name="daterange"]').daterangepicker({
@@ -348,9 +399,37 @@
                     $('#end_date').val(endDate);
                 });*/
 
+                $('#divError').html('');
+
+                $('#btnFilter').click(function(){
+                    let datefrom = $('#inputFrom').val();
+                    let dateto = $('#inputTo').val();
+
+                    if(!!datefrom || !!dateto){
+                        if(datefrom===''){
+                            $('#divError').html(setError('Invalid value date from'));
+                            return;
+                        }
+                        if(dateto===''){
+                            $('#divError').html(setError('Invalid value date to'));
+                            return;
+                        }
+
+                        if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
+                            $('#divError').html(setError('Date from must be greater than date to'));
+                            return;
+                        }
+                    }
+
+                    $('#formFilter').submit();
+                })
+
                 $('#travTable').DataTable({
                     dom: '',
                     ordering: false,
+                });
+                $("#per_page").change(function() {
+                    $("form.form-per-page").submit();
                 });
             })
         </script>

@@ -23,6 +23,11 @@
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
         <style>
             .userNameColorChange{
@@ -133,6 +138,9 @@
             body{
                 background-color: #f8f8f8;
             }
+            #sidebar-menu ul li a.active{
+                border-right-color: transparent;
+            }
         </style>
     </head>
     <body>
@@ -151,7 +159,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left:4%; padding-right: 4%;">
+                    <div class="container-fluid main-container" style="padding-left:4%; padding-right: 4%;">
                         <div class= "row">
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Transaction</h4>
@@ -160,25 +168,32 @@
                         </div>
 
                     <?php $buyerTransactionsFilter = $this->session->userdata('buyerTransactionsFilter'); ?>
+
+                        <div id="divError"></div>
+
                         <!-- start page title -->
-                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
-                            <div class="row">
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">From: </label>
-                                        <input type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
-                                        value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
+                        <form id="formFilter" class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/Trasection/index">
+                            <div class="row filter-row">
+                                <div class="col-xl-5">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">From: </label>
+                                                <input id="inputFrom" type="date" class="form-control filters_style" placeholder="start date" name="start_date" 
+                                                value="<?=(!empty($buyerTransactionsFilter['start_date']) ? $buyerTransactionsFilter['start_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
 
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">To:</label>
-                                        <input type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
-                                        value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">To:</label>
+                                                <input id="inputTo" type="date" class="form-control filters_style" placeholder="end date" name="end_date" 
+                                                value="<?=(!empty($buyerTransactionsFilter['end_date']) ? $buyerTransactionsFilter['end_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
                                     </div>
-                                </div> <!-- end col -->
-
+                                </div>
+                                
                                 <div class="col-xl-3">
                                     <div class="form-group">
                                         <label class="col-form-label">Price:</label>
@@ -195,11 +210,12 @@
                                     </div>
                                 </div>-->
 
-                                <div class="col-xl-3 mt-1">
+                                <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <input type="submit" class="form-control filters_style_input filter buttonNew" value="Filter" />
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
+                                        <!--<input type="submit" class="btn btn-submit" value="Filter" />-->
+                                        <button id="btnFilter" type="button" class="btn btn-submit">Filter</button>
+                                        <a class= "btn btn-reset" href="<?php echo base_url();?>index.php/admin/Trasection/resetFilterBuyers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </div>
                                 </div> <!-- end col -->
@@ -209,22 +225,22 @@
 
                         <div class = "row mt-2">
                             <div class="col">
-                                <table class="table table-borderless" id="buyersTable" style="width:100% !important">
+                                <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                            <th>Select All</th>
-                                            <th>Name</th>
-                                            <th>Date</th>
-                                            <th>Order ID</th>
-                                            <th>Amount</th>
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
+                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Order ID</th>
+                                            <th class="text-center">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($buyers_payment as $value){?>
                                             <tr>
-                                                <td><input class="checkInput" type="checkbox" data-id="<?php echo $value['_id']; ?>" /></td>
-                                                <td>
+                                                <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                                <td class="text-center">
                                                     <?php if(empty($value['profileData'][0]['profile_image']) || $value['profileData'][0]['profile_image'] == ''|| is_null($value['profileData'][0]['profile_image']) ){ 
                                                         
                                                         $imageSource = SURL.'assets/images/male.png';;
@@ -237,18 +253,42 @@
 
                                                     <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                                 </td>
-                                                <td class= "userNameColorChange"><?php echo $value['profileData'][0]['full_name']; ?></td>
-                                                <td><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
-                                                <td style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
-                                                <td style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
+                                                <td class= "userNameColorChange text-center"><?php echo $value['profileData'][0]['full_name']; ?></td>
+                                                <td class="text-center"><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                                <td class="text-center" style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
+                                                <td class="text-center" style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
                                 </table>
-                                <div class="dt-more-container">
-                                    <button id="btn-example-load-more" style="display:none">Load More</button>
+
+                                <?=($total_rows === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
+                                <?php $thisPagination = $this->session->userdata('paginationData'); ?>
+                                <div class="pagination-container d-flex justify-content-end align-items-center">
+                                    <span class="rows-per-page">
+                                        Rows per page:
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/trasection/index">
+                                            <select name="per_page" id="per_page">
+                                                <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
+                                                <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
+                                                <option value="12" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "12") ? "selected" : "")?>>12</option>
+                                                <option value="20" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "20") ? "selected" : "")?>>20</option>
+                                                <option value="50" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "50") ? "selected" : "")?>>50</option>
+                                            </select>
+                                        </form>
+                                    </span>
+                                    
+                                    <?php
+                                    $start = ($total_rows > 0)? $index + 1 : 0;
+                                    $end = ($total_rows - $per_page >= $start)? $index + $per_page : $total_rows;
+                                    $pagination_msg = $start.'-'.$end.' of '.$total_rows;
+                                    ?>
+                                    <span class="pagination-msg"><?=$pagination_msg?></span>
+                                    <?=$links?>
                                 </div>
-                                <div class="pagination"><?php  echo $this->pagination->create_links(); ?></div>
+
+                                <!--<div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>-->
+                                            
                             </div>
                         </div>                    
                     </div> <!-- container -->
@@ -287,13 +327,63 @@
 
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
+
+        <!-- Moment js -->
+        <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
+
         <script>
             $("#checkAll").click(function(){
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
         </script>
         <script type="text/javascript">
+            function setError(error){
+                var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                            +error+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+                                '<span aria-hidden="true">&times;</span>'
+                            '</button>'
+                        '</div>';
+                return errorAlert;
+            }
             $(function(){
+
+                //$('#inputFrom').tooltip('disable');
+                $('#divError').html('');
+
+                $('#btnFilter').click(function(){
+                    let datefrom = $('#inputFrom').val();
+                    let dateto = $('#inputTo').val();
+
+                    //console.log('date from', datefrom);
+                    //console.log('date to', dateto);
+                    if(!!datefrom || !!dateto){
+                        if(datefrom===''){
+                            //console.log('Invalid value date from', datefrom);
+                            //document.querySelector('#inputFrom').setAttribute('title', 'Invalid value date from');
+                            //$('#inputFrom').tooltip('enable');
+                            //$('#inputFrom').tooltip('show')
+                            $('#divError').html(setError('Invalid value date from'));
+                            return;
+                        }
+                        if(dateto===''){
+                            //console.log('Invalid value date to', dateto);
+                            $('#divError').html(setError('Invalid value date to'));
+                            return;
+                        }
+                        ///console.log('date from as date',new Date(datefrom))
+                        //console.log('date to as date', new Date(dateto))
+                        
+                        if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
+                            //console.log('Date from must be greater than date to');
+                            $('#divError').html(setError('Date from must be greater than date to'));
+                            return;
+                        }
+                    }
+
+                    $('#formFilter').submit();
+                })
+
                 var table = $('#buyersTable').DataTable({
                     //dom: "<'row float-left mb-2'<'col-sm-8 toolbar'><'col-sm-4' f>>rt",
                     dom: '',
@@ -311,22 +401,26 @@
                     //        searchable: false
                     //    },
                     //],
-                    drawCallback: function(){
+                    //drawCallback: function(){
                         // If there is some more data
-                        if($('#btn-example-load-more').is(':visible')){
+                    //    if($('#btn-example-load-more').is(':visible')){
                             // Scroll to the "Load more" button
-                            $('html, body').animate({
-                            scrollTop: $('#btn-example-load-more').offset().top
-                            }, 1000);
-                        }
+                    //        $('html, body').animate({
+                    //        scrollTop: $('#btn-example-load-more').offset().top
+                    //        }, 1000);
+                    //    }
 
                         // Show or hide "Load more" button based on whether there is more data available
-                        $('#btn-example-load-more').toggle(this.api().page.hasMore());
-                    }      
-                });
-                $('#btn-example-load-more').on('click', function(){  
+                    //    $('#btn-example-load-more').toggle(this.api().page.hasMore());
+                    //}      
+                //});
+                //$('#btn-example-load-more').on('click', function(){  
                     // Load more data
-                    table.page.loadMore();
+                //    table.page.loadMore();
+                });
+                
+                $("#per_page").change(function() {
+                    $("form.form-per-page").submit();
                 });
             })
         </script>

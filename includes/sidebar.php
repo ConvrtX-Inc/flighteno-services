@@ -63,7 +63,7 @@
                         
                             <a href="<?php echo base_url();?>index.php/admin/Users/index">
                                 <i class=" mdi mdi-account-outline"></i>
-                                <span> Buyers </span>
+                                <span> Buyer </span>
                             </a>
                                         
                         </li>

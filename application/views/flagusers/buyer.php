@@ -29,6 +29,12 @@
         <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001"/>
         </svg> -->
 
+        <!-- DROP DOWN STYLE -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
 
             .userNameColorChange{
@@ -137,6 +143,9 @@
             body{
                 background-color: #f8f8f8;
             }
+            #sidebar-menu ul li a.active{
+                border-right-color: transparent;
+            }
         </style>
 
     </head>
@@ -158,7 +167,7 @@
             <div class="content-page">
                 <div class="content">
                     <!-- Start Content-->
-                    <div class="container-fluid" style="padding-left: 4%; padding-right:4%">
+                    <div class="container-fluid main-container" style="padding-left: 4%; padding-right:4%">
                         <div class="row">           
                             <div class="col-12 mt-3">
                                 <h4 class="page-title styleHeader titleStyle">Flag users</h4>
@@ -166,25 +175,32 @@
                             </div>  
                         </div>
 
-                        <?php $flagBuyerUsers = $this->session->userdata('flagBuyerUsers'); ?>
-                        <form class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
-                            <div class="row">
+                    <?php $flagBuyerUsers = $this->session->userdata('flagBuyerUsers'); ?>
+                        
+                        <div id="divError"></div>
+                        
+                        <form id="formFilter" class="mt-2" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
+                            <div class="row filter-row">
                                
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">From:</label>
-                                        <input id="start_date" type="date" class="form-control filters_style" placeholder="start date" 
-                                        name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
-                                    </div>
-                                </div> <!-- end col -->
+                                <div class="col-xl-5">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">From:</label>
+                                                <input id="inputFrom" type="date" class="form-control filters_style" placeholder="start date" 
+                                                name="start_date"  value="<?=(!empty($flagBuyerUsers['start_date']) ? $flagBuyerUsers['start_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
 
-                                <div class="col-xl-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label">To:</label>
-                                        <input id="end_date" type="date" class="form-control filters_style" placeholder="end date"  
-                                        name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="col-form-label">To:</label>
+                                                <input id="inputTo" type="date" class="form-control filters_style" placeholder="end date"  
+                                                name="end_date"  value="<?=(!empty($flagBuyerUsers['end_date']) ? $flagBuyerUsers['end_date'] : "")?>" />
+                                            </div>
+                                        </div> <!-- end col -->
                                     </div>
-                                </div> <!-- end col -->
+                                </div>
 
                                 <!--<div class="col-xl-3">
                                     <div class="form-group row">
@@ -204,11 +220,11 @@
                                     </div>
                                 </div> 
 
-                                <div class="col-xl-3 mt-1">
+                                <div class="col-xl-4 mt-1">
                                     <div class="form-group">
                                         <label style="display: block;">Search</label>
-                                        <button type="submit" class="form-control filters_style_input filter button">Filter</button>
-                                        <a class= "form-control filters_style_input filter buttonReset"href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
+                                        <button id="btnFilter" type="button" class="btn btn-sm btn-submit">Filter</button>
+                                        <a class= "btn-reset" href="<?php echo base_url();?>index.php/admin/FlagUsers/resetFilterBuyers">Reset</a>
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </div>
                                 </div> <!-- end col -->
@@ -217,11 +233,11 @@
                         </form>
                         <div class = "row mt-2">
                             <div class="col">
-                                <table class="table table-borderless" id="buyersTable" style="width:100% !important">
+                                <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th><input class="checkInput" type="checkbox" id="checkAll" name="checkAll" value="all"></th>
-                                            <th>Select All</th>
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
                                             <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Location</th>
@@ -231,7 +247,7 @@
                                     <body>
                                         <?php foreach($flagUsers as $buyerFlag) { ?>
                                             <tr>
-                                                <td><input class="checkInput" type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" /></td>
+                                                <td><input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" id="check<?php echo $buyerFlag['_id']; ?>"/><label for="check<?php echo $buyerFlag['_id']; ?>"></label></td>
                                                 <td>
                                                     <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
                                                         
@@ -259,7 +275,33 @@
                                         <?php } ?>
                                     </body>
                                 </table>
-                                <div class="pagination" ><?php  echo $this->pagination->create_links(); ?></div>
+
+                                <?=($total_rows === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
+                                <?php $thisPagination = $this->session->userdata('paginationData'); ?>
+                                <div class="pagination-container d-flex justify-content-end align-items-center">
+                                    <span class="rows-per-page">
+                                        Rows per page:
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/FlagUsers/index">
+                                            <select name="per_page" id="per_page">
+                                                <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
+                                                <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
+                                                <option value="12" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "12") ? "selected" : "")?>>12</option>
+                                                <option value="20" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "20") ? "selected" : "")?>>20</option>
+                                                <option value="50" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "50") ? "selected" : "")?>>50</option>
+                                            </select>
+                                        </form>
+                                    </span>
+                                    
+                                    <?php
+                                    $start = ($total_rows > 0)? $index + 1 : 0;
+                                    $end = ($total_rows - $per_page >= $start)? $index + $per_page : $total_rows;
+                                    $pagination_msg = $start.'-'.$end.' of '.$total_rows;
+                                    ?>
+                                    <span class="pagination-msg"><?=$pagination_msg?></span>
+                                    <?=$links?>
+                                </div>
+
+                                <!--<div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>-->
                             </div>
                         </div>
 
@@ -330,6 +372,15 @@
             });
         </script>
         <script type="text/javascript">
+            function setError(error){
+                var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                            +error+
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+                                '<span aria-hidden="true">&times;</span>'
+                            '</button>'
+                        '</div>';
+                return errorAlert;
+            }
             $(function(){
 
                 /*$('input[name="daterange"]').daterangepicker({
@@ -353,9 +404,38 @@
                     $('#end_date').val(endDate);
                 });*/
 
+                $('#divError').html('');
+
+                $('#btnFilter').click(function(){
+                    let datefrom = $('#inputFrom').val();
+                    let dateto = $('#inputTo').val();
+
+                    if(!!datefrom || !!dateto){
+                        if(datefrom===''){
+                            $('#divError').html(setError('Invalid value date from'));
+                            return;
+                        }
+                        if(dateto===''){
+                            $('#divError').html(setError('Invalid value date to'));
+                            return;
+                        }
+
+                        if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
+                            $('#divError').html(setError('Date from must be greater than date to'));
+                            return;
+                        }
+                    }
+
+                    $('#formFilter').submit();
+                })
+
                 $('#buyersTable').DataTable({
                     dom: '',
                     ordering: false,
+                });
+
+                $("#per_page").change(function() {
+                    $("form.form-per-page").submit();
                 });
             })
         </script>
