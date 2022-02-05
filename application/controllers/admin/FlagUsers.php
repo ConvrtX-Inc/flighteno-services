@@ -19,10 +19,18 @@ class FlagUsers extends CI_Controller {
         $db  =  $this->mongo_db->customQuery();
         if( $this->input->post() ){
 
-            $postData['flagBuyerUsers'] = $this->input->post();
-            $this->session->set_userdata($postData);
+            //$postData['flagBuyerUsers'] = $this->input->post();
+            //$this->session->set_userdata($postData);
+            
+            //echo "<pre>";print_r($_POST['per_page']);exit;
+            if (isset($_POST['per_page'])) {
+                $this->session->set_userdata('paginationData', $_POST);
+            } else {
+                $this->session->set_userdata('flagBuyerUsers', $_POST);
+            }
         }
         $flagBuyerUsers = $this->session->userdata('flagBuyerUsers');
+        $paginationData = $this->session->userdata('paginationData');
 
         if(!is_null($flagBuyerUsers)){
         if($flagBuyerUsers['start_date'] !="" && $flagBuyerUsers['end_date'] != ""){
@@ -42,10 +50,13 @@ class FlagUsers extends CI_Controller {
         $flag      =  $db->users->find($findArray);
         $flagCount =  iterator_to_array($flag);
 
+        $total_rows=count($flagCount);
+
         $config['base_url'] = SURL . 'index.php/admin/FlagUsers/index';
         $config['total_rows'] = count($flagCount);
-        $config['per_page'] = 10;
-        $config['num_links'] = 5;
+        //$config['per_page'] = 10;
+        $config['per_page'] = !empty($paginationData['per_page'])? intval($paginationData['per_page']) : 3;
+        /*$config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
@@ -59,6 +70,28 @@ class FlagUsers extends CI_Controller {
         $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['full_tag_open'] = '<ul class="pagination">';
+        $config['full_tag_close'] = '</ul>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
+        $config['cur_tag_close'] = '</b></a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';*/
+        $config['num_links'] = 0;
+        $config['use_page_numbers'] = TRUE;
+        $config['uri_segment'] = 4;
+        $config['reuse_query_string'] = TRUE;
+        $config["first_tag_open"] = '<li class="d-none">';
+        $config["first_tag_close"] = '</li>';
+        $config["last_tag_open"] = '<li class="d-none">';
+        $config["last_tag_close"] = '</li>';
+        $config['next_link'] = '<i class="fas fa-chevron-right"></i>';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fas fa-chevron-left"></i>';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '';
+        $config['last_link'] = '';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -84,6 +117,10 @@ class FlagUsers extends CI_Controller {
         $data['flagUsers'] =  $flagRes;
         $data['total']     =  count($flagCount);
 
+        $data['total_rows']=$total_rows;
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
+
         $this->load->view('flagusers/buyer', $data);
     }
 
@@ -93,10 +130,17 @@ class FlagUsers extends CI_Controller {
         $db  =  $this->mongo_db->customQuery();
         if( $this->input->post() ){
 
-            $postData['flagTravelerUser'] = $this->input->post();
-            $this->session->set_userdata($postData);
+            //$postData['flagTravelerUser'] = $this->input->post();
+            //$this->session->set_userdata($postData);
+            if (isset($_POST['per_page'])) {
+                $this->session->set_userdata('paginationData', $_POST);
+            } else {
+                $this->session->set_userdata('flagTravelerUser', $_POST);
+            }
         }
         $searchDataTraveler = $this->session->userdata('flagTravelerUser');
+        $paginationData = $this->session->userdata('paginationData');
+
 	if(!is_null($searchDataTraveler)){
         if($searchDataTraveler['start_date'] !="" && $searchDataTraveler['end_date'] != ""){
 
@@ -113,10 +157,13 @@ class FlagUsers extends CI_Controller {
         $flag      =  $db->users->find($findArray);
         $flagCount =  iterator_to_array($flag);
 
+        $total_rows=count($flagCount);
+
         $config['base_url'] = SURL . 'index.php/admin/FlagUsers/flagTraveler';
         $config['total_rows'] = count($flagCount);
-        $config['per_page'] = 10;
-        $config['num_links'] = 5;
+        //$config['per_page'] = 10;
+        $config['per_page'] = !empty($paginationData['per_page'])? intval($paginationData['per_page']) : 3;
+        /*$config['num_links'] = 5;
         $config['use_page_numbers'] = TRUE;
         $config['uri_segment'] = 4;
         $config['reuse_query_string'] = TRUE;
@@ -130,6 +177,28 @@ class FlagUsers extends CI_Controller {
         $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
         $config['prev_tag_open'] = '<li>';
         $config['prev_tag_close'] = '</li>';
+        $config['full_tag_open'] = '<ul class="pagination">';
+        $config['full_tag_close'] = '</ul>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
+        $config['cur_tag_close'] = '</b></a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';*/
+        $config['num_links'] = 0;
+        $config['use_page_numbers'] = TRUE;
+        $config['uri_segment'] = 4;
+        $config['reuse_query_string'] = TRUE;
+        $config["first_tag_open"] = '<li class="d-none">';
+        $config["first_tag_close"] = '</li>';
+        $config["last_tag_open"] = '<li class="d-none">';
+        $config["last_tag_close"] = '</li>';
+        $config['next_link'] = '<i class="fas fa-chevron-right"></i>';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fas fa-chevron-left"></i>';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['first_link'] = '';
+        $config['last_link'] = '';
         $config['full_tag_open'] = '<ul class="pagination">';
         $config['full_tag_close'] = '</ul>';
         $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -153,6 +222,10 @@ class FlagUsers extends CI_Controller {
 
         $data['flagTravelerUsers'] =  $flagRes;
         $data['total']     =  count($flagCount);
+        
+        $data['total_rows']=$total_rows;
+        $data['index'] = $page;
+        $data['per_page'] = $config['per_page'];
 
         $this->load->view('flagusers/traveler', $data);
     }

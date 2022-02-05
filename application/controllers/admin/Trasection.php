@@ -24,6 +24,7 @@ class Trasection extends CI_Controller {
       }
     }
     $filterDataBuyer = $this->session->userdata('buyerTransactionsFilter');
+    $paginationData = $this->session->userdata('paginationData');
 
     if(!is_null($filterDataBuyer)){
       if($filterDataBuyer['start_date'] != "" && $filterDataBuyer['end_date'] != ""){
@@ -188,6 +189,7 @@ class Trasection extends CI_Controller {
       }
     }
     $filterData = $this->session->userdata('travelerTransactionsFilter');
+    $paginationData = $this->session->userdata('paginationData');
     
     if(!is_null($filterData)) {
       if($filterData['start_date'] !="" && $filterData['end_date'] != ""){
