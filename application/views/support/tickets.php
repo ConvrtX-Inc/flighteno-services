@@ -299,7 +299,7 @@
                             </div> 
                         </div>
                         <div class="row mb-5 tickets-container">
-                            <div class="col-5">
+                            <div class="col-lg-5 col-xxl-4">
                                 <div class="tickets-list">
                                     <div class="tickets-list-tabs">
                                          <a href="#" class="active">Buyers</a>
@@ -312,7 +312,7 @@
                                                 <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
 
-                                            <div class="tickets-list-user-middle">
+                                            <div class="tickets-list-user-middle flex-fill">
                                                 <h5 class="this-user">Margarette Smith</h5>
                                                 <p class="this-preview">Shipping Complaint</p>
                                             </div>
@@ -328,7 +328,7 @@
                                                 <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
 
-                                            <div class="tickets-list-user-middle">
+                                            <div class="tickets-list-user-middle flex-fill">
                                                 <h5 class="this-user">Margarette Smith</h5>
                                                 <p class="this-preview">What time was our meeting? I want to re-schedule if possible.</p>
                                             </div>
@@ -344,7 +344,7 @@
                                                 <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
 
-                                            <div class="tickets-list-user-middle">
+                                            <div class="tickets-list-user-middle flex-fill">
                                                 <h5 class="this-user">Margarette Smith</h5>
                                                 <p class="this-preview">I am trying to create a sample data from your previous message.</p>
                                             </div>
@@ -357,9 +357,95 @@
                                 </div>
                             </div>
 
-                            <div class="col-7">
-                                <div class="tickets-messages">
-                                    messages
+                            <div class="col-lg-7 col-xxl-8">
+                                <div class="tickets-messages d-flex flex-column">
+                                    <div class="tickets-messages-info">
+                                        <div class="this-top d-flex align-items-center">
+                                            <div class="user-info d-flex flex-fill align-items-center">
+                                                <div class="this-left">
+                                                    <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                                </div>
+                                                <div class="this-right">
+                                                    <h3 class="this-user">Margarette Smith</h3>
+                                                    <p class="this-email underlined m-0">margarette@gmail.com</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="order-info">
+                                                <p class="m-0"><span class="color-pink text-small">Order No.</span> 123456789</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="this-bottom">
+                                            <p class="m-0"><span class="color-pink text-small">Subject:</span> Shipping Complaint</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="tickets-messages-history flex-fill">
+                                        <div class="msg msg-incoming w-75">
+                                            <div class="this-top d-flex">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-incoming w-75">
+                                            <div class="this-top d-flex">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tickets-messages-textarea align-self-end">
+                                        
+                                    </div>
                                 </div>
                             </div>
 
@@ -438,7 +524,7 @@
                                     </div>
                                     
                                     <div class="msg_history" id="messagesData">
-                
+                                        
                                     </div>
 
                                     <div class="type_msg" id ="messageReply">

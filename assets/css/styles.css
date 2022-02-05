@@ -379,6 +379,7 @@ body {
   box-shadow: 0px 10px 40px rgb(0 0 0 / 3%);
   border-radius: 20px;
   height: 75vh;
+  overflow: hidden;
 }
 
 .tickets-list-tabs {
@@ -528,4 +529,61 @@ body {
   font-size: 17px;
   font-weight: 500;
   padding: 10px 40px;
+}
+
+.tickets-messages-history {
+  padding: 30px;
+  overflow-y: scroll;
+}
+
+.tickets-messages-history .msg {
+  margin-bottom: 25px;
+}
+
+.tickets-messages-history .msg-profile {
+  margin-right: 8px;
+  max-width: 35px;
+}
+
+.tickets-messages-history .msg-container {
+  border-radius: 20px;
+  padding: 15px 30px;
+  position: relative;
+}
+
+.tickets-messages-history .msg-container .msg-text {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tickets-messages-history .msg-container .msg-time-elapsed {
+  color: #09110E;
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.3;
+  position: absolute;
+  right: 5px;
+  bottom: -21px;
+}
+
+.tickets-messages-history .msg-incoming .msg-container {
+  background: #F3F3F3;
+}
+
+.tickets-messages-history .msg-incoming .msg-container .msg-text {
+  color: #808191;
+}
+
+.tickets-messages-history .msg-outgoing .msg-container {
+  background: #F18BB1;
+}
+
+.tickets-messages-history .msg-outgoing .msg-container .msg-text {
+  color: #FFFFFF;
+}
+
+.tickets-messages-textarea {
+  background: red;
+  width: 100%;
+  min-height: 100px;
 }
