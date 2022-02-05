@@ -261,7 +261,34 @@
                                         <?php } ?>
                                     </tbody>
                                 </table>
-                                <div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>
+
+                                <?=($total_rows === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
+                                <?php $thisPagination = $this->session->userdata('paginationData'); ?>
+                                <div class="pagination-container d-flex justify-content-end align-items-center">
+                                    <span class="rows-per-page">
+                                        Rows per page:
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/trasection/index">
+                                            <select name="per_page" id="per_page">
+                                                <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
+                                                <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
+                                                <option value="12" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "12") ? "selected" : "")?>>12</option>
+                                                <option value="20" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "20") ? "selected" : "")?>>20</option>
+                                                <option value="50" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "50") ? "selected" : "")?>>50</option>
+                                            </select>
+                                        </form>
+                                    </span>
+                                    
+                                    <?php
+                                    $start = ($total_rows > 0)? $index + 1 : 0;
+                                    $end = ($total_rows - $per_page >= $start)? $index + $per_page : $total_rows;
+                                    $pagination_msg = $start.'-'.$end.' of '.$total_rows;
+                                    ?>
+                                    <span class="pagination-msg"><?=$pagination_msg?></span>
+                                    <?=$links?>
+                                </div>
+
+                                <!--<div class="mt-4 pagination float-right"><?php  echo $this->pagination->create_links(); ?></div>-->
+                                            
                             </div>
                         </div>                    
                     </div> <!-- container -->
@@ -390,6 +417,10 @@
                 //$('#btn-example-load-more').on('click', function(){  
                     // Load more data
                 //    table.page.loadMore();
+                });
+                
+                $("#per_page").change(function() {
+                    $("form.form-per-page").submit();
                 });
             })
         </script>

@@ -15,8 +15,13 @@ class Trasection extends CI_Controller {
     $db  =  $this->mongo_db->customQuery();
     if( $this->input->post() ){
 
-      $filterData['buyerTransactionsFilter'] = $this->input->post();
-      $this->session->set_userdata($filterData);
+      //$filterData['buyerTransactionsFilter'] = $this->input->post();
+      //$this->session->set_userdata($filterData);
+      if (isset($_POST['per_page'])) {
+          $this->session->set_userdata('paginationData', $_POST);
+      } else {
+          $this->session->set_userdata('buyerTransactionsFilter', $_POST);
+      }
     }
     $filterDataBuyer = $this->session->userdata('buyerTransactionsFilter');
 
@@ -42,11 +47,14 @@ class Trasection extends CI_Controller {
     $buyer_trasections    =  $db->payment_details->find($findArray);
     $buyerRes_trasections =  iterator_to_array($buyer_trasections);
 
+    $total_rows = count($buyerRes_trasections);
+
     $config['base_url'] = SURL . 'index.php/admin/Trasection/index';
-    $config['total_rows'] = count($buyerRes_trasections);
-    //$config['per_page'] = 20;
-    $config['per_page'] = 10;
-    $config['num_links'] = 4;
+    //$config['total_rows'] = count($buyerRes_trasections);
+    $config['total_rows'] = $total_rows;
+    //$config['per_page'] = 3;
+    $config['per_page'] = !empty($paginationData['per_page'])? intval($paginationData['per_page']) : 3;
+    /*$config['num_links'] = 4;
     $config['use_page_numbers'] = TRUE;
     $config['uri_segment'] = 4;
     $config['reuse_query_string'] = TRUE;
@@ -60,6 +68,28 @@ class Trasection extends CI_Controller {
     $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
     $config['prev_tag_open'] = '<li>';
     $config['prev_tag_close'] = '</li>';
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
+    $config['cur_tag_close'] = '</b></a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';*/
+    $config['num_links'] = 0;
+    $config['use_page_numbers'] = TRUE;
+    $config['uri_segment'] = 4;
+    $config['reuse_query_string'] = TRUE;
+    $config["first_tag_open"] = '<li class="d-none">';
+    $config["first_tag_close"] = '</li>';
+    $config["last_tag_open"] = '<li class="d-none">';
+    $config["last_tag_close"] = '</li>';
+    $config['next_link'] = '<i class="fas fa-chevron-right"></i>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_link'] = '<i class="fas fa-chevron-left"></i>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['first_link'] = '';
+    $config['last_link'] = '';
     $config['full_tag_open'] = '<ul class="pagination">';
     $config['full_tag_close'] = '</ul>';
     $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -139,6 +169,11 @@ class Trasection extends CI_Controller {
     //echo "<pre>";print_r($buyerRes_trasec);exit;
 
     $data['buyers_payment']    =  $buyerRes_trasec;
+    
+    $data['total_rows']=$total_rows;
+    $data['index'] = $page;
+    $data['per_page'] = $config['per_page'];
+
     $this->load->view('trasection/buyer', $data);
   }
   public function trasectionTraveler(){
@@ -146,10 +181,12 @@ class Trasection extends CI_Controller {
     $db  =  $this->mongo_db->customQuery();
     
     if( $this->input->post() ){
-      $filterData['travelerTransactionsFilter'] = $this->input->post();
-      $this->session->set_userdata($filterData);
+      if (isset($_POST['per_page'])) {
+          $this->session->set_userdata('paginationData', $_POST);
+      } else {
+          $this->session->set_userdata('travelerTransactionsFilter', $_POST);
+      }
     }
-   
     $filterData = $this->session->userdata('travelerTransactionsFilter');
     
     if(!is_null($filterData)) {
@@ -172,11 +209,15 @@ class Trasection extends CI_Controller {
     
     $buyer    =  $db->payment_details->find($findArray);
     $buyerRes =  iterator_to_array($buyer);
+    
+    $total_rows = count($buyerRes);
+    
     $config['base_url'] = SURL . 'index.php/admin/Trasection/index';
-    $config['total_rows'] = count($buyerRes);
+    //$config['total_rows'] = count($buyerRes);
+    $config['total_rows'] = $total_rows;
     //$config['per_page'] = 20;
-    $config['per_page'] = 10;
-    $config['num_links'] = 5;
+    $config['per_page'] = !empty($paginationData['per_page'])? intval($paginationData['per_page']) : 3;
+    /*$config['num_links'] = 5;
     $config['use_page_numbers'] = TRUE;
     $config['uri_segment'] = 4;
     $config['reuse_query_string'] = TRUE;
@@ -190,6 +231,28 @@ class Trasection extends CI_Controller {
     $config['prev_link'] = '<i class="fa fa-long-arrow-left"></i>Previous';
     $config['prev_tag_open'] = '<li>';
     $config['prev_tag_close'] = '</li>';
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
+    $config['cur_tag_close'] = '</b></a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';*/
+    $config['num_links'] = 0;
+    $config['use_page_numbers'] = TRUE;
+    $config['uri_segment'] = 4;
+    $config['reuse_query_string'] = TRUE;
+    $config["first_tag_open"] = '<li class="d-none">';
+    $config["first_tag_close"] = '</li>';
+    $config["last_tag_open"] = '<li class="d-none">';
+    $config["last_tag_close"] = '</li>';
+    $config['next_link'] = '<i class="fas fa-chevron-right"></i>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_link'] = '<i class="fas fa-chevron-left"></i>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['first_link'] = '';
+    $config['last_link'] = '';
     $config['full_tag_open'] = '<ul class="pagination">';
     $config['full_tag_close'] = '</ul>';
     $config['cur_tag_open'] = '<li class="active"><a href="#"><b>';
@@ -269,6 +332,10 @@ class Trasection extends CI_Controller {
 
     // echo "<pre>";print_r($travelerRes);exit;
     $data['traveler_res']    =  $travelerRes;
+    
+    $data['total_rows']=$total_rows;
+    $data['index'] = $page;
+    $data['per_page'] = $config['per_page'];
 
     $this->load->view('trasection/traveler', $data);
   }
