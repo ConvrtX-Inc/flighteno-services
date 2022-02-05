@@ -236,18 +236,31 @@
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                            <th class="table-col-profile">Select All</th>
-                                            <th>Full Name</th>
-                                            <th>Email</th>
-                                            <th>Location</th>
-                                            <th>Flag</th>
+                                            <th scope="col">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <input type="checkbox" id="checkAll" name="checkAll"/>
+                                                        <label class="" for="checkAll"></label>
+                                                    </div>
+                                                    <div class="col-10 mt-2">
+                                                        Select All
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th scope="col" class="table-col-profile"></th>
+                                            <th scope="col" class="text-center">Full Name</th>
+                                            <th scope="col" class="text-center">Email</th>
+                                            <th scope="col" class="text-center">Location</th>
+                                            <th scope="col" class="text-center">Flag</th>
                                         </tr>
                                     </thead>
                                     <body>
                                         <?php foreach($flagUsers as $buyerFlag) { ?>
                                             <tr>
-                                                <td><input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" id="check<?php echo $buyerFlag['_id']; ?>"/><label for="check<?php echo $buyerFlag['_id']; ?>"></label></td>
+                                                <th scope="row">
+                                                    <input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" id="check<?php echo $buyerFlag['_id']; ?>"/>
+                                                    <label for="check<?php echo $buyerFlag['_id']; ?>"></label>
+                                                </th>
                                                 <td>
                                                     <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
                                                         
@@ -256,12 +269,12 @@
 
                                                         $imageSource = $buyerFlag['profile_image'];
                                                     } ?>
-                                                    <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
+                                                    <img src="<?php echo $imageSource;?>" alt="" class="ml-4 rounded-circle images avatar-sm bx-shadow-lg image2">
                                                 </td>
-                                                <td class="userNameColorChange"> <?php echo $buyerFlag['full_name'];?> </td>
-                                                <td> <?php echo $buyerFlag['email_address'];?> </td>
-                                                <td> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
-                                                <td>
+                                                <td class="userNameColorChange text-center"> <?php echo $buyerFlag['full_name'];?> </td>
+                                                <td class="text-center"> <?php echo $buyerFlag['email_address'];?> </td>
+                                                <td class="text-center"> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
+                                                <td class="text-center">
                                                 <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
                                                         
                                                         <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">

@@ -226,13 +226,23 @@
                             </div>
                         </form>
 
-                        <div class = "row mt-4">
+                        <div class = "row mt-2">
                             <div class="col">
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                            <th class="table-col-profile">Select All</th>
+                                            <th scope="col">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <input type="checkbox" id="checkAll" name="checkAll"/>
+                                                        <label class="" for="checkAll"></label>
+                                                    </div>
+                                                    <div class="col-10 mt-2">
+                                                        Select All
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="table-col-profile"></th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Order ID</th>
