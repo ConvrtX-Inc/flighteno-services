@@ -144,7 +144,7 @@
                             </div>  
                         </div>
 
-                        <div class = "row mb-5">
+                        <div class = "row">
                             <div class="col-12">
                                 <table class="content-table">
                                     <tr>
@@ -186,18 +186,31 @@
                                     <?php } ?>
                                 </table>
 
-                                <div class="mt-4"><?php  echo $this->pagination->create_links(); ?></div>
-                                <?php
-                                $start = ($total > 0)? $index + 1 : 0;
-                                $end = ($total - $per_page >= $start)? $index + $per_page : $total;
-                                ?>
-                                <?php if($start == 0) { ?>
-                                    <center><p style="font-size: 16px;">No results found.</p></center>
-                                <?php
-                                } else { ?>
-                                    <p class="pagination-results">Displaying results <strong><?=$start . ' - ' . $end . '</strong> of ' . $total?></p>
-                                <?php
-                                } ?>
+                                <?=($total === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
+
+                                <?php $thisPagination = $this->session->userdata('paginationData'); ?>
+                                <div class="pagination-container d-flex justify-content-end align-items-center">
+                                    <span class="rows-per-page">
+                                        Rows per page:
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/Support/index">
+                                            <select name="per_page" id="per_page">
+                                                <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
+                                                <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
+                                                <option value="12" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "12") ? "selected" : "")?>>12</option>
+                                                <option value="20" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "20") ? "selected" : "")?>>20</option>
+                                                <option value="50" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "50") ? "selected" : "")?>>50</option>
+                                            </select>
+                                        </form>
+                                    </span>
+                                    
+                                    <?php
+                                    $start = ($total > 0)? $index + 1 : 0;
+                                    $end = ($total - $per_page >= $start)? $index + $per_page : $total;
+                                    $pagination_msg = $start.'-'.$end.' of '.$total;
+                                    ?>
+                                    <span class="pagination-msg"><?=$pagination_msg?></span>
+                                    <?=$links?>
+                                </div>
                                 
                                 <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
@@ -336,6 +349,10 @@
                     });
                 });
                 */
+
+                $("#per_page").change(function() {
+                    $("form.form-per-page").submit();
+                });
             });
         </script>
 
