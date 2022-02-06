@@ -444,7 +444,36 @@
                                     </div>
 
                                     <div class="tickets-messages-textarea align-self-end">
-                                        
+                                        <div class="tickets-messages-textarea-container d-flex align-items-center">
+                                            <form method="POST" enctype="multipart/form-data" action="<?php echo base_url();?>index.php/admin/Support/fileUpload">
+                                                <div class="this-icon">
+                                                    <label class="m-0" for="fileUploaded"> 
+                                                        <img src="<?php echo SURL;?>assets/images/upload-file.png" >
+                                                    </label>     
+                                                    <input class="d-none" id="fileUploaded" type="file" accept="application/doc|application/csv|application/ppt|application/docx|application/txt|application/pdf" onchange="fileUpload(this)" />
+                                                </div>
+                                            </form>
+                                            
+                                            <div class="this-icon">
+                                                <a href="">
+                                                    <img src="<?php echo SURL;?>assets/images/smiley.png" >
+                                                </a>
+                                            </div>
+
+                                            <form id="reg" method="POST" enctype="multipart/form-data" action="<?php echo base_url();?>index.php/admin/Support/imageSendUpload">
+                                                <div class="this-icon">
+                                                    <label class="m-0" for="file-input"> 
+                                                        <img src="<?php echo SURL;?>assets/images/upload-img.png" >
+                                                    </label> 
+                                                    <input class="d-none" id="file-input" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
+                                                </div>
+                                            </form>
+                                                
+                                            <textarea type="text" class="form-control flex-fill w-auto" placeholder="Write your message here" id="text-msg"></textarea>
+                                            <a href="#" id="btn-send">
+                                                <img class="position-absolute" src="<?php echo SURL;?>assets/images/btn-send.png" >
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -536,6 +536,12 @@ body {
   overflow-y: scroll;
 }
 
+.tickets-messages-history::-webkit-scrollbar,
+.tickets-messages-history::-webkit-scrollbar-track,
+.tickets-messages-history::-webkit-scrollbar-thumb {
+  display: none;
+}
+
 .tickets-messages-history .msg {
   margin-bottom: 25px;
 }
@@ -583,7 +589,35 @@ body {
 }
 
 .tickets-messages-textarea {
-  background: red;
   width: 100%;
-  min-height: 100px;
+}
+
+.tickets-messages-textarea-container {
+  border: 1px solid #EAEAEA;
+  border-radius: 200px;
+  margin: 20px 30px;
+  padding: 7px 7px 7px 20px;
+}
+
+.tickets-messages-textarea .this-icon {
+  margin: 0 5px;
+}
+
+.tickets-messages-textarea .this-icon img {
+  cursor: pointer;
+}
+
+.tickets-messages-textarea #text-msg {
+  border: none;
+  height: 36px;
+  resize: none;
+}
+
+.tickets-messages-textarea #btn-send {
+  background: #E1467D;
+  border-radius: 50px;
+  padding: 15px;
+  width: 45px;
+  height: 45px;
+  position: relative;
 }
