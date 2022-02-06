@@ -52,3 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'admin/Login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+$route['admin/Support/buyer'] = 'admin/Support/index';
+$route['admin/Support/(:any)/(:any)'] = 'admin/Support/tickets/$1/$2';
+$route['admin/Support/(:any)/(:any)/(:any)'] = 'admin/Support/tickets_single/$1/$2/$3';
