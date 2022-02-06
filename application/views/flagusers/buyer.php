@@ -32,6 +32,9 @@
         <!-- DROP DOWN STYLE -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 
+        <!-- Sweetalert2 -->
+        <link href="<?php echo SURL;?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
         <!-- Global admin style -->
         <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
 
@@ -65,17 +68,6 @@
                 border-bottom: 1px solid #dddddd;
             }
             .table tbody tr:last-child { border-bottom: none; }
-
-            .checkInput {
-                border: 2px solid #898A8D;
-                box-sizing: border-box;
-                border-radius: 4px;
-            }
-            .checkInput:checked {
-                accent-color: #69C200;
-                border-radius: 4px;
-                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-            }
 
             .styleHeader{
 
@@ -145,6 +137,12 @@
             }
             #sidebar-menu ul li a.active{
                 border-right-color: transparent;
+            }
+            .btn-flag{
+                border: none;
+            }
+            li span.link-disabled{
+                margin-top: .5rem!important;
             }
         </style>
 
@@ -275,14 +273,16 @@
                                                 <td class="text-center"> <?php echo $buyerFlag['email_address'];?> </td>
                                                 <td class="text-center"> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
                                                 <td class="text-center">
-                                                <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
-                                                        
-                                                        <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                                    <?php }else{ ?>
+                                                    <button data-id="<?php echo $buyerFlag['_id']; ?>" class="btn-flag" type="button">
+                                                    <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
+                                                            
+                                                            <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                        <?php }else{ ?>
 
-                                                        <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                                    <?php }
-                                                    ?>
+                                                            <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                        <?php }
+                                                        ?>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -360,6 +360,9 @@
         <script src="<?php echo SURL;?>assets/js/pages/dashboard.init.js"></script>
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
+        
+        <!-- Sweetalert2 -->
+        <script src="<?php echo SURL;?>assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
         <script>
             $("#checkAll").click(function(){
@@ -385,6 +388,7 @@
             });
         </script>
         <script type="text/javascript">
+            //var flagTable;
             function setError(error){
                 var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
                             +error+
@@ -442,14 +446,38 @@
                     $('#formFilter').submit();
                 })
 
-                $('#buyersTable').DataTable({
-                    dom: '',
-                    ordering: false,
-                });
+                //var flagTable = $('#buyersTable').DataTable({
+                //    dom: '',
+                //    ordering: false,
+                //});
 
                 $("#per_page").change(function() {
                     $("form.form-per-page").submit();
                 });
+
+                $('.btn-flag').on('click', function(){
+                    var userId = $(this).attr('data-id');
+                    //alert(userId)
+                    
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.value==true) {
+                                Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                                )
+                            }
+                    })
+
+                });    
             })
         </script>
     </body>

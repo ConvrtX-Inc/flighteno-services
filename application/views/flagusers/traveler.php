@@ -147,6 +147,12 @@
             #sidebar-menu ul li a.active{
                 border-right-color: transparent;
             }
+            li span.link-disabled{
+                margin-top: .5rem!important;
+            }
+            .btn-flag{
+                border: none;
+            }
         </style>
     </head>
     <body>
