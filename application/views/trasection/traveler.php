@@ -144,6 +144,9 @@
             #sidebar-menu ul li a.active{
                 border-right-color: transparent;
             }
+            li span.link-disabled{
+                margin-top: .5rem!important;
+            }
         </style>
     </head>
     <body>
@@ -226,13 +229,23 @@
                             </div>
                         </form>
 
-                        <div class = "row mt-4">
+                        <div class = "row mt-2">
                             <div class="col">
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                            <th class="table-col-profile">Select All</th>
+                                            <th scope="col">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <input type="checkbox" id="checkAll" name="checkAll"/>
+                                                        <label class="" for="checkAll"></label>
+                                                    </div>
+                                                    <div class="col-10 mt-2">
+                                                        Select All
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="table-col-profile"></th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Order ID</th>
@@ -329,11 +342,6 @@
         <!-- Moment js -->
         <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
         
-        <script>
-            $("#checkAll").click(function(){
-                $('input:checkbox').not(this).prop('checked', this.checked);
-            });
-        </script>
         <script type="text/javascript">
             function setError(error){
                 var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
@@ -347,6 +355,14 @@
             $(function(){
 
                 $('#divError').html('');
+
+                $("#checkAll").click(function(){
+                    $('input:checkbox').not(this).prop('checked', this.checked);
+                });
+
+                $(".content-table").on("click", "td input[type='checkbox']", function(){
+                    $("#checkAll").prop("checked", false);
+                });
 
                 $('#btnFilter').click(function(){
                     let datefrom = $('#inputFrom').val();
@@ -374,13 +390,6 @@
                 $('#travTable').DataTable({
                     dom: '',
                     ordering: false,
-                    //columnDefs: [
-                    //    {
-                    //        targets: [ 4 ],
-                    //        visible: false,
-                    //        searchable: false
-                    //    },
-                    //]
                 });
                 
                 $("#per_page").change(function() {

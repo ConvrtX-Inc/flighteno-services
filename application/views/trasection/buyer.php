@@ -141,6 +141,9 @@
             #sidebar-menu ul li a.active{
                 border-right-color: transparent;
             }
+            li span.link-disabled{
+                margin-top: .5rem!important;
+            }
         </style>
     </head>
     <body>
@@ -228,8 +231,18 @@
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                            <th class="table-col-profile">Select All</th>
+                                            <th scope="col">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <input type="checkbox" id="checkAll" name="checkAll"/>
+                                                        <label class="" for="checkAll"></label>
+                                                    </div>
+                                                    <div class="col-10 mt-2">
+                                                        Select All
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="table-col-profile"></th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Order ID</th>
@@ -331,11 +344,6 @@
         <!-- Moment js -->
         <script src="<?php echo SURL;?>assets/libs/moment/moment.min.js"></script>
 
-        <script>
-            $("#checkAll").click(function(){
-                $('input:checkbox').not(this).prop('checked', this.checked);
-            });
-        </script>
         <script type="text/javascript">
             function setError(error){
                 var errorAlert='<div class="alert alert-danger alert-dismissible fade show" role="alert">'
@@ -351,18 +359,20 @@
                 //$('#inputFrom').tooltip('disable');
                 $('#divError').html('');
 
+                $("#checkAll").click(function(){
+                    $('input:checkbox').not(this).prop('checked', this.checked);
+                });
+
+                $(".content-table").on("click", "td input[type='checkbox']", function(){
+                    $("#checkAll").prop("checked", false);
+                });
+
                 $('#btnFilter').click(function(){
                     let datefrom = $('#inputFrom').val();
                     let dateto = $('#inputTo').val();
 
-                    //console.log('date from', datefrom);
-                    //console.log('date to', dateto);
                     if(!!datefrom || !!dateto){
                         if(datefrom===''){
-                            //console.log('Invalid value date from', datefrom);
-                            //document.querySelector('#inputFrom').setAttribute('title', 'Invalid value date from');
-                            //$('#inputFrom').tooltip('enable');
-                            //$('#inputFrom').tooltip('show')
                             $('#divError').html(setError('Invalid value date from'));
                             return;
                         }
@@ -371,9 +381,6 @@
                             $('#divError').html(setError('Invalid value date to'));
                             return;
                         }
-                        ///console.log('date from as date',new Date(datefrom))
-                        //console.log('date to as date', new Date(dateto))
-                        
                         if(!moment(dateto).isAfter(datefrom, 'day') && !moment(dateto).isSame(datefrom, 'day')){
                             //console.log('Date from must be greater than date to');
                             $('#divError').html(setError('Date from must be greater than date to'));

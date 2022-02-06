@@ -147,6 +147,12 @@
             #sidebar-menu ul li a.active{
                 border-right-color: transparent;
             }
+            li span.link-disabled{
+                margin-top: .5rem!important;
+            }
+            .btn-flag{
+                border: none;
+            }
         </style>
     </head>
     <body>
@@ -235,12 +241,22 @@
                             <div class="col">
                                 <table class="content-table">
                                     <tr>
-                                        <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
-                                        <th class="table-col-profile">Select All</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Location</th>
-                                        <th>Flag</th>
+                                        <th scope="col">
+                                            <div class="row">
+                                                <div class="col-2">
+                                                    <input type="checkbox" id="checkAll" name="checkAll"/>
+                                                    <label class="" for="checkAll"></label>
+                                                </div>
+                                                <div class="col-10 mt-2">
+                                                    Select All
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="table-col-profile"></th>
+                                        <th class="text-center">Full Name</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">Location</th>
+                                        <th class="text-center">Flag</th>
                                     </tr>
                                     <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
                                         <tr>
@@ -255,10 +271,10 @@
                                                 } ?>
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </td>
-                                            <td class= "userNameColorChange"><?php echo $travelerUsers['full_name']; ?></td>
-                                            <td><?php echo $travelerUsers['email_address']; ?></td>
-                                            <td><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
-                                            <td>
+                                            <td class= "userNameColorChange text-center"><?php echo $travelerUsers['full_name']; ?></td>
+                                            <td class="text-center"><?php echo $travelerUsers['email_address']; ?></td>
+                                            <td class="text-center"><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
+                                            <td class="text-center">
                                                 <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
                                                     
                                                     <!-- $class = 'fas'; -->
