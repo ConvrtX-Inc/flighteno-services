@@ -300,7 +300,7 @@
                         </div>
                         <div class="row mb-5 tickets-container">
                             <div class="col-lg-5 col-xxl-4">
-                                <div class="tickets-list">
+                                <div class="tickets-list d-flex flex-column">
                                     <div class="tickets-list-tabs">
                                          <a href="#" class="active">Buyers</a>
                                          <a href="#">Travelers</a>
@@ -323,36 +323,42 @@
                                             </div>
                                         </div>
 
-                                        <div class="tickets-list-user d-flex justify-content-start align-items-center">
+                                        <?php
+                                        foreach ($tickets as $ticket) {
+                                            if (empty($ticket['ticketUserData'][0]['profile_image'])) {
+                                                $imageSource = "https://ptetutorials.com/images/user-profile.png";
+                                            } else {
+                                                $imageSource = $ticket['ticketUserData'][0]['profile_image'];
+                                            }
+
+                                            if (!empty($ticket['created_date'])) {
+                                                $time_zone = date_default_timezone_get();
+                                                $date = $ticket['created_date']->toDateTime()->format("Y-m-d H:i:s");
+                                                $last_time_ago = time_elapsed_string($date, $time_zone);
+                                            } else {
+                                                $last_time_ago = '---';
+                                            }
+                                        ?>
+
+                                        <div class="tickets-list-user d-flex justify-content-start align-items-center" data-id="<?=(string)$ticket['_id']?>">
                                             <div class="tickets-list-user-left">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                                <img src="<?=$imageSource?>" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
 
                                             <div class="tickets-list-user-middle flex-fill">
-                                                <h5 class="this-user">Margarette Smith</h5>
-                                                <p class="this-preview">What time was our meeting? I want to re-schedule if possible.</p>
+                                                <h5 class="this-user"><?=$ticket['ticketUserData'][0]['full_name']?></h5>
+                                                <p class="this-preview"><?=$ticket['subject']?></p>
                                             </div>
 
                                             <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time">12 hrs ago</h6>
+                                                <h6 class="this-time"><?=$last_time_ago?></h6>
                                                 <span class="this-unread">29</span>
                                             </div>
                                         </div>
 
-                                        <div class="tickets-list-user d-flex justify-content-start align-items-center">
-                                            <div class="tickets-list-user-left">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
-                                            </div>
-
-                                            <div class="tickets-list-user-middle flex-fill">
-                                                <h5 class="this-user">Margarette Smith</h5>
-                                                <p class="this-preview">I am trying to create a sample data from your previous message.</p>
-                                            </div>
-
-                                            <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time">3 days ago</h6>
-                                            </div>
-                                        </div>
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                 </div>
                             </div>
