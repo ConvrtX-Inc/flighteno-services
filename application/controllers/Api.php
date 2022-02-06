@@ -125,10 +125,13 @@ class Api extends CI_Controller{
 
 				$userData    =  $db->users->find([ 'email_address' => $data]);
 				$resUserData =  iterator_to_array($userData);
-				error_log("returned data: ");
+				error_log("returned data1: ");
 				error_log(json_encode($userData));
+				error_log("returned data2: ");
+				error_log($userData);
+				error_log("returned data3: ");
 				error_log($resUserData);
-				
+
 				if(count($resUserData) > 0 ){
 					if($resUserData[0]['signup_source'] == 'google' || $resUserData[0]['signup_source'] == 'facebook' ){
 
