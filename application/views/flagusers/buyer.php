@@ -273,7 +273,7 @@
                                                 <td class="text-center"> <?php echo $buyerFlag['email_address'];?> </td>
                                                 <td class="text-center"> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
                                                 <td class="text-center">
-                                                    <button data-id="<?php echo $buyerFlag['_id']; ?>" class="btn-flag" type="button">
+                                                    <!--<button data-id="<?php echo $buyerFlag['_id']; ?>" class="btn-flag" type="button">-->
                                                     <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
                                                             
                                                             <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
@@ -282,7 +282,7 @@
                                                             <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
                                                         <?php }
                                                         ?>
-                                                    </button>
+                                                    <!--</button>-->
                                                 </td>
                                             </tr>
                                         <?php } ?>
