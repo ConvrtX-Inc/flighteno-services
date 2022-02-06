@@ -128,9 +128,8 @@ class Api extends CI_Controller{
 				error_log("returned data1: ");
 				error_log(json_encode($userData));
 				error_log("returned data2: ");
-				error_log($userData);
-				error_log("returned data3: ");
-				error_log($resUserData);
+				error_log(print_r($resUserData));
+				
 
 				if(count($resUserData) > 0 ){
 					if($resUserData[0]['signup_source'] == 'google' || $resUserData[0]['signup_source'] == 'facebook' ){
