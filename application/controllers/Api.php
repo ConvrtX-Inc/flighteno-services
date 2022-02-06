@@ -124,20 +124,19 @@ class Api extends CI_Controller{
 			if($type  == 'email'){
 
 				$userData    =  $db->users->find([ 'email_address' => $data]);
-				$resUserData =  iterator_to_array($userData);
-				error_log("returned data: ");
-				error_log(json_encode($userData));
-				error_log($resUserData);
-				
+				$resUserData =  iterator_to_array($userData);			
+
 				if(count($resUserData) > 0 ){
-					if($resUserData[0]['signup_source'] == 'google' || $resUserData[0]['signup_source'] == 'facebook' ){
+					//if($resUserData[0]['signup_source'] == 'google' || $resUserData[0]['signup_source'] == 'facebook' ){
+					error_log("Check property: ".property_exists($resUserData[0], 'signup_source'));
+					if(property_exists($resUserData[0], 'signup_source')) {
 
 						http_response_code(200);
 						$data = new stdClass;
 						$data->Status = 400;
 						$data->Message = 'Your account is associated with social login you can not reset your password.';
 						echo json_encode($data);
-					}else{
+					} else{
 				
 						$phoneNumber = $resUserData[0]['phone_number'];
 						$twilio = $this->setupTwilio();
