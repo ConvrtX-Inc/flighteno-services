@@ -128,7 +128,7 @@ class Api extends CI_Controller{
 
 				if(count($resUserData) > 0 ){
 					//if($resUserData[0]['signup_source'] == 'google' || $resUserData[0]['signup_source'] == 'facebook' ){
-					if(property_exists('signup_source', $resUserData[0])) {
+					if(var_dump(property_exists($resUserData[0], 'signup_source'))) {
 
 						http_response_code(200);
 						$data = new stdClass;
