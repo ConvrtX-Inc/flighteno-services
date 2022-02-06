@@ -525,6 +525,17 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
+/*
 $config['sid'] = 'ACc21663705acbf496e5740f59f673019c';
-$config['twilio_token'] = 'ba05306cc16cc27e95dd9ca92da12fa3';  
+$config['twilio_token'] = 'ba05306cc16cc27e95dd9ca92da12fa3';
 $config['service_id'] = 'VAa0a01310d8c2116de1581afe34d6ba87';
+*/
+
+/**Changes to Twilio
+ * sid = Account SID
+ * twilio_token = Auth token
+ * service_id = app service id
+ */
+$config['sid'] = 'AC81e89cf6e91eb32d34fb5c700ff5fbe0';
+$config['twilio_token'] = 'd006d71818e794b255c488d5801586b3';
+$config['service_id'] = 'VA6d54c252ce05404db16fc3cbdecd53e2';
