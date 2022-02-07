@@ -382,6 +382,12 @@ body {
   /* overflow: hidden; */
 }
 
+.tickets-messages.loading {
+  filter: blur(20px);
+  pointer-events: none;
+  user-select: none;
+}
+
 .tickets-list-tabs {
   display: flex;
 }
@@ -427,12 +433,11 @@ body {
 }
 
 .tickets-list-user .tickets-list-user-middle {
-  width: 60% !important;
+  /* width: 60% !important; */
 }
 
 .tickets-list-user .tickets-list-user-left {
-  padding-right: 10px;
-  width: 18% !important;
+  padding-right: 12px;
 }
 
 .tickets-list-user .this-image,

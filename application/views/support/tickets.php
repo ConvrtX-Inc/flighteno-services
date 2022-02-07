@@ -302,8 +302,8 @@
                             <div class="col-lg-5 col-xxl-4">
                                 <div class="tickets-list d-flex flex-column">
                                     <div class="tickets-list-tabs">
-                                         <a href="#" class="active">Buyers</a>
-                                         <a href="#">Travelers</a>
+                                         <a href="<?php echo base_url();?>index.php/admin/Support/buyer/tickets" class="<?=($profile_status === 'buyer')? 'active':''?>">Buyers</a>
+                                         <a href="<?php echo base_url();?>index.php/admin/Support/traveler/tickets" class="<?=($profile_status === 'traveler')? 'active':''?>">Travelers</a>
                                     </div>
 
                                     <div class="tickets-list-main">
@@ -318,7 +318,7 @@
                                             </div>
 
                                             <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time">5 mins ago</h6>
+                                                <h6 class="this-time mt-0">5 mins ago</h6>
                                                 <span class="this-unread">2</span>
                                             </div>
                                         </div>
@@ -351,7 +351,7 @@
                                             </div>
 
                                             <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time"><?=$last_time_ago?></h6>
+                                                <h6 class="this-time mt-0"><?=$last_time_ago?></h6>
                                                 <span class="this-unread">29</span>
                                             </div>
                                         </div>
@@ -828,6 +828,14 @@
                         }
                     });
                 })
+
+                const userID = <?=$id_user?>;
+                if (userID === 0) {
+                    // Select the first ticket by default
+                    $(".click").first().click();
+                } else {
+                    // Select the active ticket
+                }
             });
             $(document).ready(function() {
                 $('.msg_send_btn').click(function() {

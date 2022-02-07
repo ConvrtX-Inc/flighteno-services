@@ -258,7 +258,7 @@ class Support extends CI_Controller {
         $this->load->view('support/traveler', $data);
     }//end
 
-    public function tickets($profile_status, $id_user){
+    public function tickets($profile_status, $id_user = 0){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
 
@@ -272,6 +272,8 @@ class Support extends CI_Controller {
             show_404();
         }
 
+        $data['profile_status'] = $profile_status;
+        $data['id_user'] = $id_user;
         $totalTickets  =  $db->ticket->count($search);
 
         $config['base_url']         =   SURL . 'index.php/admin/Support/tickets';
