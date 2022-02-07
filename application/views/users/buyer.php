@@ -150,7 +150,7 @@
                                 <div class="col-xl-3">  
                                     <select name="filter_type" class="form-control filters_style" placeholder="Select filter">
                                         <option value="name" <?=((is_null($thisData) || !isset($thisData['filter_type']) || $thisData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
-                                        <option value="location" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Area</option>
+                                        <option value="location" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Location</option>
                                         <option value="country" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
                                     </select>
                                 </div> <!-- end col -->
