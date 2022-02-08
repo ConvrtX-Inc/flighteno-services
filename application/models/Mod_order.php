@@ -866,15 +866,15 @@ class Mod_order extends CI_Model {
 
     $getData = $db->accepted_offers->find(['order_id' => $order_id, 'buyer_id' =>  $admin_id ]);
     $details = iterator_to_array($getData);
-    if(count($details) > 0){
-      
-      return 'buyer';
-    }else{
 
-      $checkOffer = $db->accepted_offers->find(['order_id' => $order_id, 'status' =>['$in' => ['complete', 'accepted']], 'traveler_id' =>  $admin_id ]);
+    if(count($details) > 0){
+      return 'buyer';
+    } else{
+
+      $checkOffer = $db->accepted_offers->find(['order_id' => $order_id, 'status' =>['$in' => ['complete', 'accepted', 'new']], 'traveler_id' =>  $admin_id ]);
       $OfferDetails = iterator_to_array($checkOffer);
       if(count($OfferDetails) > 0){
-        
+
         return 'traveler';
       }else{
 
