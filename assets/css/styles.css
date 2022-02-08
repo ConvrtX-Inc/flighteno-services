@@ -379,6 +379,13 @@ body {
   box-shadow: 0px 10px 40px rgb(0 0 0 / 3%);
   border-radius: 20px;
   height: 75vh;
+  /* overflow: hidden; */
+}
+
+.tickets-messages.loading {
+  filter: blur(20px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .tickets-list-tabs {
@@ -408,6 +415,7 @@ body {
 
 .tickets-list-main {
   padding: 20px 15px;
+  overflow-y: scroll;
 }
 
 .tickets-list-user {
@@ -421,20 +429,20 @@ body {
 }
 
 .tickets-list-user .tickets-list-user-right {
-  width: 20% !important;
+  width: 22% !important;
 }
 
 .tickets-list-user .tickets-list-user-middle {
-  width: 60% !important;
+  /* width: 60% !important; */
 }
 
 .tickets-list-user .tickets-list-user-left {
-  padding-right: 10px;
+  padding-right: 12px;
 }
 
 .tickets-list-user .this-image,
 .tickets-messages .this-image {
-  max-width: 55px;
+  max-width: 48px;
 }
 
 .tickets-list-user .this-user {
@@ -528,4 +536,98 @@ body {
   font-size: 17px;
   font-weight: 500;
   padding: 10px 40px;
+}
+
+.tickets-messages-history {
+  padding: 30px;
+  overflow-y: scroll;
+}
+
+.tickets-list-main::-webkit-scrollbar,
+.tickets-list-main::-webkit-scrollbar-track,
+.tickets-list-main::-webkit-scrollbar-thumb,
+.tickets-messages-history::-webkit-scrollbar,
+.tickets-messages-history::-webkit-scrollbar-track,
+.tickets-messages-history::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+.tickets-messages-history .msg {
+  margin-bottom: 25px;
+}
+
+.tickets-messages-history .msg-profile {
+  margin-right: 8px;
+  max-width: 35px;
+}
+
+.tickets-messages-history .msg-container {
+  border-radius: 20px;
+  padding: 15px 30px;
+  position: relative;
+}
+
+.tickets-messages-history .msg-container .msg-text {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tickets-messages-history .msg-container .msg-time-elapsed {
+  color: #09110E;
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.3;
+  position: absolute;
+  right: 5px;
+  bottom: -21px;
+}
+
+.tickets-messages-history .msg-incoming .msg-container {
+  background: #F3F3F3;
+}
+
+.tickets-messages-history .msg-incoming .msg-container .msg-text {
+  color: #808191;
+}
+
+.tickets-messages-history .msg-outgoing .msg-container {
+  background: #F18BB1;
+}
+
+.tickets-messages-history .msg-outgoing .msg-container .msg-text {
+  color: #FFFFFF;
+}
+
+.tickets-messages-textarea {
+  width: 100%;
+}
+
+.tickets-messages-textarea-container {
+  border: 1px solid #EAEAEA;
+  border-radius: 200px;
+  margin: 20px 30px;
+  padding: 7px 7px 7px 20px;
+}
+
+.tickets-messages-textarea .this-icon {
+  margin: 0 5px;
+}
+
+.tickets-messages-textarea .this-icon img {
+  cursor: pointer;
+}
+
+.tickets-messages-textarea #text-msg {
+  border: none;
+  height: 36px;
+  resize: none;
+}
+
+.tickets-messages-textarea #btn-send {
+  background: #E1467D;
+  border-radius: 50px;
+  padding: 15px;
+  width: 45px;
+  height: 45px;
+  position: relative;
 }

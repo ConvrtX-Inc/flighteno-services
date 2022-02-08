@@ -258,18 +258,22 @@ class Support extends CI_Controller {
         $this->load->view('support/traveler', $data);
     }//end
 
-    public function tickets(){
+    public function tickets($profile_status, $id_user = 0){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
 
-        if($this->input->get('profile') == 'traveler'){
-
+        if ($profile_status == 'traveler') {
             $search['profile_status'] = 'traveler';
             $this->session->set_userdata('tab', 'traveler');
-        }else{
+        } elseif ($profile_status == 'buyer') {
             $this->session->set_userdata('tab', 'buyer');
             $search['profile_status'] = 'buyer';
+        } else {
+            show_404();
         }
+
+        $data['profile_status'] = $profile_status;
+        $data['id_user'] = $id_user;
         $totalTickets  =  $db->ticket->count($search);
 
         $config['base_url']         =   SURL . 'index.php/admin/Support/tickets';

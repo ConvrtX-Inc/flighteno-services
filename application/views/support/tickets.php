@@ -299,11 +299,11 @@
                             </div> 
                         </div>
                         <div class="row mb-5 tickets-container">
-                            <div class="col-5">
-                                <div class="tickets-list">
+                            <div class="col-lg-5 col-xxl-4">
+                                <div class="tickets-list d-flex flex-column">
                                     <div class="tickets-list-tabs">
-                                         <a href="#" class="active">Buyers</a>
-                                         <a href="#">Travelers</a>
+                                         <a href="<?php echo base_url();?>index.php/admin/Support/buyer/tickets" class="<?=($profile_status === 'buyer')? 'active':''?>">Buyers</a>
+                                         <a href="<?php echo base_url();?>index.php/admin/Support/traveler/tickets" class="<?=($profile_status === 'traveler')? 'active':''?>">Travelers</a>
                                     </div>
 
                                     <div class="tickets-list-main">
@@ -312,54 +312,175 @@
                                                 <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
 
-                                            <div class="tickets-list-user-middle">
+                                            <div class="tickets-list-user-middle flex-fill">
                                                 <h5 class="this-user">Margarette Smith</h5>
                                                 <p class="this-preview">Shipping Complaint</p>
                                             </div>
 
                                             <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time">5 mins ago</h6>
+                                                <h6 class="this-time mt-0">5 mins ago</h6>
                                                 <span class="this-unread">2</span>
                                             </div>
                                         </div>
 
-                                        <div class="tickets-list-user d-flex justify-content-start align-items-center">
+                                        <?php
+                                        foreach ($tickets as $ticket) {
+                                            if (empty($ticket['ticketUserData'][0]['profile_image'])) {
+                                                $imageSource = "https://ptetutorials.com/images/user-profile.png";
+                                            } else {
+                                                $imageSource = $ticket['ticketUserData'][0]['profile_image'];
+                                            }
+
+                                            if (!empty($ticket['created_date'])) {
+                                                $time_zone = date_default_timezone_get();
+                                                $date = $ticket['created_date']->toDateTime()->format("Y-m-d H:i:s");
+                                                $last_time_ago = time_elapsed_string($date, $time_zone);
+                                            } else {
+                                                $last_time_ago = '---';
+                                            }
+                                        ?>
+
+                                        <div class="tickets-list-user d-flex justify-content-start align-items-center" data-id="<?=(string)$ticket['_id']?>">
                                             <div class="tickets-list-user-left">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                                <img src="<?=$imageSource?>" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
 
-                                            <div class="tickets-list-user-middle">
-                                                <h5 class="this-user">Margarette Smith</h5>
-                                                <p class="this-preview">What time was our meeting? I want to re-schedule if possible.</p>
+                                            <div class="tickets-list-user-middle flex-fill">
+                                                <h5 class="this-user"><?=$ticket['ticketUserData'][0]['full_name']?></h5>
+                                                <p class="this-preview"><?=$ticket['subject']?></p>
                                             </div>
 
                                             <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time">12 hrs ago</h6>
+                                                <h6 class="this-time mt-0"><?=$last_time_ago?></h6>
                                                 <span class="this-unread">29</span>
                                             </div>
                                         </div>
 
-                                        <div class="tickets-list-user d-flex justify-content-start align-items-center">
-                                            <div class="tickets-list-user-left">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
-                                            </div>
-
-                                            <div class="tickets-list-user-middle">
-                                                <h5 class="this-user">Margarette Smith</h5>
-                                                <p class="this-preview">I am trying to create a sample data from your previous message.</p>
-                                            </div>
-
-                                            <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time">3 days ago</h6>
-                                            </div>
-                                        </div>
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-7">
-                                <div class="tickets-messages">
-                                    messages
+                            <div class="col-lg-7 col-xxl-8">
+                                <div class="tickets-messages d-flex flex-column">
+                                    <div class="tickets-messages-info">
+                                        <div class="this-top d-flex align-items-center">
+                                            <div class="user-info d-flex flex-fill align-items-center">
+                                                <div class="this-left">
+                                                    <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
+                                                </div>
+                                                <div class="this-right">
+                                                    <h3 class="this-user">Margarette Smith</h3>
+                                                    <p class="this-email underlined m-0">margarette@gmail.com</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="order-info">
+                                                <p class="m-0"><span class="color-pink text-small">Order No.</span> 123456789</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="this-bottom">
+                                            <p class="m-0"><span class="color-pink text-small">Subject:</span> Shipping Complaint</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="tickets-messages-history flex-fill">
+                                        <div class="msg msg-incoming w-75">
+                                            <div class="this-top d-flex">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-incoming w-75">
+                                            <div class="this-top d-flex">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="msg msg-outgoing w-75 ml-auto">
+                                            <div class="this-top d-flex justify-content-end">
+                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
+                                                <div class="msg-container">
+                                                    <p class="msg-text m-0">Lorem Ipsum.</p>
+                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tickets-messages-textarea align-self-end">
+                                        <div class="tickets-messages-textarea-container d-flex align-items-center">
+                                            <form method="POST" enctype="multipart/form-data" action="<?php echo base_url();?>index.php/admin/Support/fileUpload">
+                                                <div class="this-icon">
+                                                    <label class="m-0" for="fileUploaded"> 
+                                                        <img src="<?php echo SURL;?>assets/images/upload-file.png" >
+                                                    </label>     
+                                                    <input class="d-none" id="fileUploaded" type="file" accept="application/doc|application/csv|application/ppt|application/docx|application/txt|application/pdf" onchange="fileUpload(this)" />
+                                                </div>
+                                            </form>
+                                            
+                                            <div class="this-icon">
+                                                <a href="">
+                                                    <img src="<?php echo SURL;?>assets/images/smiley.png" >
+                                                </a>
+                                            </div>
+
+                                            <form id="reg" method="POST" enctype="multipart/form-data" action="<?php echo base_url();?>index.php/admin/Support/imageSendUpload">
+                                                <div class="this-icon">
+                                                    <label class="m-0" for="file-input"> 
+                                                        <img src="<?php echo SURL;?>assets/images/upload-img.png" >
+                                                    </label> 
+                                                    <input class="d-none" id="file-input" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
+                                                </div>
+                                            </form>
+                                                
+                                            <textarea type="text" class="form-control flex-fill w-auto" placeholder="Write your message here" id="text-msg"></textarea>
+                                            <a href="#" id="btn-send">
+                                                <img class="position-absolute" src="<?php echo SURL;?>assets/images/btn-send.png" >
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -438,7 +559,7 @@
                                     </div>
                                     
                                     <div class="msg_history" id="messagesData">
-                
+                                        
                                     </div>
 
                                     <div class="type_msg" id ="messageReply">
@@ -707,6 +828,14 @@
                         }
                     });
                 })
+
+                const userID = <?=$id_user?>;
+                if (userID === 0) {
+                    // Select the first ticket by default
+                    $(".click").first().click();
+                } else {
+                    // Select the active ticket
+                }
             });
             $(document).ready(function() {
                 $('.msg_send_btn').click(function() {
