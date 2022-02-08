@@ -322,6 +322,11 @@
                                             } else {
                                                 $last_time_ago = '---';
                                             }
+
+                                            $unreadMessageCount = $ticket["unreadMessageCount"][0]['count'];
+                                            if (empty($unreadMessageCount) || is_null($unreadMessageCount)) {
+                                                $unreadMessageCount = 0;
+                                            }
                                         ?>
 
                                         <div class="tickets-list-user d-flex justify-content-start align-items-center" data-id="<?=(string)$ticket['_id']?>" data-user-id="<?=(string)$ticket['admin_id']?>">
@@ -336,7 +341,11 @@
 
                                             <div class="tickets-list-user-right align-self-start">
                                                 <h6 class="this-time mt-0"><?=$last_time_ago?></h6>
-                                                <!-- <span class="this-unread">29</span> -->
+                                                <?php
+                                                if ($unreadMessageCount != 0) { ?>
+                                                    <span class="this-unread"><?=$unreadMessageCount?></span>
+                                                <?php
+                                                } ?>
                                             </div>
                                         </div>
 

@@ -331,36 +331,36 @@ class Support extends CI_Controller {
                     'created_date'  =>  '$created_date'
                 ]
             ],
-            // [
-            //     '$lookup' => [
-            //         'from' => 'ticket_reply',
-            //         'let' => [
-            //             'ticketId' =>  '$_id',
-            //         ],
-            //         'pipeline' => [
-            //             [
-            //             '$match' => [
-            //                 '$expr' => [
-            //                     '$eq' => [
-            //                         '$ticket_id',
-            //                         '$$ticketId'
-            //                     ]
-            //                 ],
-            //                 'status' => 'new'
-            //             ],
-            //         ],
+            [
+                '$lookup' => [
+                    'from' => 'ticket_reply',
+                    'let' => [
+                        'ticketId' =>  '$_id',
+                    ],
+                    'pipeline' => [
+                        [
+                        '$match' => [
+                            '$expr' => [
+                                '$eq' => [
+                                    '$ticket_id',
+                                    '$$ticketId'
+                                ]
+                            ],
+                            'status' => 'new'
+                        ],
+                    ],
                     
-            //         [
-            //             '$group' => [
-            //                 '_id'    =>  '$ticket_id',
-            //                 'count'  =>  ['$sum' => 1] 
+                    [
+                        '$group' => [
+                            '_id'    =>  '$ticket_id',
+                            'count'  =>  ['$sum' => 1] 
                             
-            //             ]
-            //         ]
-            //     ],
-            //     'as' => 'unreadMessageCount'
-            //     ]
-            // ],
+                        ]
+                    ]
+                ],
+                'as' => 'unreadMessageCount'
+                ]
+            ],
 
             [
                 '$lookup' => [
@@ -407,6 +407,10 @@ class Support extends CI_Controller {
         $tickets    = $db->ticket->aggregate($getTickets);
         $ticketData = iterator_to_array($tickets);
         $data['tickets'] = $ticketData;
+
+        // var_dump($data['tickets'][0]["unreadMessageCount"][0]['count']);
+        // exit();
+
         $this->load->view('support/tickets', $data);
     }//end
     
@@ -600,7 +604,7 @@ class Support extends CI_Controller {
             if (empty($message_main) || $message_main == ''|| is_null($message_main)) {   
                 $template_data['message'] = '<img src="'. $res['image'] . '">';
             } else {
-                $template_data['message'] = $res['message'];
+                $template_data['message'] = nl2br($res['message']);
             }
 
             $time_zone = date_default_timezone_get();
