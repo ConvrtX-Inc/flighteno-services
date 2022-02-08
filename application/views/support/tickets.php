@@ -302,27 +302,11 @@
                             <div class="col-lg-5 col-xxl-4">
                                 <div class="tickets-list d-flex flex-column">
                                     <div class="tickets-list-tabs">
-                                         <a href="<?php echo base_url();?>index.php/admin/Support/buyer/tickets" class="<?=($profile_status === 'buyer')? 'active':''?>">Buyers</a>
-                                         <a href="<?php echo base_url();?>index.php/admin/Support/traveler/tickets" class="<?=($profile_status === 'traveler')? 'active':''?>">Travelers</a>
+                                         <a href="<?php echo base_url();?>admin/Support/buyer/tickets" class="<?=($profile_status === 'buyer')? 'active':''?>">Buyers</a>
+                                         <a href="<?php echo base_url();?>admin/Support/traveler/tickets" class="<?=($profile_status === 'traveler')? 'active':''?>">Travelers</a>
                                     </div>
 
                                     <div class="tickets-list-main">
-                                        <div class="tickets-list-user d-flex justify-content-start align-items-center active">
-                                            <div class="tickets-list-user-left">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="this-image rounded-circle bx-shadow-lg">
-                                            </div>
-
-                                            <div class="tickets-list-user-middle flex-fill">
-                                                <h5 class="this-user">Margarette Smith</h5>
-                                                <p class="this-preview">Shipping Complaint</p>
-                                            </div>
-
-                                            <div class="tickets-list-user-right align-self-start">
-                                                <h6 class="this-time mt-0">5 mins ago</h6>
-                                                <span class="this-unread">2</span>
-                                            </div>
-                                        </div>
-
                                         <?php
                                         foreach ($tickets as $ticket) {
                                             if (empty($ticket['ticketUserData'][0]['profile_image'])) {
@@ -340,7 +324,7 @@
                                             }
                                         ?>
 
-                                        <div class="tickets-list-user d-flex justify-content-start align-items-center" data-id="<?=(string)$ticket['_id']?>">
+                                        <div class="tickets-list-user d-flex justify-content-start align-items-center" data-id="<?=(string)$ticket['_id']?>" data-user-id="<?=(string)$ticket['admin_id']?>">
                                             <div class="tickets-list-user-left">
                                                 <img src="<?=$imageSource?>" class="this-image rounded-circle bx-shadow-lg">
                                             </div>
@@ -352,7 +336,7 @@
 
                                             <div class="tickets-list-user-right align-self-start">
                                                 <h6 class="this-time mt-0"><?=$last_time_ago?></h6>
-                                                <span class="this-unread">29</span>
+                                                <!-- <span class="this-unread">29</span> -->
                                             </div>
                                         </div>
 
@@ -377,17 +361,18 @@
                                                 </div>
                                             </div>
 
-                                            <div class="order-info">
-                                                <p class="m-0"><span class="color-pink text-small">Order No.</span> 123456789</p>
+                                            <div class="order-info w-25">
+                                                <p class="m-0"><span class="color-pink text-small">Order No.</span> <span class="this-order">123456789</span></p>
                                             </div>
                                         </div>
 
                                         <div class="this-bottom">
-                                            <p class="m-0"><span class="color-pink text-small">Subject:</span> Shipping Complaint</p>
+                                            <p class="m-0"><span class="color-pink text-small">Subject:</span> <span class="this-subject">Shipping Complaint</span></p>
                                         </div>
                                     </div>
 
                                     <div class="tickets-messages-history flex-fill">
+                                    <!--
                                         <div class="msg msg-incoming w-75">
                                             <div class="this-top d-flex">
                                                 <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
@@ -447,6 +432,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    -->
                                     </div>
 
                                     <div class="tickets-messages-textarea align-self-end">
@@ -710,6 +696,8 @@
                         'data': {ticketId : ticketId},
                         'success': function (response) {
                             var data =  JSON.parse(response);
+                            console.log(data);
+                            // return;
                             
                             var orderDetails = '';
                             var htmlDesign = '';
@@ -828,14 +816,6 @@
                         }
                     });
                 })
-
-                const userID = <?=$id_user?>;
-                if (userID === 0) {
-                    // Select the first ticket by default
-                    $(".click").first().click();
-                } else {
-                    // Select the active ticket
-                }
             });
             $(document).ready(function() {
                 $('.msg_send_btn').click(function() {
@@ -896,7 +876,64 @@
             $(document).ready(function(){
 
                 // $("#sendMessage").removeClass("form-control");
-            })
+
+                // Initialize message data containers
+                const userImageContainer = $(".user-info .this-image");
+                const userNameContainer = $(".user-info .this-user");
+                const userEmailContainer = $(".user-info .this-email");
+                const orderNumberContainer = $(".order-info .this-order");
+                const subjectContainer = $(".this-subject");
+                const ticketMessagesContainer = $(".tickets-messages");
+                const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+
+                $(".tickets-list").on("click", ".tickets-list-user", function() {
+                    const activeTicket = $(this);
+                    const ticketId = activeTicket.data("id");
+                    const userId = activeTicket.data("user-id");
+                    const profileStatus = "<?=$profile_status?>";
+                    const newUrl = "<?=SURL?>admin/Support/" + profileStatus + "/tickets/" + userId + "/" + ticketId;
+
+                    // replace url
+                    window.history.replaceState(null, null, newUrl);
+
+                    ticketMessagesContainer.addClass("loading");
+                    $(".tickets-list-user.active").removeClass("active");
+                    activeTicket.addClass("active");
+
+                    // load active ticket history
+                    $.ajax({
+                        'url': '<?=base_url()?>index.php/admin/Support/getMessages',
+                        'type': 'POST',
+                        'data': { ticketId : ticketId },
+                        'success': function (response) {
+                            const data =  JSON.parse(response)[0];
+                            const profileData = data["profileData"][0];
+                            console.log(data);
+
+                            // display data
+                            userImageContainer.attr("src", profileData["profile_image"]);
+                            userNameContainer.html(profileData["full_name"]);
+                            userEmailContainer.html(profileData["email_address"]);
+                            orderNumberContainer.html(data["order_number"]);
+                            subjectContainer.html(data["subject"]);
+                            ticketMessagesHistoryContainer.html(data["messages"]);
+                            
+                            ticketMessagesContainer.removeClass("loading");
+
+                            // scroll to latest message
+                            ticketMessagesHistoryContainer.scrollTop(ticketMessagesHistoryContainer.prop("scrollHeight"));
+                        }
+                    });
+                });
+
+                const userID = <?=$id_user?>;
+                if (userID === 0) {
+                    // Select the first ticket by default
+                    $(".tickets-list-user").first().click();
+                } else {
+                    // Select the active ticket
+                }
+            });
         </script>
     </body>
 </html>

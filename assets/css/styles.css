@@ -432,9 +432,9 @@ body {
   width: 22% !important;
 }
 
-.tickets-list-user .tickets-list-user-middle {
-  /* width: 60% !important; */
-}
+/* .tickets-list-user .tickets-list-user-middle {
+  width: 60% !important;
+} */
 
 .tickets-list-user .tickets-list-user-left {
   padding-right: 12px;
@@ -515,6 +515,9 @@ body {
 
 .tickets-messages-info .this-top .order-info p {
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tickets-messages-info .this-top .user-info .this-left {

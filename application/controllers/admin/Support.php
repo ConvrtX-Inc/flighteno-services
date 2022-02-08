@@ -413,6 +413,7 @@ class Support extends CI_Controller {
         $this->Mod_login->is_user_login();
         $db = $this->mongo_db->customQuery();
         $ticketId  =  (string)$this->input->post('ticketId');
+        // $ticketId = "61f5306f8da54f6b6833a17a";
         // $db->ticket_reply->updateMany(['ticket_id' => $ticketId, 'status' => "new" ], ['$set' => ['status' => 'read']]);
         $getMessages = [
             [
@@ -431,7 +432,8 @@ class Support extends CI_Controller {
                     'order_number'  =>  '$order_number',
                     'subject'       =>  '$subject',
                     'message'       =>  '$message',
-                    'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                    // 'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                    'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y/%m/%d %H:%M:%S", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
                     'status'        =>  '$status',
                 ]
             ],
@@ -491,7 +493,8 @@ class Support extends CI_Controller {
                             'ticket_id'     =>  '$ticket_id',
                             'admin_id'      =>  '$admin_id',
                             'message'       =>  '$message',
-                            'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                            // 'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                            'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y/%m/%d %H:%M:%S", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
                             'status'        =>  '$status',
                             'file'          =>  '$file',
                             'image'         =>  '$image',
@@ -542,9 +545,82 @@ class Support extends CI_Controller {
 
         $messages     = $db->ticket->aggregate($getMessages);
         $messagesData = iterator_to_array($messages);
-        $messagesData = json_encode((array)$messagesData);
-        echo $messagesData;
+        // $messagesData = json_encode((array)$messagesData);
+        // echo $messagesData;exit;
         // print_r($messagesData);
+        // var_dump($messagesData[0]['messages']);
+
+        $messagesHTML = '';
+        $ticketMainData = array();
+        $ticketMainData['message'] = $messagesData[0]['message'];
+        $ticketMainData['div_class1'] = 'msg msg-incoming w-75';
+        $ticketMainData['div_class2'] = 'this-top d-flex';
+
+        $ticketCreatorImage = $messagesData[0]['profileData'][0]['profile_image'];
+        if (empty($ticketCreatorImage)) {
+            $ticketMainData['profile_image'] = "https://ptetutorials.com/images/user-profile.png";
+        } else {
+            $ticketMainData['profile_image'] = $ticketCreatorImage;
+        }
+
+        $time_zone = date_default_timezone_get();
+        $date = date('Y/m/d h:i:s', strtotime($messagesData[0]['created_date']));
+        $last_time_ago = time_elapsed_string($date, $time_zone);
+        $ticketMainData['time_lapsed'] = $last_time_ago;
+
+        // first message
+        $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+        $ticket_creator_id = $messagesData[0]['admin_id'];
+
+        // loop data and create string template of messages
+        foreach ($messagesData[0]['messages'] as $res) {
+            $template_data = array();
+            $user_id = $res['userData'][0]['_id'];
+            $profile_image = $res['userData'][0]['profile_image'];
+            $message_main = $res['message'];
+
+            if (empty($profile_image) || $profile_image == ''|| is_null($profile_image)) {                               
+                $template_data['profile_image'] = SURL.'assets/images/male.png';
+            } else {
+                $template_data['profile_image'] = $profile_image;
+            }
+
+            if ($ticket_creator_id == $user_id) {
+                // incoming classes
+                $template_data['div_class1'] = 'msg msg-incoming w-75';
+                $template_data['div_class2'] = 'this-top d-flex';
+            } else {
+                // outgoing classes
+                $template_data['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+                $template_data['div_class2'] = 'this-top d-flex justify-content-end';
+            }
+
+            if (empty($message_main) || $message_main == ''|| is_null($message_main)) {   
+                $template_data['message'] = '<img src="'. $res['image'] . '">';
+            } else {
+                $template_data['message'] = $res['message'];
+            }
+
+            $time_zone = date_default_timezone_get();
+            $date = date('Y/m/d h:i:s', strtotime($res['created_date']));
+            $last_time_ago = time_elapsed_string($date, $time_zone);
+            $template_data['time_lapsed'] = $last_time_ago;
+
+            // var_dump($res);
+            // echo "<br/><br/>";
+
+            $messagesHTML .= $this->parser->parse('support/template-ticket', $template_data, TRUE);
+        }
+
+        // echo $messagesHTML;
+
+        $messagesData[0]['messages'] = $messagesHTML;
+        $messagesData = json_encode((array)$messagesData);
+        echo $messagesData;exit;
+        // print_r($messagesData);
+        // var_dump($messagesData[0]['messages']);
+
         exit;
     }//end
 
