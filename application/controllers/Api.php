@@ -34,7 +34,7 @@ class Api extends CI_Controller{
 				echo json_encode($data);
 			}
 			
-		}else{
+		} else{
 
 			http_response_code(400);
 			$data = new stdClass;
