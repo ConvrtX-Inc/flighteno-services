@@ -910,8 +910,10 @@
                             const profileData = data["profileData"][0];
                             console.log(data);
 
+                            const profileImage = (profileData["profile_image"])? profileData["profile_image"] : "https://ptetutorials.com/images/user-profile.png";
+
                             // display data
-                            userImageContainer.attr("src", profileData["profile_image"]);
+                            userImageContainer.attr("src", profileImage);
                             userNameContainer.html(profileData["full_name"]);
                             userEmailContainer.html(profileData["email_address"]);
                             orderNumberContainer.html(data["order_number"]);
@@ -926,12 +928,15 @@
                     });
                 });
 
-                const userID = <?=$id_user?>;
-                if (userID === 0) {
+                const userID = "<?=$id_user?>";
+                const ticketID = "<?=$id_ticket?>";
+                if (userID == 0 && ticketID == 0) {
                     // Select the first ticket by default
                     $(".tickets-list-user").first().click();
                 } else {
                     // Select the active ticket
+                    const activeTicket = $(".tickets-list-user[data-id='" + ticketID + "']");
+                    activeTicket.click();
                 }
             });
         </script>
