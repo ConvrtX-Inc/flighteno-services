@@ -2401,8 +2401,10 @@ class Rest_calls extends REST_Controller
 
                 $order_id = (string)$this->post('order_id');
                 $orderData = $this->Mod_order->getOrderDetails($order_id);
+                $userProfileData = $this->Mod_users->getUserProfileStatus($orderData['admin_id']);
                 $response_array = [
                     'data' => $orderData,
+                    'profile' => $userProfileData,
                     'status' => 'Successfully Fetched!',
                 ];
                 $this->set_response($response_array, REST_Controller::HTTP_CREATED);
