@@ -401,10 +401,10 @@
 
                                             <form id="reg" method="POST" enctype="multipart/form-data" action="<?php echo base_url();?>index.php/admin/Support/imageSendUpload">
                                                 <div class="this-icon">
-                                                    <label class="m-0" for="file-input"> 
+                                                    <label class="m-0" for="upload-image"> 
                                                         <img src="<?php echo SURL;?>assets/images/upload-img.png" >
                                                     </label> 
-                                                    <input class="d-none" id="file-input" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
+                                                    <input class="d-none" id="upload-image" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
                                                 </div>
                                             </form>
                                                 
@@ -509,10 +509,10 @@
 
                                             <form id="reg" method="POST" enctype="multipart/form-data" action="<?php echo base_url();?>index.php/admin/Support/imageSendUpload">
                                                 <div class="image-upload">
-                                                    <label for="file-input"class="positionStyle" > 
+                                                    <label for="upload-image"class="positionStyle" > 
                                                         <i class="fas fa-image"></i>
                                                     </label> 
-                                                    <input class="imageIcon" id="file-input" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
+                                                    <input class="imageIcon" id="upload-image" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
                                                 </div>
                                             </form>
                                                 
@@ -550,50 +550,6 @@
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
         <script>
-            
-
-            function fileUpload(form) {
-                var data = new FormData();
-                var files = $("#fileUploaded").get(0).files;
-                if (files.length > 0) {
-                    data.append("file", files[0]);
-                }
-                var Id = $('#ticketId').val();
-                data.append("ticketId", Id);
-
-                $.ajax({
-                    url: '<?php echo base_url();?>index.php/admin/Support/fileSendUpload',
-                    type: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: data,
-                    success: function (response) {
-                        $('#fileUploaded').val(''); 
-                        var file = '<div class="outgoing_msg">';
-                        file += '<div class="sent_msg">';
-
-                        file += '<a href="'+response+'" download>download</a>';
-                        // <iframe src="'+response+'" frameborder="0"  class="avatar-sm bx-shadow-mg"></iframe>
-                        file += '</a>';
-                        file += '<span class="time_date">'+ new Date() +'</span>';
-                        file += '</div>';
-                        file += '</div>';
-
-                        $('#messagesData').append(file);
-                        $('#messagesData').append(image);
-                    },
-                    error: function (er) {
-                        var image = '<div class="outgoing_msg">';
-                        image += '<div class="sent_msg">';
-                        image += '<img src="'+er+'" alt="" class="images avatar-sm bx-shadow-mg">';
-                        image += '<span class="time_date">'+ new Date() +'</span>';
-                        image += '</div>';
-                        image += '</div>';
-                        $('#messagesData').append(image);
-                    }
-                });        
-            };//end
-
             $(document).ready(function(){
                 $('.click').click(function(){
                     $("tr").removeClass('active_chat');
@@ -859,7 +815,7 @@
             function imageUpload(theForm) { 
                 const ticketMessagesHistoryContainer = $(".tickets-messages-history");
                 const ticketId = activeTicketId;
-                const files = $("#file-input").get(0).files;
+                const files = $("#upload-image").get(0).files;
                 let data = new FormData();
                 
                 // Prepare data
@@ -878,20 +834,63 @@
                     data: data,
                     success: function (response) {
                         // const res = JSON.parse(response)["upload_data"];
-                        // console.log(res)
-
+                        // console.log(res) 
                         console.log(response)
+                        
+                        $('#upload-image').val('');
                         ticketMessagesHistoryContainer.append(response);
                         scrollToLatest(ticketMessagesHistoryContainer);
                     },
                     error: function (er) {
                         console.log(er)
+                        if (er.status == 415)
+                            alert("The filetype you are attempting to upload is not allowed.");
                     }
                 });
             }
 
+            // Sending file function
+            function fileUpload(form) {
+                const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+                const ticketId = activeTicketId;
+                const files = $("#fileUploaded").get(0).files;
+                let data = new FormData();
+
+                // Prepare data
+                if (files.length > 0)
+                    data.append("file", files[0]);
+                data.append("ticketId", ticketId);
+                data.append("profileImage", userSession["profile_image"]);
+
+                console.log("sending file to " + activeTicketId + "...")
+
+                $.ajax({
+                    url: '<?php echo base_url();?>index.php/admin/Support/fileSendUpload',
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        // const res = JSON.parse(response)["upload_data"];
+                        // console.log(res) 
+                        console.log(response)
+                        
+                        $('#fileUploaded').val('');
+                        ticketMessagesHistoryContainer.append(response);
+                        scrollToLatest(ticketMessagesHistoryContainer);
+                    },
+                    error: function (er) {
+                        console.log(er)
+                        if (er.status == 415)
+                            alert("The filetype you are attempting to upload is not allowed.");
+                    }
+                });        
+            }
+
             function scrollToLatest(container) {
-                container.scrollTop(container.prop("scrollHeight") + 30);
+                setTimeout(() => {
+                    container.scrollTop(container.prop("scrollHeight") + 100);
+                }, 50);
             }
         </script>
     </body>

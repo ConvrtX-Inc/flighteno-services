@@ -608,6 +608,11 @@ body {
   color: #FFFFFF;
 }
 
+.tickets-messages-history .msg-outgoing .msg-container .msg-text a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .tickets-messages-textarea {
   width: 100%;
 }

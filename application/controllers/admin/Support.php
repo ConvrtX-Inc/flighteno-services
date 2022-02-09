@@ -603,8 +603,16 @@ class Support extends CI_Controller {
             }
 
             if (empty($message_main) || $message_main == ''|| is_null($message_main)) {   
-                $template_data['message'] = '<img src="'. $res['image'] . '">';
-                // $template_data['message'] = '<img src="'.SURL.'assets/uploads/'. $res['image'] . '">';
+                $url_image = $res['image'];
+                $url_file = $res['file'];
+
+                if (empty($url_file) || $url_file == ''|| is_null($url_file)) {
+                    $template_data['message'] = '<img src="'. $url_image . '">';
+                    // $template_data['message'] = '<img src="'.SURL.'assets/uploads/'. $res['image'] . '">';
+                } else {
+                    $file_extension = strtoupper(pathinfo($url_file, PATHINFO_EXTENSION));
+                    $template_data['message'] = '<a href="' . $url_file . '" download>Download ' . $file_extension . ' file.</a>';
+                }
             } else {
                 $template_data['message'] = nl2br($res['message']);
             }
@@ -649,7 +657,7 @@ class Support extends CI_Controller {
             'message'      =>  $message,
             'admin_id'     =>  $this->session->userdata('admin_id'),
             'status'       =>  'new',
-            'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+            'created_date' =>  $created_date,
         ];
         $db->ticket_reply->insertOne($tickerReply);
 
@@ -683,25 +691,30 @@ class Support extends CI_Controller {
 
 			if (!$this->upload->do_upload('image')) {
 				$error_file_arr = array('error' => $this->upload->display_errors());
-				return $error_file_arr;
+				// echo json_encode($error_file_arr);
+                echo http_response_code(415);
+                exit;
 			} else {
                 $data = array('upload_data' => $this->upload->data());
 			    // $imagePath = $data['upload_data']['full_path'];
                 // $imagePath = str_replace("/var/www/html/","http://3.120.159.133/", $imagePath);
                 $image_file_name = $data['upload_data']['file_name'];
                 $imagePath = SURL.'assets/uploads/'. $image_file_name;
+                $created_date = $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'));
+        
+                $time_zone = date_default_timezone_get();
+                $date = date('Y/m/d h:i:s', $created_date);
+                $last_time_ago = time_elapsed_string($date, $time_zone);
 
                 $tickerReply = [
                     'image'        =>  $imagePath,
                     'ticket_id'    =>  (string)$this->input->post('ticketId'),
                     'admin_id'     =>  $this->session->userdata('admin_id'),
                     'status'       =>  'new',
-                    'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                    'created_date' =>  $created_date,
                 ];
                 $db = $this->mongo_db->customQuery();
                 $db->ticket_reply->insertOne($tickerReply); 
-                
-                // print_r($imagePath);
 
                 // Generate html template
                 $ticketMainData = array();
@@ -712,7 +725,6 @@ class Support extends CI_Controller {
                 $ticketMainData['time_lapsed'] = $last_time_ago;
                 $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
 
-                // echo json_encode($data);
                 echo $messagesHTML;
 		        exit;
             }
@@ -720,15 +732,12 @@ class Support extends CI_Controller {
     }//end
     
     public function fileSendUpload(){
-
-
         if($_FILES['file']['name'] != '' && $this->input->post('ticketId') ){
-			
             $fileUploadPath = FCPATH.'assets/uploads/';
 			$orignal_file_name = $_FILES['file']['name'];
 
 			$config['upload_path']   = $fileUploadPath;
-			$config['allowed_types'] = 'pdf|doc|csv|ppt|docx|txt|tex';
+			$config['allowed_types'] = 'pdf|doc|csv|ppt|docx|txt';
 			$config['max_size']	     = '6000';
 			$config['overwrite']     = true;
             $config['encrypt_name']  =  TRUE;
@@ -736,29 +745,45 @@ class Support extends CI_Controller {
 			$this->load->library('upload', $config);
             $this->upload->initialize($config);
 
-			if(!$this->upload->do_upload('file')){
-				$error_file_arr = array('error' => $this->upload->display_errors());
-				return $error_file_arr;
-
-			}else{
-			
+			if (!$this->upload->do_upload('file')) {
+                $error_file_arr = array('error' => $this->upload->display_errors());
+				// echo json_encode($error_file_arr);
+                echo http_response_code(415);
+                exit;
+			} else {
                 $data = array('upload_data' => $this->upload->data());
-			    $filePathFinal = $data['upload_data']['full_path'];
-
-                $filePathFinal = str_replace("/var/www/html/", "http://3.120.159.133/", $filePathFinal);
-                print_r($filePathFinal);
+			    // $filePathFinal = $data['upload_data']['full_path'];
+                // $filePathFinal = str_replace("/var/www/html/", "http://3.120.159.133/", $filePathFinal);
+                $file_name = $data['upload_data']['file_name'];
+                $filePath = SURL.'assets/uploads/'. $file_name;
+                $created_date = $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'));
+        
+                $time_zone = date_default_timezone_get();
+                $date = date('Y/m/d h:i:s', $created_date);
+                $last_time_ago = time_elapsed_string($date, $time_zone);
 
                 $tickerReply = [
-                    'file'         =>  $filePathFinal,
+                    'file'         =>  $filePath,
                     'ticket_id'    =>  (string)$this->input->post('ticketId'),
                     'admin_id'     =>  $this->session->userdata('admin_id'),
                     'status'       =>  'new',
-                    'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                    'created_date' =>  $created_date,
                 ];
                 $db = $this->mongo_db->customQuery();
                 $db->ticket_reply->insertOne($tickerReply); 
 
-                return $filePathFinal;
+                // Generate html template
+                $file_extension = strtoupper(pathinfo($filePath, PATHINFO_EXTENSION));
+
+                $ticketMainData = array();
+                $ticketMainData['profile_image'] = $this->input->post('profileImage');
+                $ticketMainData['message'] = '<a href="' . $filePath . '" download>Download ' . $file_extension . ' file.</a>';
+                $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+                $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
+                $ticketMainData['time_lapsed'] = $last_time_ago;
+                $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+                echo $messagesHTML;
 		        exit;
             }
         }
