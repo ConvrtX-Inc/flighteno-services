@@ -2407,7 +2407,7 @@ class Rest_calls extends REST_Controller
                 $response_array = [
                     'data' => $orderData,
                     'profile' => $userProfileData,
-                    'order_history' => orderHistory,
+                    'order_history' => $orderHistory,
                     'status' => 'Successfully Fetched!',
                 ];
                 $this->set_response($response_array, REST_Controller::HTTP_CREATED);
