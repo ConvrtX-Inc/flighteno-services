@@ -575,6 +575,11 @@ body {
   font-weight: 500;
 }
 
+.tickets-messages-history .msg-container .msg-text img {
+  border-radius: 20px;
+  max-width: 100px;
+}
+
 .tickets-messages-history .msg-container .msg-time-elapsed {
   color: #09110E;
   font-size: 10px;

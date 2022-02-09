@@ -602,7 +602,8 @@ class Support extends CI_Controller {
             }
 
             if (empty($message_main) || $message_main == ''|| is_null($message_main)) {   
-                $template_data['message'] = '<img src="'. $res['image'] . '">';
+                // $template_data['message'] = '<img src="'. $res['image'] . '">';
+                $template_data['message'] = '<img src="'.SURL.'assets/uploads/'. $res['image'] . '">';
             } else {
                 $template_data['message'] = nl2br($res['message']);
             }
@@ -665,7 +666,6 @@ class Support extends CI_Controller {
     }//end message
 
     public function imageSendUpload(){
-
         if($_FILES['image']['name'] != '' && $this->input->post('ticketId') ){
 			$uploadImagePath = FCPATH.'assets/uploads/';
 
@@ -680,18 +680,17 @@ class Support extends CI_Controller {
 			$this->load->library('upload', $config);
             $this->upload->initialize($config);
 
-			if(!$this->upload->do_upload('image')){
+			if (!$this->upload->do_upload('image')) {
 				$error_file_arr = array('error' => $this->upload->display_errors());
 				return $error_file_arr;
-
-			}else{
-			
+			} else {
                 $data = array('upload_data' => $this->upload->data());
-			    $imagePath = $data['upload_data']['full_path'];
-                $imagePath = str_replace("/var/www/html/","http://3.120.159.133/", $imagePath);
-                print_r($imagePath);
+			    // $imagePath = $data['upload_data']['full_path'];
+                // $imagePath = str_replace("/var/www/html/","http://3.120.159.133/", $imagePath);
+                $image_file_name = $data['upload_data']['file_name'];
+
                 $tickerReply = [
-                    'image'        =>  $imagePath,
+                    'image'        =>  $image_file_name,
                     'ticket_id'    =>  (string)$this->input->post('ticketId'),
                     'admin_id'     =>  $this->session->userdata('admin_id'),
                     'status'       =>  'new',
@@ -699,8 +698,20 @@ class Support extends CI_Controller {
                 ];
                 $db = $this->mongo_db->customQuery();
                 $db->ticket_reply->insertOne($tickerReply); 
+                
+                // print_r($imagePath);
 
-                return $imagePath;
+                // Generate html template
+                $ticketMainData = array();
+                $ticketMainData['profile_image'] = $this->input->post('profileImage');
+                $ticketMainData['message'] = '<img src="'.SURL.'assets/uploads/'. $image_file_name . '">';
+                $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+                $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
+                $ticketMainData['time_lapsed'] = $last_time_ago;
+                $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+                // echo json_encode($data);
+                echo $messagesHTML;
 		        exit;
             }
         }

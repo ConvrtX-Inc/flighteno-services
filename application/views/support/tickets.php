@@ -550,43 +550,7 @@
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
         <script>
-            function imageUpload(theForm) { 
-                var data = new FormData();
-                var files = $("#file-input").get(0).files;
-                if (files.length > 0) {
-                    data.append("image", files[0]);
-                }
-                var Id = $('#ticketId').val();
-                data.append("ticketId", Id);
-                
-                $.ajax({
-                    url: '<?php echo base_url();?>index.php/admin/Support/imageSendUpload',
-                    type: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: data,
-                    success: function (response) {
-                        $('#file-input').val(''); 
-                        var image = '<div class="outgoing_msg">';
-                        image += '<div class="sent_msg">';                        
-                        image += '<a href="'+response+'" download><img src="'+response+'" width="100" height="104">';
-                        image += '</a>';
-                        image += '<span class="time_date">'+ new Date() +'</span>';
-                        image += '</div>';
-                        image += '</div>';
-                        $('#messagesData').append(image);
-                    },
-                    error: function (er) {
-                        var image = '<div class="outgoing_msg">';
-                        image += '<div class="sent_msg">';
-                        image += '<img src="'+er+'" alt="" class="images avatar-sm bx-shadow-mg">';
-                        image += '<span class="time_date">'+ new Date() +'</span>';
-                        image += '</div>';
-                        image += '</div>';
-                        $('#messagesData').append(image);
-                    }
-                });
-            }//end
+            
 
             function fileUpload(form) {
                 var data = new FormData();
@@ -820,12 +784,19 @@
             //     pickerPosition: "top"
             // });
 
+            // Active ticket
+            let activeTicketId = "";
+
+            <?php $userArray = $this->session->userdata('user_data'); ?>
+            const userSession = <?=json_encode($userArray)?>;
+          
+            // Admin profile placeholder
+            if (!userSession["profile_image"])
+                userSession["profile_image"] = "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg";
+
             $(document).ready(function(){
 
                 // $("#sendMessage").removeClass("form-control");
-
-                // Active ticket
-                let activeTicketId = "";
 
                 // Initialize message data containers
                 const userImageContainer = $(".user-info .this-image");
@@ -875,7 +846,7 @@
                             ticketMessagesContainer.removeClass("loading");
 
                             // scroll to latest message
-                            ticketMessagesHistoryContainer.scrollTop(ticketMessagesHistoryContainer.prop("scrollHeight"));
+                            scrollToLatest(ticketMessagesHistoryContainer);
                         }
                     });
                 });
@@ -896,7 +867,7 @@
                     e.preventDefault();
 
                     const textMessage = textMessageContainer.val();
-                    const profileImage = "http://localhost/flighteno-services/assets/images/male.png"; // change to current admin's profile image
+                    const profileImage = userSession["profile_image"];
 
                     // Text message error validation
                     if (!textMessage.trim()) {
@@ -914,11 +885,51 @@
                         'data': { ticketId : activeTicketId, sendMessage : textMessage, profileImage: profileImage },
                         'success': function (response) {
                             ticketMessagesHistoryContainer.append(response);
+                            scrollToLatest(ticketMessagesHistoryContainer);
                             textMessageContainer.val("");
                         }
                     });
                 });
             });
+
+            // Sending image function
+            function imageUpload(theForm) { 
+                const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+                const ticketId = activeTicketId;
+                const files = $("#file-input").get(0).files;
+                let data = new FormData();
+                
+                // Prepare data
+                if (files.length > 0)
+                    data.append("image", files[0]);
+                data.append("ticketId", ticketId);
+                data.append("profileImage", userSession["profile_image"]);
+
+                console.log("sending message to " + activeTicketId + "...")
+                
+                $.ajax({
+                    url: '<?php echo base_url();?>index.php/admin/Support/imageSendUpload',
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        // const res = JSON.parse(response)["upload_data"];
+                        // console.log(res)
+
+                        console.log(response)
+                        ticketMessagesHistoryContainer.append(response);
+                        scrollToLatest(ticketMessagesHistoryContainer);
+                    },
+                    error: function (er) {
+                        console.log(er)
+                    }
+                });
+            }
+
+            function scrollToLatest(container) {
+                container.scrollTop(container.prop("scrollHeight"));
+            }
         </script>
     </body>
 </html>
