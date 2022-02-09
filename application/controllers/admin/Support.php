@@ -633,16 +633,35 @@ class Support extends CI_Controller {
         $this->Mod_login->is_user_login();
         $db = $this->mongo_db->customQuery();
 
+        $ticket_id = (string)$this->input->post('ticketId');
+        $message = (string)$this->input->post('sendMessage');
+        $created_date = $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'));
+
+        $time_zone = date_default_timezone_get();
+        $date = date('Y/m/d h:i:s', $created_date);
+        $last_time_ago = time_elapsed_string($date, $time_zone);
+
+        // Save new reply
         $tickerReply = [
-            'ticket_id'    =>  (string)$this->input->post('ticketId'),
-            'message'      =>  (string)$this->input->post('sendMessage'),
+            'ticket_id'    =>  $ticket_id,
+            'message'      =>  $message,
             'admin_id'     =>  $this->session->userdata('admin_id'),
             'status'       =>  'new',
             'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
         ];
-        $db = $this->mongo_db->customQuery();
-        $db->ticket_reply->insertOne($tickerReply); 
-        return true;
+        $db->ticket_reply->insertOne($tickerReply);
+
+        // Generate html template
+        $ticketMainData = array();
+        $ticketMainData['profile_image'] = $this->input->post('profileImage');
+        $ticketMainData['message'] = nl2br($message);
+        $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+        $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
+        $ticketMainData['time_lapsed'] = $last_time_ago;
+        $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+        echo $messagesHTML;
+        exit;
     }//end message
 
     public function imageSendUpload(){

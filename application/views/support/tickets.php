@@ -357,7 +357,7 @@
                             </div>
 
                             <div class="col-lg-7 col-xxl-8">
-                                <div class="tickets-messages d-flex flex-column">
+                                <div class="tickets-messages d-flex flex-column loading">
                                     <div class="tickets-messages-info">
                                         <div class="this-top d-flex align-items-center">
                                             <div class="user-info d-flex flex-fill align-items-center">
@@ -380,69 +380,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="tickets-messages-history flex-fill">
-                                    <!--
-                                        <div class="msg msg-incoming w-75">
-                                            <div class="this-top d-flex">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
-                                                <div class="msg-container">
-                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="msg msg-outgoing w-75 ml-auto">
-                                            <div class="this-top d-flex justify-content-end">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
-                                                <div class="msg-container">
-                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text.</p>
-                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="msg msg-outgoing w-75 ml-auto">
-                                            <div class="this-top d-flex justify-content-end">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
-                                                <div class="msg-container">
-                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</p>
-                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="msg msg-incoming w-75">
-                                            <div class="this-top d-flex">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
-                                                <div class="msg-container">
-                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text.</p>
-                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="msg msg-outgoing w-75 ml-auto">
-                                            <div class="this-top d-flex justify-content-end">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
-                                                <div class="msg-container">
-                                                    <p class="msg-text m-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</p>
-                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="msg msg-outgoing w-75 ml-auto">
-                                            <div class="this-top d-flex justify-content-end">
-                                                <img src="https://ptetutorials.com/images/user-profile.png" class="msg-profile rounded-circle align-self-end">
-                                                <div class="msg-container">
-                                                    <p class="msg-text m-0">Lorem Ipsum.</p>
-                                                    <p class="msg-time-elapsed m-0">10 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    -->
-                                    </div>
+                                    <div class="tickets-messages-history flex-fill"></div>
 
                                     <div class="tickets-messages-textarea align-self-end">
                                         <div class="tickets-messages-textarea-container d-flex align-items-center">
@@ -886,6 +824,9 @@
 
                 // $("#sendMessage").removeClass("form-control");
 
+                // Active ticket
+                let activeTicketId = "";
+
                 // Initialize message data containers
                 const userImageContainer = $(".user-info .this-image");
                 const userNameContainer = $(".user-info .this-user");
@@ -894,13 +835,15 @@
                 const subjectContainer = $(".this-subject");
                 const ticketMessagesContainer = $(".tickets-messages");
                 const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+                const textMessageContainer = $("#text-msg");
 
+                // Loading selected ticket data
                 $(".tickets-list").on("click", ".tickets-list-user", function() {
                     const activeTicket = $(this);
-                    const ticketId = activeTicket.data("id");
+                    activeTicketId = activeTicket.data("id");
                     const userId = activeTicket.data("user-id");
                     const profileStatus = "<?=$profile_status?>";
-                    const newUrl = "<?=SURL?>admin/Support/" + profileStatus + "/tickets/" + userId + "/" + ticketId;
+                    const newUrl = "<?=SURL?>admin/Support/" + profileStatus + "/tickets/" + userId + "/" + activeTicketId;
 
                     // replace url
                     window.history.replaceState(null, null, newUrl);
@@ -913,7 +856,7 @@
                     $.ajax({
                         'url': '<?=base_url()?>index.php/admin/Support/getMessages',
                         'type': 'POST',
-                        'data': { ticketId : ticketId },
+                        'data': { ticketId : activeTicketId },
                         'success': function (response) {
                             const data =  JSON.parse(response)[0];
                             const profileData = data["profileData"][0];
@@ -947,6 +890,34 @@
                     const activeTicket = $(".tickets-list-user[data-id='" + ticketID + "']");
                     activeTicket.click();
                 }
+
+                // Sending message function
+                $("#btn-send").on("click", function(e) {
+                    e.preventDefault();
+
+                    const textMessage = textMessageContainer.val();
+                    const profileImage = "http://localhost/flighteno-services/assets/images/male.png"; // change to current admin's profile image
+
+                    // Text message error validation
+                    if (!textMessage.trim()) {
+                        alert("Please input your message.");
+                        textMessageContainer.val("");
+                        textMessageContainer.focus();
+                        return;
+                    }
+
+                    console.log("sending message to " + activeTicketId + "...")
+
+                    $.ajax({
+                        'url': '<?php echo base_url();?>index.php/admin/Support/sendMessage',
+                        'type': 'POST',
+                        'data': { ticketId : activeTicketId, sendMessage : textMessage, profileImage: profileImage },
+                        'success': function (response) {
+                            ticketMessagesHistoryContainer.append(response);
+                            textMessageContainer.val("");
+                        }
+                    });
+                });
             });
         </script>
     </body>
