@@ -882,5 +882,14 @@ class Mod_order extends CI_Model {
       }
     }
   }//end
+
+  public function getOrderNotificationHistory($order_id) {
+
+    $db   =  $this->mongo_db->customQuery();
+    $history =  $db->notifications->find(['order_id' => $order_id]);
+    $getData   =  iterator_to_array($history);
+
+    return $getData;
+  }
 }
 
