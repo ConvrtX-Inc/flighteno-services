@@ -343,7 +343,7 @@
                                                 <h6 class="this-time mt-0"><?=$last_time_ago?></h6>
                                                 <?php
                                                 if ($unreadMessageCount != 0) { ?>
-                                                    <span class="this-unread"><?=$unreadMessageCount?></span>
+                                                    <!-- <span class="this-unread"><?=$unreadMessageCount?></span> -->
                                                 <?php
                                                 } ?>
                                             </div>
@@ -728,43 +728,6 @@
                     });
                 })
             });
-            $(document).ready(function() {
-                $('.msg_send_btn').click(function() {
-                    let ticketId    = $('#ticketId').val();
-                    let sendMessage = $('#sendMessage').val();
-                    var addMessage = '';
-                    if(sendMessage){  
-                        $.ajax({
-                            'url': '<?php echo base_url();?>index.php/admin/Support/sendMessage',
-                            'type': 'POST',
-                            'data': {ticketId : ticketId, sendMessage : sendMessage},
-                            'success': function (response) {
-                                $('#sendMessage').val('');
-                                $('#pstyleCountager span').remove();
-
-                                addMessage += '<div class="outgoing_msg">';
-                                addMessage += '<div class="sent_msg">';
-                                addMessage += '<p style="border-radius: 25px; border: 2px solid #e9ecef; background-color:#F18BB1;">'+sendMessage+'</p>';
-                                addMessage += '<span class="time_date">'+ new Date() +'</span>';
-                                addMessage += '</div>';
-                                addMessage += '</div>';
-
-                                // addMessage += '<div class="outgoing_msg">';
-                                // addMessage += ' <div class="sent_msg" style="display:flex">';
-                                // addMessage += '<div style="width:14%;"> <img src="https://ptetutorials.com/images/user-profile.png" alt=""> </div> ';
-                                // addMessage += '<div style="margin-left: 3%">';
-                                // addMessage += '<p style="border-radius: 25px; border: 2px solid #e9ecef; background-color:#F18BB1;">'+sendMessage+'</p>';
-                                // addMessage += '<span class="time_date">'+new Date()+'</span>';
-                                // addMessage += '</div>';
-                                // addMessage += '</div>';
-                                // addMessage += '</div>';
-
-                                $('#messagesData').append(addMessage);
-                            }
-                        });
-                    }
-                });
-            });
         </script>
         <!-- Datatable js -->
         <script src="<?php echo SURL;?>assets/libs/datatables/jquery.dataTables.min.js"></script>
@@ -809,7 +772,7 @@
                 const textMessageContainer = $("#text-msg");
 
                 // Loading selected ticket data
-                $(".tickets-list").on("click", ".tickets-list-user", function() {
+                $(".tickets-list").on("click", ".tickets-list-user:not(.active)", function() {
                     const activeTicket = $(this);
                     activeTicketId = activeTicket.data("id");
                     const userId = activeTicket.data("user-id");
@@ -928,7 +891,7 @@
             }
 
             function scrollToLatest(container) {
-                container.scrollTop(container.prop("scrollHeight"));
+                container.scrollTop(container.prop("scrollHeight") + 30);
             }
         </script>
     </body>
