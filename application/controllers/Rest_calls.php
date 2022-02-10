@@ -1657,7 +1657,7 @@ class Rest_calls extends REST_Controller
                 $admin_id = (string)$this->post('admin_id');
                 $orders = $this->Mod_order->getRecentOrders($admin_id);
                 $userProfileData = $this->Mod_users->getUserProfileStatus($admin_id);
-                $orderHistory = $this->Mod_users->getRecentOrderNotificationHistory($admin_id);
+                $orderHistory = $this->Mod_order->getRecentOrderNotificationHistory($admin_id);
 
                 $response_array['status'] = 'Data Fetched!';
                 $response_array['orders'] = $orders;
