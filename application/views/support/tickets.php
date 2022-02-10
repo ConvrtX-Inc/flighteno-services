@@ -416,7 +416,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <!--
                             <p class="mt-5 mb-5">end ....</p>
 
                             <div class="messaging ">
@@ -522,7 +522,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>                                    
+                            </div>         
+                            -->                           
                         </div>
                     </div> <!-- container -->
                 </div> <!-- content -->
@@ -607,7 +608,7 @@
                                 htmlDesign += '<div class="incoming_msg">';
                                 htmlDesign += '<div class="received_msg">';
                                 htmlDesign += '<div class="received_withd_msg">';
-                                htmlDesign +='<video width="125px" height="125px" controls><source src="'+ videos['0'] +'" ></video>';
+                                htmlDesign +='<video controls><source src="'+ videos['0'] +'" ></video>';
                                 htmlDesign += '</div>';
                                 htmlDesign += '</div>';
                                 htmlDesign += '</div>';
@@ -761,11 +762,10 @@
                             orderNumberContainer.html(data["order_number"]);
                             subjectContainer.html(data["subject"]);
                             ticketMessagesHistoryContainer.html(data["messages"]);
-                            
-                            ticketMessagesContainer.removeClass("loading");
 
                             // scroll to latest message
                             scrollToLatest(ticketMessagesHistoryContainer);
+                            ticketMessagesContainer.removeClass("loading");
                         }
                     });
                 });
@@ -889,7 +889,7 @@
 
             function scrollToLatest(container) {
                 setTimeout(() => {
-                    container.scrollTop(container.prop("scrollHeight") + 100);
+                    container.scrollTop(container.prop("scrollHeight") + 1000);
                 }, 50);
             }
         </script>

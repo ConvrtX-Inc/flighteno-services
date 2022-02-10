@@ -557,7 +557,6 @@ class Support extends CI_Controller {
 
         $messagesHTML = '';
         $ticketMainData = array();
-        $ticketMainData['message'] = $messagesData[0]['message'];
         $ticketMainData['div_class1'] = 'msg msg-incoming w-75';
         $ticketMainData['div_class2'] = 'this-top d-flex';
 
@@ -573,7 +572,21 @@ class Support extends CI_Controller {
         $last_time_ago = time_elapsed_string($date, $time_zone);
         $ticketMainData['time_lapsed'] = $last_time_ago;
 
-        // first message
+        $first_image = $messagesData[0]['image'][0];
+        $first_video = $messagesData[0]['video'][0];
+        $first_message = $messagesData[0]['message'];
+
+        if (!empty($first_image)) {
+            $ticketMainData['message'] = '<img src="'. $first_image . '">';
+            $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+        }
+
+        if (!empty($first_video)) {
+            $ticketMainData['message'] = '<video controls><source src="'. $first_video . '" ></video>';
+            $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+        }
+
+        $ticketMainData['message'] = $first_message;
         $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
 
         $ticket_creator_id = $messagesData[0]['admin_id'];

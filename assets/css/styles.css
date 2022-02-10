@@ -579,7 +579,12 @@ body {
 .tickets-messages-history .msg-container .msg-text img {
   background: #FFFFFF;
   border-radius: 10px;
-  max-width: 100px;
+  max-width: 150px;
+}
+
+.tickets-messages-history .msg-container .msg-text video {
+  width: 150px;
+  height: 150px;
 }
 
 .tickets-messages-history .msg-container .msg-time-elapsed {
