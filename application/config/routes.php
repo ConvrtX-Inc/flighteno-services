@@ -53,6 +53,7 @@ $route['default_controller'] = 'admin/Login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+$route['admin'] = 'admin/Login';
 $route['admin/Support/buyer'] = 'admin/Support/index';
 $route['admin/Support/(:any)/tickets'] = 'admin/Support/tickets/$1';
 $route['admin/Support/(:any)/tickets/(:any)'] = 'admin/Support/tickets/$1/$2';
