@@ -577,7 +577,7 @@ class Support extends CI_Controller {
         $first_message = $messagesData[0]['message'];
 
         if (!empty($first_image)) {
-            $ticketMainData['message'] = '<img src="'. $first_image . '">';
+            $ticketMainData['message'] = '<img src="'. $first_image . '"><a class="link-download" href="'. $first_image .'" target="_blank"><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
             $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
         }
 
@@ -620,7 +620,7 @@ class Support extends CI_Controller {
                 $url_file = $res['file'];
 
                 if (empty($url_file) || $url_file == ''|| is_null($url_file)) {
-                    $template_data['message'] = '<img src="'. $url_image . '">';
+                    $template_data['message'] = '<img src="'. $url_image . '"><a class="link-download" href="'. $url_image .'" download><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
                     // $template_data['message'] = '<img src="'.SURL.'assets/uploads/'. $res['image'] . '">';
                 } else {
                     $file_extension = strtoupper(pathinfo($url_file, PATHINFO_EXTENSION));
@@ -732,7 +732,7 @@ class Support extends CI_Controller {
                 // Generate html template
                 $ticketMainData = array();
                 $ticketMainData['profile_image'] = $this->input->post('profileImage');
-                $ticketMainData['message'] = '<img src="'.$imagePath.'">';
+                $ticketMainData['message'] = '<img src="'.$imagePath.'"><a class="link-download" href="'. $imagePath .'" download><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
                 $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
                 $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
                 $ticketMainData['time_lapsed'] = $last_time_ago;
