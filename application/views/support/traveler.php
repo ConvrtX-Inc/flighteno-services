@@ -156,8 +156,14 @@
                                         <th class="table-col-small"></th>
                                     </tr>
                                     <?php foreach ($traveler_res as $key=>$value){ ?>
+                                    <?php
+                                        $this_ticket_id = $value['_id'];
+                                        $this_user_id = json_decode(json_encode($value["profileData"]))[0]->_id;
+                                        $chat_url = base_url().'index.php/admin/Support/traveler/tickets/'.$this_user_id.'/'.$this_ticket_id;
+                                        $disable_url = '';
+                                    ?>
                                     <tr>
-                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td><input type="checkbox" data-id="<?=$this_ticket_id?>" data-userid="<?=$this_user_id?>" id="check<?=$this_ticket_id?>"/><label for="check<?=$this_ticket_id?>"></label></td>
                                         <td> 
                                             <center>
                                                 <?php $profile_image = json_decode(json_encode($value["profileData"]))[0]->profile_image; ?>
@@ -178,8 +184,8 @@
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
-                                                <p><a class="option-chat" href="#">Chat User</a></p>
-                                                <p><a class="option-disable" href="#">Disable User</a></p>
+                                                <p><a class="option-chat" href="<?=$chat_url?>" target="_blank">Chat User</a></p>
+                                                <p><a class="option-disable" href="<?=$disable_url?>">Disable User</a></p>
                                             </div>
                                         </td>
                                     </tr>
