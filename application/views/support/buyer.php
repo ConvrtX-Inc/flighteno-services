@@ -160,7 +160,6 @@
                                         $this_ticket_id = $value['_id'];
                                         $this_user_id = json_decode(json_encode($value["profileData"]))[0]->_id;
                                         $chat_url = base_url().'index.php/admin/Support/buyer/tickets/'.$this_user_id.'/'.$this_ticket_id;
-                                        $disable_url = base_url().'index.php/admin/Users/disable_user/'.$this_user_id;
                                     ?>
                                     <tr>
                                         <td class="checkbox-col"><input type="checkbox" data-id="<?=$this_ticket_id?>" data-userid="<?=$this_user_id?>" id="check<?=$this_ticket_id?>"/><label for="check<?=$this_ticket_id?>"></label></td>
