@@ -426,15 +426,16 @@ body {
 
 .tickets-list-user.active {
   background: #EEEEEE;
+  cursor: default;
 }
 
 .tickets-list-user .tickets-list-user-right {
   width: 22% !important;
 }
 
-.tickets-list-user .tickets-list-user-middle {
-  /* width: 60% !important; */
-}
+/* .tickets-list-user .tickets-list-user-middle {
+  width: 60% !important;
+} */
 
 .tickets-list-user .tickets-list-user-left {
   padding-right: 12px;
@@ -515,6 +516,9 @@ body {
 
 .tickets-messages-info .this-top .order-info p {
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tickets-messages-info .this-top .user-info .this-left {
@@ -539,7 +543,7 @@ body {
 }
 
 .tickets-messages-history {
-  padding: 30px;
+  padding: 30px 30px 0;
   overflow-y: scroll;
 }
 
@@ -572,6 +576,30 @@ body {
   font-weight: 500;
 }
 
+.tickets-messages-history .msg-container .msg-text img {
+  background: #FFFFFF;
+  border-radius: 10px;
+  max-width: 150px;
+}
+
+.tickets-messages-history .msg-container .msg-text video {
+  width: 150px;
+  height: 150px;
+}
+
+.tickets-messages-history .msg-container .msg-text .link-download {
+  margin-left: 5px;
+}
+
+.tickets-messages-history .msg-container .msg-text .link-download img {
+  background: none;
+  border-radius: 0;
+}
+
+.tickets-messages-history .msg-outgoing .msg-container .msg-text .link-download img {
+  filter: brightness(0) invert(1);
+}
+
 .tickets-messages-history .msg-container .msg-time-elapsed {
   color: #09110E;
   font-size: 10px;
@@ -596,6 +624,11 @@ body {
 
 .tickets-messages-history .msg-outgoing .msg-container .msg-text {
   color: #FFFFFF;
+}
+
+.tickets-messages-history .msg-outgoing .msg-container .msg-text a {
+  color: #ffffff;
+  text-decoration: underline;
 }
 
 .tickets-messages-textarea {

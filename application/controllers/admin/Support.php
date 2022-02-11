@@ -258,7 +258,7 @@ class Support extends CI_Controller {
         $this->load->view('support/traveler', $data);
     }//end
 
-    public function tickets($profile_status, $id_user = 0){
+    public function tickets($profile_status, $id_user = 0, $id_ticket = 0){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
 
@@ -274,6 +274,7 @@ class Support extends CI_Controller {
 
         $data['profile_status'] = $profile_status;
         $data['id_user'] = $id_user;
+        $data['id_ticket'] = $id_ticket;
         $totalTickets  =  $db->ticket->count($search);
 
         $config['base_url']         =   SURL . 'index.php/admin/Support/tickets';
@@ -330,36 +331,36 @@ class Support extends CI_Controller {
                     'created_date'  =>  '$created_date'
                 ]
             ],
-            // [
-            //     '$lookup' => [
-            //         'from' => 'ticket_reply',
-            //         'let' => [
-            //             'ticketId' =>  '$_id',
-            //         ],
-            //         'pipeline' => [
-            //             [
-            //             '$match' => [
-            //                 '$expr' => [
-            //                     '$eq' => [
-            //                         '$ticket_id',
-            //                         '$$ticketId'
-            //                     ]
-            //                 ],
-            //                 'status' => 'new'
-            //             ],
-            //         ],
+            [
+                '$lookup' => [
+                    'from' => 'ticket_reply',
+                    'let' => [
+                        'ticketId' =>  '$_id',
+                    ],
+                    'pipeline' => [
+                        [
+                        '$match' => [
+                            '$expr' => [
+                                '$eq' => [
+                                    '$ticket_id',
+                                    '$$ticketId'
+                                ]
+                            ],
+                            'status' => 'new'
+                        ],
+                    ],
                     
-            //         [
-            //             '$group' => [
-            //                 '_id'    =>  '$ticket_id',
-            //                 'count'  =>  ['$sum' => 1] 
+                    [
+                        '$group' => [
+                            '_id'    =>  '$ticket_id',
+                            'count'  =>  ['$sum' => 1] 
                             
-            //             ]
-            //         ]
-            //     ],
-            //     'as' => 'unreadMessageCount'
-            //     ]
-            // ],
+                        ]
+                    ]
+                ],
+                'as' => 'unreadMessageCount'
+                ]
+            ],
 
             [
                 '$lookup' => [
@@ -406,6 +407,10 @@ class Support extends CI_Controller {
         $tickets    = $db->ticket->aggregate($getTickets);
         $ticketData = iterator_to_array($tickets);
         $data['tickets'] = $ticketData;
+
+        // var_dump($data['tickets'][0]["unreadMessageCount"][0]['count']);
+        // exit();
+
         $this->load->view('support/tickets', $data);
     }//end
     
@@ -413,6 +418,7 @@ class Support extends CI_Controller {
         $this->Mod_login->is_user_login();
         $db = $this->mongo_db->customQuery();
         $ticketId  =  (string)$this->input->post('ticketId');
+        // $ticketId = "61f5306f8da54f6b6833a17a";
         // $db->ticket_reply->updateMany(['ticket_id' => $ticketId, 'status' => "new" ], ['$set' => ['status' => 'read']]);
         $getMessages = [
             [
@@ -431,7 +437,8 @@ class Support extends CI_Controller {
                     'order_number'  =>  '$order_number',
                     'subject'       =>  '$subject',
                     'message'       =>  '$message',
-                    'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                    // 'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                    'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y/%m/%d %H:%M:%S", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
                     'status'        =>  '$status',
                 ]
             ],
@@ -491,7 +498,8 @@ class Support extends CI_Controller {
                             'ticket_id'     =>  '$ticket_id',
                             'admin_id'      =>  '$admin_id',
                             'message'       =>  '$message',
-                            'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                            // 'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y:%m:%d:%H:%M:%S:%L%z", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
+                            'created_date'  =>  [ '$dateToString' => [ 'format' => "%Y/%m/%d %H:%M:%S", 'date' => '$created_date', 'timezone' => "America/New_York"] ],
                             'status'        =>  '$status',
                             'file'          =>  '$file',
                             'image'         =>  '$image',
@@ -542,9 +550,105 @@ class Support extends CI_Controller {
 
         $messages     = $db->ticket->aggregate($getMessages);
         $messagesData = iterator_to_array($messages);
-        $messagesData = json_encode((array)$messagesData);
-        echo $messagesData;
+        // $messagesData = json_encode((array)$messagesData);
+        // echo $messagesData;exit;
         // print_r($messagesData);
+        // var_dump($messagesData[0]['messages']);
+
+        $messagesHTML = '';
+        $ticketMainData = array();
+        $ticketMainData['div_class1'] = 'msg msg-incoming w-75';
+        $ticketMainData['div_class2'] = 'this-top d-flex';
+
+        $ticketCreatorImage = $messagesData[0]['profileData'][0]['profile_image'];
+        if (empty($ticketCreatorImage)) {
+            $ticketMainData['profile_image'] = "https://ptetutorials.com/images/user-profile.png";
+        } else {
+            $ticketMainData['profile_image'] = $ticketCreatorImage;
+        }
+
+        $time_zone = date_default_timezone_get();
+        $date = date('Y/m/d h:i:s', strtotime($messagesData[0]['created_date']));
+        $last_time_ago = time_elapsed_string($date, $time_zone);
+        $ticketMainData['time_lapsed'] = $last_time_ago;
+
+        $first_image = $messagesData[0]['image'][0];
+        $first_video = $messagesData[0]['video'][0];
+        $first_message = $messagesData[0]['message'];
+
+        if (!empty($first_image)) {
+            $ticketMainData['message'] = '<img src="'. $first_image . '"><a class="link-download" href="'. $first_image .'" target="_blank"><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
+            $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+        }
+
+        if (!empty($first_video)) {
+            $ticketMainData['message'] = '<video controls><source src="'. $first_video . '" ></video>';
+            $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+        }
+
+        $ticketMainData['message'] = $first_message;
+        $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+        $ticket_creator_id = $messagesData[0]['admin_id'];
+
+        // loop data and create string template of messages
+        foreach ($messagesData[0]['messages'] as $res) {
+            $template_data = array();
+            $user_id = $res['userData'][0]['_id'];
+            $profile_image = $res['userData'][0]['profile_image'];
+            $message_main = $res['message'];
+
+            if (empty($profile_image) || $profile_image == ''|| is_null($profile_image)) {                               
+                // $template_data['profile_image'] = SURL.'assets/images/male.png';
+                $template_data['profile_image'] = 'https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg';
+            } else {
+                $template_data['profile_image'] = $profile_image;
+            }
+
+            if ($ticket_creator_id == $user_id) {
+                // incoming classes
+                $template_data['div_class1'] = 'msg msg-incoming w-75';
+                $template_data['div_class2'] = 'this-top d-flex';
+            } else {
+                // outgoing classes
+                $template_data['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+                $template_data['div_class2'] = 'this-top d-flex justify-content-end';
+            }
+
+            if (empty($message_main) || $message_main == ''|| is_null($message_main)) {   
+                $url_image = $res['image'];
+                $url_file = $res['file'];
+
+                if (empty($url_file) || $url_file == ''|| is_null($url_file)) {
+                    $template_data['message'] = '<img src="'. $url_image . '"><a class="link-download" href="'. $url_image .'" download><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
+                    // $template_data['message'] = '<img src="'.SURL.'assets/uploads/'. $res['image'] . '">';
+                } else {
+                    $file_extension = strtoupper(pathinfo($url_file, PATHINFO_EXTENSION));
+                    $template_data['message'] = '<a href="' . $url_file . '" download>Download ' . $file_extension . ' file.</a>';
+                }
+            } else {
+                $template_data['message'] = nl2br($res['message']);
+            }
+
+            $time_zone = date_default_timezone_get();
+            $date = date('Y/m/d h:i:s', strtotime($res['created_date']));
+            $last_time_ago = time_elapsed_string($date, $time_zone);
+            $template_data['time_lapsed'] = $last_time_ago;
+
+            // var_dump($res);
+            // echo "<br/><br/>";
+
+            $messagesHTML .= $this->parser->parse('support/template-ticket', $template_data, TRUE);
+        }
+
+        // echo $messagesHTML;
+
+        $messagesData[0]['messages'] = $messagesHTML;
+        $messagesData = json_encode((array)$messagesData);
+        echo $messagesData;exit;
+        // print_r($messagesData);
+        // var_dump($messagesData[0]['messages']);
+
         exit;
     }//end
 
@@ -552,20 +656,38 @@ class Support extends CI_Controller {
         $this->Mod_login->is_user_login();
         $db = $this->mongo_db->customQuery();
 
+        $ticket_id = (string)$this->input->post('ticketId');
+        $message = (string)$this->input->post('sendMessage');
+        $created_date = $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'));
+
+        $time_zone = date_default_timezone_get();
+        $date = date('Y/m/d h:i:s', $created_date);
+        $last_time_ago = time_elapsed_string($date, $time_zone);
+
+        // Save new reply
         $tickerReply = [
-            'ticket_id'    =>  (string)$this->input->post('ticketId'),
-            'message'      =>  (string)$this->input->post('sendMessage'),
+            'ticket_id'    =>  $ticket_id,
+            'message'      =>  $message,
             'admin_id'     =>  $this->session->userdata('admin_id'),
             'status'       =>  'new',
-            'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+            'created_date' =>  $created_date,
         ];
-        $db = $this->mongo_db->customQuery();
-        $db->ticket_reply->insertOne($tickerReply); 
-        return true;
+        $db->ticket_reply->insertOne($tickerReply);
+
+        // Generate html template
+        $ticketMainData = array();
+        $ticketMainData['profile_image'] = $this->input->post('profileImage');
+        $ticketMainData['message'] = nl2br($message);
+        $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+        $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
+        $ticketMainData['time_lapsed'] = $last_time_ago;
+        $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+        echo $messagesHTML;
+        exit;
     }//end message
 
     public function imageSendUpload(){
-
         if($_FILES['image']['name'] != '' && $this->input->post('ticketId') ){
 			$uploadImagePath = FCPATH.'assets/uploads/';
 
@@ -580,42 +702,55 @@ class Support extends CI_Controller {
 			$this->load->library('upload', $config);
             $this->upload->initialize($config);
 
-			if(!$this->upload->do_upload('image')){
+			if (!$this->upload->do_upload('image')) {
 				$error_file_arr = array('error' => $this->upload->display_errors());
-				return $error_file_arr;
-
-			}else{
-			
+				// echo json_encode($error_file_arr);
+                echo http_response_code(415);
+                exit;
+			} else {
                 $data = array('upload_data' => $this->upload->data());
-			    $imagePath = $data['upload_data']['full_path'];
-                $imagePath = str_replace("/var/www/html/","http://3.120.159.133/", $imagePath);
-                print_r($imagePath);
+			    // $imagePath = $data['upload_data']['full_path'];
+                // $imagePath = str_replace("/var/www/html/","http://3.120.159.133/", $imagePath);
+                $image_file_name = $data['upload_data']['file_name'];
+                $imagePath = SURL.'assets/uploads/'. $image_file_name;
+                $created_date = $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'));
+        
+                $time_zone = date_default_timezone_get();
+                $date = date('Y/m/d h:i:s', $created_date);
+                $last_time_ago = time_elapsed_string($date, $time_zone);
+
                 $tickerReply = [
                     'image'        =>  $imagePath,
                     'ticket_id'    =>  (string)$this->input->post('ticketId'),
                     'admin_id'     =>  $this->session->userdata('admin_id'),
                     'status'       =>  'new',
-                    'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                    'created_date' =>  $created_date,
                 ];
                 $db = $this->mongo_db->customQuery();
                 $db->ticket_reply->insertOne($tickerReply); 
 
-                return $imagePath;
+                // Generate html template
+                $ticketMainData = array();
+                $ticketMainData['profile_image'] = $this->input->post('profileImage');
+                $ticketMainData['message'] = '<img src="'.$imagePath.'"><a class="link-download" href="'. $imagePath .'" download><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
+                $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+                $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
+                $ticketMainData['time_lapsed'] = $last_time_ago;
+                $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+                echo $messagesHTML;
 		        exit;
             }
         }
     }//end
     
     public function fileSendUpload(){
-
-
         if($_FILES['file']['name'] != '' && $this->input->post('ticketId') ){
-			
             $fileUploadPath = FCPATH.'assets/uploads/';
 			$orignal_file_name = $_FILES['file']['name'];
 
 			$config['upload_path']   = $fileUploadPath;
-			$config['allowed_types'] = 'pdf|doc|csv|ppt|docx|txt|tex';
+			$config['allowed_types'] = 'pdf|doc|csv|ppt|docx|txt';
 			$config['max_size']	     = '6000';
 			$config['overwrite']     = true;
             $config['encrypt_name']  =  TRUE;
@@ -623,29 +758,45 @@ class Support extends CI_Controller {
 			$this->load->library('upload', $config);
             $this->upload->initialize($config);
 
-			if(!$this->upload->do_upload('file')){
-				$error_file_arr = array('error' => $this->upload->display_errors());
-				return $error_file_arr;
-
-			}else{
-			
+			if (!$this->upload->do_upload('file')) {
+                $error_file_arr = array('error' => $this->upload->display_errors());
+				// echo json_encode($error_file_arr);
+                echo http_response_code(415);
+                exit;
+			} else {
                 $data = array('upload_data' => $this->upload->data());
-			    $filePathFinal = $data['upload_data']['full_path'];
-
-                $filePathFinal = str_replace("/var/www/html/", "http://3.120.159.133/", $filePathFinal);
-                print_r($filePathFinal);
+			    // $filePathFinal = $data['upload_data']['full_path'];
+                // $filePathFinal = str_replace("/var/www/html/", "http://3.120.159.133/", $filePathFinal);
+                $file_name = $data['upload_data']['file_name'];
+                $filePath = SURL.'assets/uploads/'. $file_name;
+                $created_date = $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'));
+        
+                $time_zone = date_default_timezone_get();
+                $date = date('Y/m/d h:i:s', $created_date);
+                $last_time_ago = time_elapsed_string($date, $time_zone);
 
                 $tickerReply = [
-                    'file'         =>  $filePathFinal,
+                    'file'         =>  $filePath,
                     'ticket_id'    =>  (string)$this->input->post('ticketId'),
                     'admin_id'     =>  $this->session->userdata('admin_id'),
                     'status'       =>  'new',
-                    'created_date' =>  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                    'created_date' =>  $created_date,
                 ];
                 $db = $this->mongo_db->customQuery();
                 $db->ticket_reply->insertOne($tickerReply); 
 
-                return $filePathFinal;
+                // Generate html template
+                $file_extension = strtoupper(pathinfo($filePath, PATHINFO_EXTENSION));
+
+                $ticketMainData = array();
+                $ticketMainData['profile_image'] = $this->input->post('profileImage');
+                $ticketMainData['message'] = '<a href="' . $filePath . '" download>Download ' . $file_extension . ' file.</a>';
+                $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
+                $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
+                $ticketMainData['time_lapsed'] = $last_time_ago;
+                $messagesHTML = $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
+
+                echo $messagesHTML;
 		        exit;
             }
         }

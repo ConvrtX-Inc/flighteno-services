@@ -156,8 +156,13 @@
                                         <th class="table-col-small"></th>
                                     </tr>
                                     <?php foreach ($buyer_res as $key=>$value){ ?>
+                                    <?php
+                                        $this_ticket_id = $value['_id'];
+                                        $this_user_id = json_decode(json_encode($value["profileData"]))[0]->_id;
+                                        $chat_url = base_url().'index.php/admin/Support/buyer/tickets/'.$this_user_id.'/'.$this_ticket_id;
+                                    ?>
                                     <tr>
-                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td class="checkbox-col"><input type="checkbox" data-id="<?=$this_ticket_id?>" data-userid="<?=$this_user_id?>" id="check<?=$this_ticket_id?>"/><label for="check<?=$this_ticket_id?>"></label></td>
                                         <td> 
                                             <center>
                                                 <?php $profile_image = json_decode(json_encode($value["profileData"]))[0]->profile_image; ?>
@@ -178,7 +183,7 @@
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
-                                                <p><a class="option-chat" href="#">Chat User</a></p>
+                                                <p><a class="option-chat" href="<?=$chat_url?>" target="_blank">Chat User</a></p>
                                                 <p><a class="option-disable" href="#">Disable User</a></p>
                                             </div>
                                         </td>
@@ -300,6 +305,61 @@
                         optionBox.slideToggle("fast").addClass("more-options-visible");
                     }
                 });
+
+                $(".content-table").on("click", ".option-disable", function(e) {
+                    e.preventDefault();
+                    
+                    const checkedUsers = $(".content-table").find("td input[type='checkbox']:checked");
+
+                    if (checkedUsers.length > 1) {
+                        let userIDs = [];
+                        console.log("disable checked ...")
+
+                        // Get unique users that are checked
+                        checkedUsers.each(function() {
+                            const currentUserId = $(this).data("userid");
+                            if (!userIDs.includes(currentUserId))
+                                userIDs.push(currentUserId);
+                        });
+
+                        // Disable unique users
+                        let ajaxRequests = [];
+                        userIDs.forEach((userID) => {
+                            ajaxRequests.push(disableUser(userID));
+                        });
+
+                        $.when.apply(undefined, ajaxRequests).then(function(results) {
+                            console.log("when result many ...")
+                            console.log(JSON.parse(results[0]))
+                            alert("Multiple users successfully disabled.");
+                            $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                        });
+                    } else {
+                        // Get selected user's id
+                        const closestCheckbox = $(this).closest("td").siblings(".checkbox-col").find("input[type='checkbox']").first();
+                        const userID = closestCheckbox.data("userid");
+
+                        $.when(disableUser(userID)).then(function(result) {
+                            console.log("when result single ...")
+                            console.log(JSON.parse(result))
+                            alert("User successfully disabled.");
+                            $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                        });
+                    }
+                });
+
+                const disableUser = (id) => {
+                    return $.ajax({
+                        'url': '<?php echo base_url();?>index.php/admin/Users/disable_user/' + id,
+                        'success': function (response) {
+                            console.log("Disable user " + id + " success.")
+                        },
+                        'error': function (er) {
+                            console.log("Something went wrong with user " + id + ".")
+                            console.log(er)
+                        }
+                    });
+                }
 
                 /*
                 // Load More Custom AJAX Pagination
