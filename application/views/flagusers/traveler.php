@@ -241,7 +241,7 @@
                             <div class="col">
                                 <table class="content-table">
                                     <tr>
-                                        <th scope="col">
+                                        <th scope="col" style="width: 120px;">
                                             <div class="row">
                                                 <div class="col-2">
                                                     <input type="checkbox" id="checkAll" name="checkAll"/>
@@ -252,11 +252,12 @@
                                                 </div>
                                             </div>
                                         </th>
-                                        <th class="table-col-profile"></th>
-                                        <th class="text-center">Full Name</th>
-                                        <th class="text-center">Email</th>
-                                        <th class="text-center">Location</th>
-                                        <th class="text-center">Flag</th>
+                                        <th scope="col"></th>
+                                        <th scope="col" class="text-center">Full Name</th>
+                                        <th scope="col" class="text-center">Date</th>
+                                        <th scope="col" class="text-center">Email</th>
+                                        <th scope="col" class="text-center">Location</th>
+                                        <th scope="col" class="text-center">Flag</th>
                                     </tr>
                                     <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
                                         <tr>
@@ -272,6 +273,7 @@
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </td>
                                             <td class= "userNameColorChange text-center"><?php echo $travelerUsers['full_name']; ?></td>
+                                            <td class="text-center"><?php  $orderDate = $travelerUsers['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
                                             <td class="text-center"><?php echo $travelerUsers['email_address']; ?></td>
                                             <td class="text-center"><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
                                             <td class="text-center">

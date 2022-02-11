@@ -28,9 +28,16 @@ class Trasection extends CI_Controller {
 
     if(!is_null($filterDataBuyer)){
       if($filterDataBuyer['start_date'] != "" && $filterDataBuyer['end_date'] != ""){
-      $startDate =  $this->mongo_db->converToMongodttime($filterDataBuyer['start_date']);
-      $endDate   =  $this->mongo_db->converToMongodttime($filterDataBuyer['end_date']);
       
+      //echo "<pre>";print_r($filterDataBuyer['start_date']);"<pre>";print_r(
+      //  date('Y-m-d', strtotime($filterDataBuyer['end_date']. ' + 1 days')));exit;  
+      
+      $startDate =  $this->mongo_db->converToMongodttime($filterDataBuyer['start_date']);
+      //$endDate   =  $this->mongo_db->converToMongodttime($filterDataBuyer['end_date']);
+      $endDate   =  $this->mongo_db->converToMongodttime(date('Y-m-d', strtotime($filterDataBuyer['end_date']. ' + 1 days')));
+      
+      //echo "<pre>";print_r($startDate);"<pre>";print_r($endDate);exit;  
+
       $findArray['created_date'] = ['$gte' => $startDate, '$lte' => $endDate];
     }
 
@@ -194,7 +201,8 @@ class Trasection extends CI_Controller {
     if(!is_null($filterData)) {
       if($filterData['start_date'] !="" && $filterData['end_date'] != ""){
           $startDate = $this->mongo_db->converToMongodttime($filterData['start_date']);
-          $endDate   = $this->mongo_db->converToMongodttime($filterData['end_date']);
+          //$endDate   = $this->mongo_db->converToMongodttime($filterData['end_date']);
+          $endDate   =  $this->mongo_db->converToMongodttime(date('Y-m-d', strtotime($filterData['end_date']. ' + 1 days')));
           $findArray['created_date'] = ['$gte' => $startDate,  '$lte' => $endDate];
       }   
       //if(!empty($filterData['price']) ){

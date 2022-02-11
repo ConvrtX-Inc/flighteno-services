@@ -234,7 +234,7 @@
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">
+                                            <th scope="col" style="width: 120px;">
                                                 <div class="row">
                                                     <div class="col-2">
                                                         <input type="checkbox" id="checkAll" name="checkAll"/>
@@ -245,8 +245,9 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th scope="col" class="table-col-profile"></th>
+                                            <th scope="col"></th>
                                             <th scope="col" class="text-center">Full Name</th>
+                                            <th scope="col" class="text-center">Date</th>
                                             <th scope="col" class="text-center">Email</th>
                                             <th scope="col" class="text-center">Location</th>
                                             <th scope="col" class="text-center">Flag</th>
@@ -270,6 +271,7 @@
                                                     <img src="<?php echo $imageSource;?>" alt="" class="ml-4 rounded-circle images avatar-sm bx-shadow-lg image2">
                                                 </td>
                                                 <td class="userNameColorChange text-center"> <?php echo $buyerFlag['full_name'];?> </td>
+                                                <td class="text-center"><?php  $orderDate = $buyerFlag['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
                                                 <td class="text-center"> <?php echo $buyerFlag['email_address'];?> </td>
                                                 <td class="text-center"> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
                                                 <td class="text-center">

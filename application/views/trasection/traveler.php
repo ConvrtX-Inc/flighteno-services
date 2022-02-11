@@ -234,7 +234,7 @@
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">
+                                            <th scope="col" style="width: 120px;">
                                                 <div class="row">
                                                     <div class="col-2">
                                                         <input type="checkbox" id="checkAll" name="checkAll"/>
@@ -245,11 +245,11 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="table-col-profile"></th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">Order ID</th>
-                                            <th class="text-center">Amount</th>
+                                            <th scope="col" class="text-center"></th>
+                                            <th scope="col" class="text-center">Name</th>
+                                            <th scope="col" class="text-center">Date</th>
+                                            <th scope="col" class="text-center">Order ID</th>
+                                            <th scope="col" class="text-center">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
