@@ -102,6 +102,7 @@ class Users extends CI_Controller {
 
         $this->load->view('users/buyer', $data);
     }
+
     public function traveler(){
         $this->Mod_login->is_user_login();
         $db  =  $this->mongo_db->customQuery();
@@ -257,5 +258,23 @@ class Users extends CI_Controller {
                 return $country["name"];
             }
         }
+    }
+
+    public function disable_user($user_id = 0) {
+        $db = $this->mongo_db->customQuery();
+        if (!empty($user_id)) {
+            $db->users->updateOne([ '_id' => $this->mongo_db->mongoId($user_id) ],  ['$set' => ['disabled' => true] ] );
+            $response_array = [
+                'status' =>  'Sucessfully disabled user.',
+                'type'   =>   200
+            ];
+        } else {
+            $response_array = [ 
+                'status' =>  'Missing user_id.',
+                'type'   =>  400
+            ];
+        }
+        echo json_encode($response_array);
+        exit;
     }
 }
