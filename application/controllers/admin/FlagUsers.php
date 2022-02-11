@@ -38,7 +38,8 @@ class FlagUsers extends CI_Controller {
             //echo "<pre>";print_r($flagBuyerUsers['daterange']);exit;
 
             $startDate = $this->mongo_db->converToMongodttime($flagBuyerUsers['start_date']);
-            $endDate   = $this->mongo_db->converToMongodttime($flagBuyerUsers['end_date']);
+            //$endDate   = $this->mongo_db->converToMongodttime($flagBuyerUsers['end_date']);
+            $endDate   =  $this->mongo_db->converToMongodttime(date('Y-m-d', strtotime($flagBuyerUsers['end_date']. ' + 1 days')));
             $findArray['created_date'] = ['$gte' => $startDate,  '$lte' => $endDate];
         }  
         if($flagBuyerUsers['full_name'] != ""){
@@ -145,7 +146,8 @@ class FlagUsers extends CI_Controller {
         if($searchDataTraveler['start_date'] !="" && $searchDataTraveler['end_date'] != ""){
 
             $startDate = $this->mongo_db->converToMongodttime($searchDataTraveler['start_date']);
-            $endDate   = $this->mongo_db->converToMongodttime($searchDataTraveler['end_date']);
+            //$endDate   = $this->mongo_db->converToMongodttime($searchDataTraveler['end_date']);
+            $endDate   =  $this->mongo_db->converToMongodttime(date('Y-m-d', strtotime($searchDataTraveler['end_date']. ' + 1 days')));
             $findArray['created_date'] = ['$gte' => $startDate,  '$lte' => $endDate];
         }  
 
