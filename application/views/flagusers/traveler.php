@@ -240,58 +240,65 @@
                         <div class = "row mt-2">
                             <div class="col">
                                 <table class="content-table">
-                                    <tr>
-                                        <th scope="col" style="width: 120px;">
-                                            <div class="row">
-                                                <div class="col-2">
-                                                    <input type="checkbox" id="checkAll" name="checkAll"/>
-                                                    <label class="" for="checkAll"></label>
-                                                </div>
-                                                <div class="col-10 mt-2">
-                                                    Select All
-                                                </div>
-                                            </div>
-                                        </th>
-                                        <th scope="col"></th>
-                                        <th scope="col" class="text-center">Full Name</th>
-                                        <th scope="col" class="text-center">Date</th>
-                                        <th scope="col" class="text-center">Email</th>
-                                        <th scope="col" class="text-center">Location</th>
-                                        <th scope="col" class="text-center">Flag</th>
-                                    </tr>
-                                    <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
+                                    <thead>
                                         <tr>
-                                                <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" id="check<?php echo $travelerUsers['_id']; ?>"/><label for="check<?php echo $travelerUsers['_id']; ?>"></label></td>
-                                                <td>
-                                                <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
-                                                    
-                                                    $imageSource = SURL.'assets/images/male.png';
-                                                }else{
-
-                                                    $imageSource = $travelerUsers['profile_image'];
-                                                } ?>
-                                                <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
-                                            </td>
-                                            <td class= "userNameColorChange text-center"><?php echo $travelerUsers['full_name']; ?></td>
-                                            <td class="text-center"><?php  $orderDate = $travelerUsers['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
-                                            <td class="text-center"><?php echo $travelerUsers['email_address']; ?></td>
-                                            <td class="text-center"><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
-                                            <td class="text-center">
-                                                <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
-                                                    
-                                                    <!-- $class = 'fas'; -->
-                                                    <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                                <?php }else{ ?>
-
-                                                    <!-- $class = 'far'; -->
-                                                    <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
-                                                <?php }
-                                                ?>
-                                                <!-- <span><i class="<?php echo $class; ?> fa-flag fa-3x"></i></span> -->
-                                            </td>
+                                            <!--<th scope="col" style="width: 120px;">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <input type="checkbox" id="checkAll" name="checkAll"/>
+                                                        <label class="" for="checkAll"></label>
+                                                    </div>
+                                                    <div class="col-10 mt-2">
+                                                        Select All
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th scope="col"></th>-->
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
+                                            <th scope="col" class="table-col-name text-left">Full Name</th>
+                                            <th scope="col" class="text-left">Date</th>
+                                            <th scope="col" class="text-left pl-4">Email</th>
+                                            <th scope="col" class="text-left">Location</th>
+                                            <th scope="col" class="text-center">Flag</th>
                                         </tr>
-                                    <?php } ?>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($flagTravelerUsers as $travelerUsers) { ?>
+                                            <tr>
+                                                <td><input type="checkbox" data-id="<?php echo $travelerUsers['_id']; ?>" id="check<?php echo $travelerUsers['_id']; ?>"/><label for="check<?php echo $travelerUsers['_id']; ?>"></label></td>
+                                                <td class="text-center">
+                                                    <?php if(empty($travelerUsers['profile_image']) || $travelerUsers['profile_image'] == ''|| is_null($travelerUsers['profile_image']) ){ 
+                                                        
+                                                        $imageSource = SURL.'assets/images/male.png';
+                                                    }else{
+
+                                                        $imageSource = $travelerUsers['profile_image'];
+                                                    } ?>
+                                                    <img src="<?php echo $imageSource;?>" alt="" class="ml-4 rounded-circle images avatar-sm bx-shadow-lg image2">
+                                                </td>
+                                                <td class= "userNameColorChange text-left"><?php echo $travelerUsers['full_name']; ?></td>
+                                                <td class="text-left"><?php  $orderDate = $travelerUsers['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                                <td class="text-left pl-4"><?php echo $travelerUsers['email_address']; ?></td>
+                                                <td class="text-left"><?php echo isset($travelerUsers['location']) && !empty($travelerUsers['location'] && !is_null($travelerUsers['location'])) ? $travelerUsers['location'] : 'N/A';?> </td>
+                                                <td class="text-center">
+                                                    <?php if(isset($travelerUsers['flag_reported']) && ($travelerUsers['flag_reported'] == true || $travelerUsers['flag_reported'] == 1)){ ?>
+                                                        
+                                                        <!-- $class = 'fas'; -->
+                                                        <img src="<?php echo SURL;?>assets/images/flag1.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                    <?php }else{ ?>
+
+                                                        <!-- $class = 'far'; -->
+                                                        <img src="<?php echo SURL;?>assets/images/flag6.png" alt="" class="images avatar-sm bx-shadow-lg image2">
+                                                    <?php }
+                                                    ?>
+                                                    <!-- <span><i class="<?php echo $class; ?> fa-flag fa-3x"></i></span> -->
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
                                 </table>
+                                
                                 <?=($total_rows === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
                                 <?php $thisPagination = $this->session->userdata('paginationData'); ?>
                                 <div class="pagination-container d-flex justify-content-end align-items-center">
@@ -418,6 +425,10 @@
                 });*/
 
                 $('#divError').html('');
+                
+                $(".content-table").on("click", "td input[type='checkbox']", function(){
+                    $("#checkAll").prop("checked", false);
+                });
 
                 $('#btnFilter').click(function(){
                     let datefrom = $('#inputFrom').val();
