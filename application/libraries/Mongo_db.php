@@ -154,11 +154,12 @@ Class Mongo_db {
             $url = 'mongodb+srv://flight-db-user:XtLGA9vSgRUkBmWI@flightenocluster.irdgi.mongodb.net/flighteno?retryWrites=true&w=majority';
             // $url = 'mongodb://127.0.0.1:27017/';
 
+
             $this->connect = new MongoDB\Client($url);
 
             $this->db = $this->connect->{$this->database};
-
-            // var_dump($this->db);
+            
+            //var_dump($this->db);
             // exit();
 
         } catch (MongoConnectionException $e) {

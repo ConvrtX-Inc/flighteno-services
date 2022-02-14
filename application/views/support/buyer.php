@@ -139,93 +139,57 @@
                         <!-- start page title -->
                         <div class="row">
                             <div class="col-12 mt-3 mb-2">
-                                <h4 class="page-title styleHeader titleStyle">Signed up users</h4>
+                                <h4 class="page-title styleHeader titleStyle">Support</h4>
                                 <p class="titleStyle2">Buyer</p>
                             </div>  
                         </div>
-                
-                        <?php $thisData = $this->session->userdata('buyerUsersFilter'); ?>
-                        <form class="form-filter" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
-                            <div class="row filter-row">
-                                <div class="col-xl-3">  
-                                    <select name="filter_type" class="form-control filters_style" placeholder="Select filter">
-                                        <option value="name" <?=((is_null($thisData) || !isset($thisData['filter_type']) || $thisData['filter_type']  ==  "name") ? "selected" : "")?>>Name</option>
-                                        <option value="location" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "location") ? "selected" : "")?>>Location</option>
-                                        <option value="country" <?=((!is_null($thisData) && isset($thisData['filter_type']) && $thisData['filter_type']  ==  "country") ? "selected" : "")?>>Country</option>
-                                    </select>
-                                </div> <!-- end col -->
-                                
-                                <div class="col-xl-4">   
-                                    <div class="inner-addon left-addon filter-search">
-                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
-                                        <input type="text" id ="filter_search" class="form-control filters_style" placeholder="Search"  name="filter_search"  value="<?=(!empty($thisData['filter_search']) ? $thisData['filter_search'] : "")?>"/>
-                                    </div>
-                                    
-                                    <select name="country" class="form-control filters_style" placeholder="Select Country">
-                                        <option value="" selected>Select Country</option>
-                                        <?php foreach ($getAllCountries as $country) {?>
-                                            <option value="<?php echo $country['code']; ?>"<?=((!is_null($thisData) && isset($thisData['country']) && $thisData['country']  ==  $country['code']) ? "selected" : "")?>><?php echo $country['name'];?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div> <!-- end col -->
-                                
-                                <div class="col-xl-4">           
-                                    <button id="filter_submit" type="submit" hidden>Submit</button>
-                                    <a href="#" class="btn-submit">Filter</a>
-                                    <a href="<?php echo base_url();?>index.php/admin/users/resetFilterBuyers" class="btn-reset">Reset</a>
-                                </div> <!-- end col -->
-                            </div>
 
-                        </form>
-
-                        <div class = "row mt-3">
+                        <div class = "row">
                             <div class="col-12">
                                 <table class="content-table">
                                     <tr>
                                         <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
                                         <th class="table-col-profile">Select All</th>
                                         <th class="table-col-name">Name</th>
-                                        <th class="table-col-large">Area</th>
-                                        <th class="table-col-medium">Country</th>
+                                        <th class="table-col-large">Subject</th>
+                                        <th class="table-col-medium">Order No.</th>
                                         <th class="table-col-small"></th>
                                     </tr>
-                                    <?php foreach ($buyers as $key=>$value){ ?>
+                                    <?php foreach ($buyer_res as $key=>$value){ ?>
+                                    <?php
+                                        $this_ticket_id = $value['_id'];
+                                        $this_user_id = json_decode(json_encode($value["profileData"]))[0]->_id;
+                                        $chat_url = base_url().'index.php/admin/Support/buyer/tickets/'.$this_user_id.'/'.$this_ticket_id;
+                                    ?>
                                     <tr>
-                                        <td><input type="checkbox" data-id="<?php echo $value['_id']; ?>" id="check<?php echo $value['_id']; ?>"/><label for="check<?php echo $value['_id']; ?>"></label></td>
+                                        <td class="checkbox-col"><input type="checkbox" data-id="<?=$this_ticket_id?>" data-userid="<?=$this_user_id?>" id="check<?=$this_ticket_id?>"/><label for="check<?=$this_ticket_id?>"></label></td>
                                         <td> 
                                             <center>
-                                                <?php if(empty($value['profile_image']) || $value['profile_image'] == ''|| is_null($value['profile_image']) ){ 
+                                                <?php $profile_image = json_decode(json_encode($value["profileData"]))[0]->profile_image; ?>
+                                                <?php if(empty($profile_image) || $profile_image == ''|| is_null($profile_image) ){ 
                                                     
                                                     $imageSource = SURL.'assets/images/male.png';;
                                                 }else{
 
-                                                    $imageSource = $value['profile_image'];
+                                                    $imageSource = $profile_image;
                                                 } ?>
                                                                             
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </center>
                                         </td>
-                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
-                                        <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
-                                        <td><?php echo Users::findCountryByCode($value['country']); ?>
-                                        </td>
+                                        <td class ="userNameColorChange"><?php echo json_decode(json_encode($value["profileData"]))[0]->full_name; ?></td>
+                                        <td><?php echo empty($value['subject']) || is_null($value['subject']) ? 'N/A' : $value['subject']; ?></td>
+                                        <td><?php echo $value['order_number']; ?></td>
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
-                                                <p><a class="option-chat" href="#">Chat User</a></p>
+                                                <p><a class="option-chat" href="<?=$chat_url?>" target="_blank">Chat User</a></p>
                                                 <p><a class="option-disable" href="#">Disable User</a></p>
                                             </div>
                                         </td>
                                     </tr>
                                     <?php } ?>
                                 </table>
-                                
-                                <!-- 
-                                    FLIGHT-29 fix
-                                    As suggested, removed 'Load more' pagination.
-                                    Added the usual table pagination of numbers.
-                                    02/04/2022: Updated pagination as per figma design.
-                                -->
 
                                 <?=($total === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
 
@@ -233,7 +197,7 @@
                                 <div class="pagination-container d-flex justify-content-end align-items-center">
                                     <span class="rows-per-page">
                                         Rows per page:
-                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/users/index">
+                                        <form class="form-per-page" method="POST" action="<?php echo base_url();?>index.php/admin/Support/index">
                                             <select name="per_page" id="per_page">
                                                 <option value="3" <?=((is_null($thisPagination) || !isset($thisPagination['per_page']) || $thisPagination['per_page']  ==  "3") ? "selected" : "")?>>3</option>
                                                 <option value="6" <?=((!is_null($thisPagination) && isset($thisPagination['per_page']) && $thisPagination['per_page']  ==  "6") ? "selected" : "")?>>6</option>
@@ -252,7 +216,7 @@
                                     <span class="pagination-msg"><?=$pagination_msg?></span>
                                     <?=$links?>
                                 </div>
-
+                                
                                 <!-- <center>
                                     <p class="mt-4 mb-0 last-page" style="display: none;">No more results found.</p>
                                     <div class="mt-4 spinner spinner-border text-dark" role="status" style="display: none;">
@@ -299,108 +263,21 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 
+        <script>
+            $("#checkAll").click(function(){
+                $('input:checkbox').not(this).prop('checked', this.checked);
+                    
+                let optionBox = $(".more-options-visible");
+                if (optionBox.length)
+                    optionBox.slideToggle("fast").removeClass("more-options-visible");
+            });
+        </script>
+
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-            // $(function() {
-            //     availableTags = [];
-            //     $.ajax({
-            //     'url': '<?php echo SURL ?>index.php/admin/users/getFullNames',
-            //     'type': 'POST',
-            //     'data': "",
-            //     'success': function (response) {
-            //         availableTags = JSON.parse(response);
-            //         $("#filter_search").autocomplete({
-            //         source: availableTags
-            //         });
-            //     }
-            //     });
-            // });
-        </script>
 
         <script>
             $(function() {
-                $("#checkAll").click(function(){
-                    $('input:checkbox').not(this).prop('checked', this.checked);
-                        
-                    let optionBox = $(".more-options-visible");
-                    if (optionBox.length)
-                        optionBox.slideToggle("fast").removeClass("more-options-visible");
-                });
-
-                const field_filter_search_container = $(".filter-search");
-                const field_filter_search = $("input[name='filter_search']");
-                const field_country = $("select[name='country']");
-
-                let type_selectize = $("select[name='filter_type']").selectize();
-                let country_selectize = $("select[name='country']").selectize({ sortField: 'text' });
-                let country_selectize_box = country_selectize.siblings(".selectize-control");
-                let country_selectize_box_dropdown = country_selectize_box.first(".selectize-input");
-                let country_selectize_control = country_selectize[0].selectize;
-
-                const filter_type = "<?php 
-                if (!is_null($thisData) && !empty($thisData['filter_type'])) 
-                    echo $thisData['filter_type']; 
-                else 
-                    echo '';
-                ?>";
-
-                if (filter_type == "country") {
-                    country_selectize_box.removeClass("d-none");
-                    field_filter_search_container.addClass("d-none");
-                    field_country.attr("required", true);
-                } else {
-                    country_selectize_box.addClass("d-none");
-                    field_filter_search_container.removeClass("d-none");
-                    field_filter_search.attr("required", true);
-                }
-
-                $(".selectize-input").addClass("filters_style");
-
-                $(".form-filter select[name='filter_type']").change(function() {
-                    resetFilterValues();
-
-                    const selected = $(this).val();
-                    if (selected == "country") {
-                        country_selectize_box.removeClass("d-none");
-                        field_filter_search_container.addClass("d-none");
-                        field_country.attr("required", true);
-                    } else {
-                        country_selectize_box.addClass("d-none");
-                        field_filter_search_container.removeClass("d-none");
-                        field_filter_search.attr("required", true);
-                    }
-                });
-
-                $(".form-filter input.form-control").keypress(function(e) {
-                    if(e.which == 13) {
-                        $("#filter_submit").click();
-                    }
-                });
-
-                $(".btn-submit").click(function(e) {
-                    e.preventDefault();
-
-                    const filter_type = $("select[name='filter_type']").val();
-                    const country = $("select[name='country']").val();
-                    
-                    if (filter_type == "country" && !country) {
-                        alert("Please select a country.");
-                        return;
-                    }
-
-                    $("#filter_submit").click();
-                });
-
-                // reset filter values
-                function resetFilterValues() {
-                    field_filter_search.val("");
-                    field_filter_search.attr("required", false);
-                    field_country.val("");
-                    field_country.attr("required", false);
-                    country_selectize_control.clear();
-                }
-
                 $(".content-table").on("click", "td input[type='checkbox']", function(){
                     $("#checkAll").prop("checked", false);
                     
@@ -429,14 +306,64 @@
                     }
                 });
 
-                /*
-                * FLIGHT-29 fix
-                * Removed 'Load more' pagination.
-                */
-                
+                $(".content-table").on("click", ".option-disable", function(e) {
+                    e.preventDefault();
+                    
+                    const checkedUsers = $(".content-table").find("td input[type='checkbox']:checked");
+
+                    if (checkedUsers.length > 1) {
+                        let userIDs = [];
+                        console.log("disable checked ...")
+
+                        // Get unique users that are checked
+                        checkedUsers.each(function() {
+                            const currentUserId = $(this).data("userid");
+                            if (!userIDs.includes(currentUserId))
+                                userIDs.push(currentUserId);
+                        });
+
+                        // Disable unique users
+                        let ajaxRequests = [];
+                        userIDs.forEach((userID) => {
+                            ajaxRequests.push(disableUser(userID));
+                        });
+
+                        $.when.apply(undefined, ajaxRequests).then(function(results) {
+                            console.log("when result many ...")
+                            console.log(JSON.parse(results[0]))
+                            alert("Multiple users successfully disabled.");
+                            $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                        });
+                    } else {
+                        // Get selected user's id
+                        const closestCheckbox = $(this).closest("td").siblings(".checkbox-col").find("input[type='checkbox']").first();
+                        const userID = closestCheckbox.data("userid");
+
+                        $.when(disableUser(userID)).then(function(result) {
+                            console.log("when result single ...")
+                            console.log(JSON.parse(result))
+                            alert("User successfully disabled.");
+                            $(".more-options-visible").slideToggle("fast").removeClass("more-options-visible");
+                        });
+                    }
+                });
+
+                const disableUser = (id) => {
+                    return $.ajax({
+                        'url': '<?php echo base_url();?>index.php/admin/Users/disable_user/' + id,
+                        'success': function (response) {
+                            console.log("Disable user " + id + " success.")
+                        },
+                        'error': function (er) {
+                            console.log("Something went wrong with user " + id + ".")
+                            console.log(er)
+                        }
+                    });
+                }
+
                 /*
                 // Load More Custom AJAX Pagination
-                const url = "<?php echo SURL ?>index.php/admin/users/loadMore";
+                const url = "<?php echo SURL ?>index.php/admin/Support/loadMore";
                 let currentIndex = <?php echo $index; ?>;
                 let per_page = <?php echo $per_page; ?>;
                 let total = <?php echo $total; ?>;

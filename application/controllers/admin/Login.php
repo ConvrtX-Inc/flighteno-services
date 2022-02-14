@@ -31,11 +31,11 @@ class Login extends CI_Controller {
 
 		$response = $this->Mod_isValidUser->getUserData($email, $password);
 
-		if($response == true  || $response == 1 || $response == 'true'){
+		//var_dump($response);
 
+		if($response == true  || $response == 1 || $response == 'true'){
 			redirect(base_url() . 'index.php/admin/Dashboard/index');
 		}else{
-					
 			$this->session->set_flashdata('error', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
 												<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 													<span aria-hidden="true">&times;</span>
