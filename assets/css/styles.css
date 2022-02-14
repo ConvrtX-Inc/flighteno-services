@@ -229,7 +229,8 @@ body {
   line-height: 2.5em;
 }
 
-.userNameColorChange {
+.userNameColorChange,
+.userNameColorChange a {
   color: #18243C !important;
 }
 
