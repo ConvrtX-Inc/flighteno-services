@@ -185,7 +185,7 @@
                                 <p class="this-label">Birthday:</p>
                               </div>
                               <div class="w-75">
-                                <p class="this-content">December 19, 1996 (x)</p>
+                                <p class="this-content"><?=get_content($user, 'birthday')?></p>
                               </div>
                             </div>
 
