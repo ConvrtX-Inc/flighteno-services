@@ -568,8 +568,8 @@ class Mod_order extends CI_Model {
           'Total'                         =>      '$Total', 
           'new_image'                     =>      '$new_image',
           'recipt'                        =>      '$recipt', 
-          'rated_admin_id'                =>      '$rated_admin_id'
-
+          'rated_admin_id'                =>      '$rated_admin_id',
+          'store_name'                    =>      '$store_name'
         ]
       ],
       [
