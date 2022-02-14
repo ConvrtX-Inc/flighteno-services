@@ -178,7 +178,7 @@
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </center>
                                         </td>
-                                        <td class ="userNameColorChange"><?php echo $value['full_name']; ?></td>
+                                        <td class ="userNameColorChange"><a href="<?php echo SURL;?>index.php/admin/Users/profile/<?php echo $value['_id'];?>"><?php echo $value['full_name']; ?></a></td>
                                         <td><?php echo empty($value['location']) || is_null($value['location']) ? 'N/A' : $value['location']; ?></td>
                                         <td><?php echo Users::findCountryByCode($value['country']); ?>
                                         <td class="more-options-col">

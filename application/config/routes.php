@@ -60,3 +60,4 @@ $route['admin/Support/(:any)/tickets/(:any)'] = 'admin/Support/tickets/$1/$2';
 $route['admin/Support/(:any)/tickets/(:any)/(:any)'] = 'admin/Support/tickets/$1/$2/$3';
 
 $route['admin/Users/disable_user/(:any)'] = 'admin/Users/disable_user/$1';
+$route['admin/Users/profile/(:any)'] = 'admin/Users/profile/$1';

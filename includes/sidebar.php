@@ -142,7 +142,7 @@
                         <li class="">
                             <a href="<?php echo base_url();?>index.php/admin/Support/index">
                                 <i class="fas fa-user-lock"></i>
-                                <span> Buyers </span>
+                                <span> Buyer </span>
                             </a>      
                         </li>
                         <li class="mt-2">                        

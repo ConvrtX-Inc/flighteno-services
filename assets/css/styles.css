@@ -229,7 +229,8 @@ body {
   line-height: 2.5em;
 }
 
-.userNameColorChange {
+.userNameColorChange,
+.userNameColorChange a {
   color: #18243C !important;
 }
 
@@ -663,4 +664,45 @@ body {
   width: 45px;
   height: 45px;
   position: relative;
+}
+
+
+/* User profile styles */
+.user-profile {
+  font-size: 16px;
+}
+
+.user-profile .user-title {
+  margin-top: 2%;
+}
+
+.user-profile .user-title a {
+  margin-right: 20px;
+}
+
+.user-profile .user-image {
+  width: 200px;
+}
+
+.user-profile .page-heading {
+  color: #000000;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 50px 0;
+}
+
+.user-profile p {
+  margin-bottom: 1.5rem;
+}
+
+.user-profile .this-label {
+  color: #898a8d;
+}
+
+.user-profile .this-content {
+  color: #000000;
+}
+
+.user-profile .id-info img {
+  max-width: 300px;
 }

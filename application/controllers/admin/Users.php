@@ -277,4 +277,20 @@ class Users extends CI_Controller {
         echo json_encode($response_array);
         exit;
     }
+
+    public function profile($user_id = '') {
+        $this->Mod_login->is_user_login();
+        $db  =  $this->mongo_db->customQuery();
+
+        if(!is_null($user_id) && !empty($user_id)){
+            $findArray['_id'] = $this->mongo_db->mongoId($user_id);
+        } else {
+            show_404();
+        }
+
+        $user = $db->users->findOne($findArray);
+        $data['user'] = iterator_to_array($user);
+        
+        $this->load->view('users/profile', $data);
+    }
 }
