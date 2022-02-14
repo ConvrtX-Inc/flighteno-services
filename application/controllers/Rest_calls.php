@@ -69,10 +69,10 @@ class Rest_calls extends REST_Controller
                         $pref_delivery_end = $this->mongo_db->converToMongodttime(date("m/d/Y H:i:s", strtotime($raw_end)));
                         $prod_delivery_date = $this->mongo_db->converToMongodttime(date($this->post('product_dilivery_date')));
 
-                        error_log("preferred date: ".$pref_date);
-                        error_log("start time: ".$pref_delivery_start);
-                        error_log("end time: ".$pref_delivery_end);
-                        error_log("delivery date: ".$prod_delivery_date);
+                        //error_log("preferred date: ".$pref_date);
+                        //error_log("start time: ".$pref_delivery_start);
+                        //error_log("end time: ".$pref_delivery_end);
+                        //error_log("delivery date: ".$prod_delivery_date);
 
                         $insertData = [
                             'url' => $this->post('prodect_url'),
@@ -200,21 +200,22 @@ class Rest_calls extends REST_Controller
 
                         $name = $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
 
-                        /*
-                        $data = $html->find("div.fs_imgc", 0);  //get all images
+
+                       /* $data = $html->find("div.fs_imgc", 0);  //get all images
                         preg_match('@src="([^"]+)"@', $data, $match);
                         $img_src = array_pop($match);
-                        file_put_contents("php://stderr", "SCRAPED IMAGE #1\n");
-                        file_put_contents("php://stderr", $img_src."\n");
                         */
 
                         //Fix to get true image
                         $img_true_url = $html->find("img[id=icImg]", 0);
                         preg_match('@src="([^"]+)"@', $img_true_url, $match_img_url);
                         $img_src_highres = array_pop($match_img_url);
+                      
+                        /*
                         file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
                         file_put_contents("php://stderr", "img tag:".$img_true_url."\n");
                         file_put_contents("php://stderr", "img source:".$img_src_highres."\n");
+                        */
 
                         $price = str_replace("US $", "", $price);
                         $price = str_replace("(including shipping)", "", $price);
@@ -397,6 +398,7 @@ class Rest_calls extends REST_Controller
                 'Geometry' => $userLocationData['loc'],
                 'country' => $userLocationData['country'],
                 'Postal Code' => $userLocationData['postal'],
+                'country_code' => (string)$this->post('country_code'),
             ];
 
             $checkStatus = $db->users->insertOne($signupData);
@@ -425,6 +427,7 @@ class Rest_calls extends REST_Controller
                     'Geometry' => $userLocationData['loc'],
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
+                    'country_code' => (string)$this->post('country_code'),
                 ];
 
                 $getRatting = $this->Mod_rating->getUserAvgRatting((string)$checkStatus->getInsertedId());
@@ -790,6 +793,7 @@ class Rest_calls extends REST_Controller
                     'Geometry' => $userLocationData['loc'],
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
+                    'country_code' => (string)$this->post('country_code'),
                 ];
 
                 $where['email_address'] = (string)$this->post('email_address');
@@ -828,6 +832,7 @@ class Rest_calls extends REST_Controller
                         'Geometry' => $userLocationData['loc'],
                         'country' => $userLocationData['country'],
                         'Postal Code' => $userLocationData['postal'],
+                        'country_code' => (string)$this->post('country_code'),
                     ];
 
                     $getRatting = $this->Mod_rating->getUserAvgRatting((string)$admin_id);

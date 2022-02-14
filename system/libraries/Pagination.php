@@ -405,7 +405,7 @@ class CI_Pagination {
 		// Note: DO NOT change the operator to === here!
 		if ($this->total_rows == 0 OR $this->per_page == 0)
 		{
-			return '';
+			// return '';
 		}
 
 		// Calculate the total number of pages
@@ -414,7 +414,7 @@ class CI_Pagination {
 		// Is there only one page? Hm... nothing more to do here then.
 		if ($num_pages === 1)
 		{
-			return '';
+			// return '';
 		}
 
 		// Check the user defined number of links.
@@ -574,25 +574,32 @@ class CI_Pagination {
 		}
 
 		// Render the "Previous" link.
-		if ($this->prev_link !== FALSE && $this->cur_page !== 1)
+		// if ($this->prev_link !== FALSE && $this->cur_page !== 1)
+		if ($this->prev_link !== FALSE)
 		{
 			$i = ($this->use_page_numbers) ? $uri_page_number - 1 : $uri_page_number - $this->per_page;
 
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, ($this->cur_page - 1));
 
-			if ($i === $base_page)
-			{
+			// For the new pagination design.
+			// Custom condition.
+			if ($this->cur_page == 1) {
 				// First page
-				$output .= $this->prev_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attr_rel('prev').'>'
-					.$this->prev_link.'</a>'.$this->prev_tag_close;
+				$output .= $this->prev_tag_open.'<span class="link-disabled">'.$this->prev_link.'</span>'.$this->prev_tag_close;
+			} else {
+				if ($i === $base_page)
+				{
+					// Second page
+					$output .= $this->prev_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attr_rel('prev').'>'
+						.$this->prev_link.'</a>'.$this->prev_tag_close;
+				}
+				else
+				{
+					$append = $this->prefix.$i.$this->suffix;
+					$output .= $this->prev_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attr_rel('prev').'>'
+						.$this->prev_link.'</a>'.$this->prev_tag_close;
+				}
 			}
-			else
-			{
-				$append = $this->prefix.$i.$this->suffix;
-				$output .= $this->prev_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attr_rel('prev').'>'
-					.$this->prev_link.'</a>'.$this->prev_tag_close;
-			}
-
 		}
 
 		// Render the pages
@@ -629,14 +636,21 @@ class CI_Pagination {
 		}
 
 		// Render the "next" link
-		if ($this->next_link !== FALSE && $this->cur_page < $num_pages)
+		// if ($this->next_link !== FALSE && $this->cur_page < $num_pages)
+		if ($this->next_link !== FALSE)
 		{
 			$i = ($this->use_page_numbers) ? $this->cur_page + 1 : $this->cur_page * $this->per_page;
 
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, $this->cur_page + 1);
 
-			$output .= $this->next_tag_open.'<a href="'.$base_url.$this->prefix.$i.$this->suffix.'"'.$attributes
+			// For the new pagination design.
+			// Custom condition.
+			if ($this->cur_page < $num_pages) {
+				$output .= $this->next_tag_open.'<a href="'.$base_url.$this->prefix.$i.$this->suffix.'"'.$attributes
 				.$this->_attr_rel('next').'>'.$this->next_link.'</a>'.$this->next_tag_close;
+			} else {
+				$output .= $this->next_tag_open.'<span class="link-disabled">'.$this->next_link.'</span>'.$this->next_tag_close;
+			}
 		}
 
 		// Render the "Last" link
