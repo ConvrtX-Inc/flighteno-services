@@ -234,7 +234,7 @@
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col" style="width: 120px;">
+                                            <!--<th scope="col" style="width: 120px;">
                                                 <div class="row">
                                                     <div class="col-2">
                                                         <input type="checkbox" id="checkAll" name="checkAll"/>
@@ -244,23 +244,25 @@
                                                         Select All
                                                     </div>
                                                 </div>
-                                            </th>
-                                            <th scope="col"></th>
-                                            <th scope="col" class="text-center">Full Name</th>
-                                            <th scope="col" class="text-center">Date</th>
-                                            <th scope="col" class="text-center">Email</th>
-                                            <th scope="col" class="text-center">Location</th>
+                                            </th>-->
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
+                                            <!--<th scope="col"></th>-->
+                                            <th scope="col" class="table-col-name text-left">Full Name</th>
+                                            <th scope="col" class="text-left">Date</th>
+                                            <th scope="col" class="text-left pl-4">Email</th>
+                                            <th scope="col" class="text-left">Location</th>
                                             <th scope="col" class="text-center">Flag</th>
                                         </tr>
                                     </thead>
-                                    <body>
+                                    <tbody>
                                         <?php foreach($flagUsers as $buyerFlag) { ?>
                                             <tr>
-                                                <th scope="row">
+                                                <td>
                                                     <input type="checkbox" data-id="<?php echo $buyerFlag['_id']; ?>" id="check<?php echo $buyerFlag['_id']; ?>"/>
                                                     <label for="check<?php echo $buyerFlag['_id']; ?>"></label>
-                                                </th>
-                                                <td>
+                                                </td>
+                                                <td class="text-center">
                                                     <?php if(empty($buyerFlag['profile_image']) || $buyerFlag['profile_image'] == ''|| is_null($buyerFlag['profile_image']) ){ 
                                                         
                                                         $imageSource = SURL.'assets/images/male.png';;
@@ -270,10 +272,10 @@
                                                     } ?>
                                                     <img src="<?php echo $imageSource;?>" alt="" class="ml-4 rounded-circle images avatar-sm bx-shadow-lg image2">
                                                 </td>
-                                                <td class="userNameColorChange text-center"> <?php echo $buyerFlag['full_name'];?> </td>
-                                                <td class="text-center"><?php  $orderDate = $buyerFlag['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
-                                                <td class="text-center"> <?php echo $buyerFlag['email_address'];?> </td>
-                                                <td class="text-center"> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
+                                                <td class="userNameColorChange text-left"> <?php echo $buyerFlag['full_name'];?> </td>
+                                                <td class="text-left"><?php  $orderDate = $buyerFlag['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                                <td class="text-left pl-4"> <?php echo $buyerFlag['email_address'];?> </td>
+                                                <td class="text-left"> <?php echo isset($buyerFlag['location']) && !empty($buyerFlag['location'] && !is_null($buyerFlag['location'])) ? $buyerFlag['location'] : 'N/A';?> </td>
                                                 <td class="text-center">
                                                     <!--<button data-id="<?php echo $buyerFlag['_id']; ?>" class="btn-flag" type="button">-->
                                                     <?php if(isset($buyerFlag['flag_reported']) && ($buyerFlag['flag_reported'] == true || $buyerFlag['flag_reported'] == 1)){ ?>
@@ -288,7 +290,7 @@
                                                 </td>
                                             </tr>
                                         <?php } ?>
-                                    </body>
+                                    </tbody>
                                 </table>
 
                                 <?=($total_rows === 0)? '<center><p class="mt-5" style="font-size: 16px;">No results found.</p></center>' : ''?>
@@ -424,6 +426,10 @@
                 });*/
 
                 $('#divError').html('');
+
+                $(".content-table").on("click", "td input[type='checkbox']", function(){
+                    $("#checkAll").prop("checked", false);
+                });
 
                 $('#btnFilter').click(function(){
                     let datefrom = $('#inputFrom').val();

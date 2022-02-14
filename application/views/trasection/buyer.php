@@ -231,7 +231,7 @@
                                 <table class="content-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col" style="width: 120px;">
+                                            <!--<th scope="col" style="width: 120px;">
                                                 <div class="row">
                                                     <div class="col-2">
                                                         <input type="checkbox" id="checkAll" name="checkAll"/>
@@ -241,12 +241,14 @@
                                                         Select All
                                                     </div>
                                                 </div>
-                                            </th>
-                                            <th scope="col" class="text-center"></th>
-                                            <th scope="col" class="text-center">Name</th>
-                                            <th scope="col" class="text-center">Date</th>
-                                            <th scope="col" class="text-center">Order ID</th>
-                                            <th scope="col" class="text-center">Amount</th>
+                                            </th>-->
+                                            <th class="table-col-small"><input type="checkbox" id="checkAll" name="checkAll"/><label for="checkAll"></label></th>
+                                            <th class="table-col-profile">Select All</th>
+                                            <!--<th scope="col" class="text-center"></th>-->
+                                            <th scope="col" class="table-col-name text-left">Name</th>
+                                            <th scope="col" class="text-left">Date</th>
+                                            <th scope="col" class="text-left">Order ID</th>
+                                            <th scope="col" class="text-left">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -266,10 +268,10 @@
 
                                                     <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                                 </td>
-                                                <td class= "userNameColorChange text-center"><?php echo $value['profileData'][0]['full_name']; ?></td>
-                                                <td class="text-center"><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
-                                                <td class="text-center" style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
-                                                <td class="text-center" style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
+                                                <td class= "userNameColorChange text-left"><?php echo $value['profileData'][0]['full_name']; ?></td>
+                                                <td class="text-left"><?php  $orderDate = $value['created_date']->toDateTime()->format("d M Y"); echo $orderDate; ?></td>
+                                                <td class="text-left" style = "font-weight:bold"><?php echo $value['order_id']; ?></td>
+                                                <td class="text-left" style = "font-weight:bold"><?php echo '$'.$value['price']; ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
