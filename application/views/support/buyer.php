@@ -159,7 +159,8 @@
                                     <?php
                                         $this_ticket_id = $value['_id'];
                                         $this_user_id = json_decode(json_encode($value["profileData"]))[0]->_id;
-                                        $chat_url = base_url().'index.php/admin/Support/buyer/tickets/'.$this_user_id.'/'.$this_ticket_id;
+                                        // $chat_url = base_url().'index.php/admin/Support/buyer/tickets/'.$this_user_id.'/'.$this_ticket_id;
+                                        $chat_url = base_url().'index.php/admin/Support/buyer/tickets';
                                     ?>
                                     <tr>
                                         <td class="checkbox-col"><input type="checkbox" data-id="<?=$this_ticket_id?>" data-userid="<?=$this_user_id?>" id="check<?=$this_ticket_id?>"/><label for="check<?=$this_ticket_id?>"></label></td>
@@ -183,7 +184,7 @@
                                         <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
-                                                <p><a class="option-chat" href="<?=$chat_url?>" target="_blank">Chat User</a></p>
+                                                <p><a class="option-chat" href="<?=$chat_url?>">Chat User</a></p>
                                                 <p><a class="option-disable" href="#">Disable User</a></p>
                                             </div>
                                         </td>
