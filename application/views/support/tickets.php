@@ -12,9 +12,6 @@
         <!-- jvectormap -->
         <link href="<?php echo SURL;?>assets/libs/jqvmap/jqvmap.min.css" rel="stylesheet" />
 
-        <!-- emoji picker style -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css" />
-
         <!-- App css -->
         <link href="<?php echo SURL;?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -132,12 +129,15 @@
                                                     <label class="m-0" for="fileUploaded"> 
                                                         <img src="<?php echo SURL;?>assets/images/upload-file.png" >
                                                     </label>     
-                                                    <input class="d-none" id="fileUploaded" type="file" accept="application/doc|application/csv|application/ppt|application/docx|application/txt|application/pdf" onchange="fileUpload(this)" />
+                                                    <input class="d-none" id="fileUploaded" type="file" accept="application/doc|application/csv|application/ppt|application/docx|application/txt|application/pdf" onchange="fileUploadOnChange()" />
                                                 </div>
                                             </form>
                                             
                                             <div class="this-icon">
-                                                <a href="">
+                                                <div class="emoji-tooltip" role="tooltip">
+                                                    <emoji-picker class="light"></emoji-picker>
+                                                </div>
+                                                <a class="add-emoji" href="#">
                                                     <img src="<?php echo SURL;?>assets/images/smiley.png" >
                                                 </a>
                                             </div>
@@ -147,11 +147,14 @@
                                                     <label class="m-0" for="upload-image"> 
                                                         <img src="<?php echo SURL;?>assets/images/upload-img.png" >
                                                     </label> 
-                                                    <input class="d-none" id="upload-image" type="file" onchange="imageUpload(this)"  accept="application/gif|application/jpeg|application/png|application/jpg" />
+                                                    <input class="d-none" id="upload-image" type="file" onchange="imageUploadOnChange()"  accept="application/gif|application/jpeg|application/png|application/jpg" />
                                                 </div>
                                             </form>
-                                                
-                                            <textarea type="text" class="form-control flex-fill w-auto" placeholder="Write your message here" id="text-msg"></textarea>
+                                            
+                                            <div class="flex-fill w-auto">
+                                                <textarea type="text" class="form-control" placeholder="Write your message here" id="text-msg"></textarea>
+                                                <p class="file-label m-0 ml-1 mr-1"><span class="this-text mr-1"></span><a class="file-close" href="#"><i class="mdi mdi-close-circle"></i></a></p>
+                                            </div>
                                             <a href="#" id="btn-send">
                                                 <img class="position-absolute" src="<?php echo SURL;?>assets/images/btn-send.png" >
                                             </a>
@@ -174,37 +177,59 @@
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <!-- <script src="https://unpkg.com/@popperjs/core@2"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 
-        <script>
-            // $('#sendMessage').emojioneArea({
-            //     pickerPosition: "top"
-            // });
+        <script type="module">
+            import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js'
+            import insertText from 'https://cdn.jsdelivr.net/npm/insert-text-at-cursor@0.3.0/index.js'
+            const tooltip = document.querySelector('.emoji-tooltip')
+
+            document.querySelector('emoji-picker').addEventListener('emoji-click', e => {
+                insertText(document.querySelector('#text-msg'), e.detail.unicode);
+                tooltip.classList.toggle('shown');
+            });
+        </script>
+
+        <script type="text/javascript">
+            // Initialize message data containers
+            const userImageContainer = $(".user-info .this-image");
+            const userNameContainer = $(".user-info .this-user");
+            const userEmailContainer = $(".user-info .this-email");
+            const orderNumberContainer = $(".order-info .this-order");
+            const subjectContainer = $(".this-subject");
+            const ticketMessagesContainer = $(".tickets-messages");
+            const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+            const textMessageContainer = $("#text-msg");
+            const fileLabelContainer = $(".file-label");
+            const fileLabelTextContainer = $(".file-label .this-text");
 
             // Active ticket
             let activeTicketId = "";
+            let activeFile;
+            let isUploadingImage = false;
+            let isUploadingFile = false;
 
             <?php $userArray = $this->session->userdata('user_data'); ?>
             const userSession = <?=json_encode($userArray)?>;
+
+            fileLabelContainer.hide();
           
             // Admin profile placeholder
             if (!userSession["profile_image"])
                 userSession["profile_image"] = "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg";
 
             $(document).ready(function(){
+                const emojiButton = $(".add-emoji");
+                const emojiTooltip = $(".emoji-tooltip");
+                Popper.createPopper(emojiButton, emojiTooltip);
 
-                // $("#sendMessage").removeClass("form-control");
-
-                // Initialize message data containers
-                const userImageContainer = $(".user-info .this-image");
-                const userNameContainer = $(".user-info .this-user");
-                const userEmailContainer = $(".user-info .this-email");
-                const orderNumberContainer = $(".order-info .this-order");
-                const subjectContainer = $(".this-subject");
-                const ticketMessagesContainer = $(".tickets-messages");
-                const ticketMessagesHistoryContainer = $(".tickets-messages-history");
-                const textMessageContainer = $("#text-msg");
+                $(".add-emoji").click(function(e) {
+                    e.preventDefault();
+                    emojiTooltip.toggleClass('shown');
+                });
 
                 // Loading selected ticket data
                 $(".tickets-list").on("click", ".tickets-list-user:not(.active)", function() {
@@ -229,8 +254,6 @@
                         'success': function (response) {
                             const data =  JSON.parse(response)[0];
                             const profileData = data["profileData"][0];
-                            console.log(data);
-
                             const profileImage = (profileData["profile_image"])? profileData["profile_image"] : "https://ptetutorials.com/images/user-profile.png";
 
                             // display data
@@ -244,6 +267,7 @@
                             // scroll to latest message
                             ticketMessagesContainer.removeClass("loading");
                             scrollToLatest(ticketMessagesHistoryContainer);
+                            resetMessageArea();
                         }
                     });
                 });
@@ -253,6 +277,8 @@
                 if (userID == 0 && ticketID == 0) {
                     // Select the first ticket by default
                     // $(".tickets-list-user").first().click();
+
+                    // do nothing ...
                 } else {
                     // Select the active ticket
                     const activeTicket = $(".tickets-list-user[data-id='" + ticketID + "']");
@@ -263,35 +289,44 @@
                 $("#btn-send").on("click", function(e) {
                     e.preventDefault();
 
-                    const textMessage = textMessageContainer.val();
-                    const profileImage = userSession["profile_image"];
+                    if (!isUploadingImage && !isUploadingFile) {
+                        const textMessage = textMessageContainer.val();
+                        const profileImage = userSession["profile_image"];
 
-                    // Text message error validation
-                    if (!textMessage.trim()) {
-                        alert("Please input your message.");
-                        textMessageContainer.val("");
-                        textMessageContainer.focus();
-                        return;
-                    }
-
-                    console.log("sending message to " + activeTicketId + "...")
-
-                    $.ajax({
-                        'url': '<?php echo base_url();?>index.php/admin/Support/sendMessage',
-                        'type': 'POST',
-                        'data': { ticketId : activeTicketId, sendMessage : textMessage, profileImage: profileImage },
-                        'success': function (response) {
-                            ticketMessagesHistoryContainer.append(response);
-                            scrollToLatest(ticketMessagesHistoryContainer);
-                            textMessageContainer.val("");
+                        // Text message error validation
+                        if (!textMessage.trim()) {
+                            alert("Please input your message.");
+                            resetMessageArea();
+                            return;
                         }
-                    });
+
+                        $.ajax({
+                            'url': '<?php echo base_url();?>index.php/admin/Support/sendMessage',
+                            'type': 'POST',
+                            'data': { ticketId : activeTicketId, sendMessage : textMessage, profileImage: profileImage },
+                            'success': function (response) {
+                                ticketMessagesHistoryContainer.append(response);
+                                scrollToLatest(ticketMessagesHistoryContainer);
+                                resetMessageArea();
+                            }
+                        });
+                    } else {
+                        if (isUploadingImage) {
+                            imageUpload();
+                        } else if (isUploadingFile) {
+                            fileUpload();
+                        }
+                    }
+                });
+
+                $(".file-close").on("click", function(e) {
+                    e.preventDefault();
+                    resetMessageArea();
                 });
             });
 
-            // Sending image function
-            function imageUpload(theForm) { 
-                const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+            // Preparing image file
+            function imageUploadOnChange() { 
                 const ticketId = activeTicketId;
                 const files = $("#upload-image").get(0).files;
                 let data = new FormData();
@@ -302,22 +337,26 @@
                 data.append("ticketId", ticketId);
                 data.append("profileImage", userSession["profile_image"]);
 
-                console.log("sending message to " + activeTicketId + "...")
-                
+                activeFile = data;
+                isUploadingImage = true;
+                isUploadingFile = false;
+                showFileLabel(files[0]["name"]);
+
+                return;
+            }
+
+            function imageUpload() {
                 $.ajax({
                     url: '<?php echo base_url();?>index.php/admin/Support/imageSendUpload',
                     type: "POST",
                     processData: false,
                     contentType: false,
-                    data: data,
+                    data: activeFile,
                     success: function (response) {
-                        // const res = JSON.parse(response)["upload_data"];
-                        // console.log(res) 
-                        console.log(response)
-                        
                         $('#upload-image').val('');
                         ticketMessagesHistoryContainer.append(response);
                         scrollToLatest(ticketMessagesHistoryContainer);
+                        resetMessageArea();
                     },
                     error: function (er) {
                         console.log(er)
@@ -327,9 +366,8 @@
                 });
             }
 
-            // Sending file function
-            function fileUpload(form) {
-                const ticketMessagesHistoryContainer = $(".tickets-messages-history");
+            // Preparing file
+            function fileUploadOnChange() {
                 const ticketId = activeTicketId;
                 const files = $("#fileUploaded").get(0).files;
                 let data = new FormData();
@@ -340,35 +378,59 @@
                 data.append("ticketId", ticketId);
                 data.append("profileImage", userSession["profile_image"]);
 
-                console.log("sending file to " + activeTicketId + "...")
+                activeFile = data;
+                isUploadingImage = false;
+                isUploadingFile = true;
+                showFileLabel(files[0]["name"]);
 
+                return;
+            }
+
+            function fileUpload() {
                 $.ajax({
                     url: '<?php echo base_url();?>index.php/admin/Support/fileSendUpload',
                     type: "POST",
                     processData: false,
                     contentType: false,
-                    data: data,
+                    data: activeFile,
                     success: function (response) {
-                        // const res = JSON.parse(response)["upload_data"];
-                        // console.log(res) 
-                        console.log(response)
-                        
                         $('#fileUploaded').val('');
                         ticketMessagesHistoryContainer.append(response);
                         scrollToLatest(ticketMessagesHistoryContainer);
+                        resetMessageArea();
                     },
                     error: function (er) {
                         console.log(er)
                         if (er.status == 415)
                             alert("The filetype you are attempting to upload is not allowed.");
                     }
-                });        
+                });
             }
 
             function scrollToLatest(container) {
                 setTimeout(() => {
                     container.scrollTop(container.prop("scrollHeight") + 1000);
                 }, 60);
+            }
+
+            function showFileLabel(fileName) {
+                textMessageContainer.hide();
+                textMessageContainer.val("");
+                fileLabelContainer.show();
+                fileLabelTextContainer.text(fileName);
+            }
+
+            function resetMessageArea() {
+                activeFile = "";
+                isUploadingImage = false;
+                isUploadingFile = false;
+                $("#upload-image").val("");
+                $("#fileUploaded").val("");
+                fileLabelContainer.hide();
+                fileLabelTextContainer.text("");
+                textMessageContainer.val("");
+                textMessageContainer.show();
+                textMessageContainer.focus();
             }
         </script>
     </body>

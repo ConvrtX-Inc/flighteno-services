@@ -641,6 +641,7 @@ body {
   border-radius: 200px;
   margin: 20px 30px;
   padding: 7px 7px 7px 20px;
+  position: relative;
 }
 
 .tickets-messages-textarea .this-icon {
@@ -651,10 +652,25 @@ body {
   cursor: pointer;
 }
 
+.tickets-messages-textarea .emoji-tooltip {
+  position: absolute;
+  bottom: 50px;
+}
+
+.tickets-messages-textarea .emoji-tooltip:not(.shown) {
+  display: none;
+}
+
 .tickets-messages-textarea #text-msg {
   border: none;
   height: 36px;
   resize: none;
+}
+
+.tickets-messages-textarea .file-label a,
+.tickets-messages-textarea .file-label a:hover,
+.tickets-messages-textarea .file-label a i {
+  color: #f33636;
 }
 
 .tickets-messages-textarea #btn-send {
