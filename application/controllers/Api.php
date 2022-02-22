@@ -208,7 +208,7 @@ class Api extends CI_Controller{
 	}//end function
 
 
-	public function CompareOldAndNewPassword () {
+	public function CompareOldAndNewPasswordEmail () {
 		$usernameAuth = md5($this->input->server('PHP_AUTH_USER'));
 		$passwordAuth = md5($this->input->server('PHP_AUTH_PW'));
 		
@@ -220,6 +220,50 @@ class Api extends CI_Controller{
 
 			$db = $this->mongo_db->customQuery();
 			$where['email_address'] = $email;
+			$record = $db->users->find($where);
+			$data = iterator_to_array($record);
+
+			if (count($data) > 0 ) {
+				if($data[0]['password'] == md5($password) ) {
+					http_response_code(200);
+					$data = new stdClass;
+					$data->Status = 200;
+					$data->Message = 'User with the same password found.';
+					$data->isOldPassword = true;
+					echo json_encode($data);
+					exit;
+				}
+			}
+
+			http_response_code(200);
+			$data = new stdClass;
+			$data->Status = 200;
+			$data->Message = 'User with the same password not found.';
+			$data->isOldPassword = false;
+			echo json_encode($data);
+
+		} else {
+			http_response_code(400);
+			$data = new stdClass;
+			$data->Status = 400;
+			$data->Message = 'Authentication Failed';
+			echo json_encode($data);
+		}
+	}
+
+
+	public function CompareOldAndNewPasswordPhone () {
+		$usernameAuth = md5($this->input->server('PHP_AUTH_USER'));
+		$passwordAuth = md5($this->input->server('PHP_AUTH_PW'));
+		
+		$validateCredentials = varify_basic_auth($passwordAuth, $usernameAuth);
+
+		if ($validateCredentials == true || $validateCredentials == 1) {
+			$phone_number = trim($this->input->post('phone_number'));
+			$password = trim($this->input->post('password'));
+
+			$db = $this->mongo_db->customQuery();
+			$where['phone_number'] = $phone_number;
 			$record = $db->users->find($where);
 			$data = iterator_to_array($record);
 
