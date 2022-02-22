@@ -2704,8 +2704,8 @@ class Rest_calls extends REST_Controller
      * this is for KYC
      */
     public function knowYourCustomer_post()
-    {
-        $data = $this->post();
+    {             
+        $data = $this->post();        
         try {
             if (!empty($this->input->request_headers('Authorization'))) {
                 $receivedTokenArray = $this->input->request_headers('Authorization');
@@ -2796,9 +2796,129 @@ class Rest_calls extends REST_Controller
                 'status_code'   => REST_Controller::HTTP_INTERNAL_SERVER_ERROR
 
             ], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
+        }        
     }//end signup
+
+    public function addChat_post()
+    {
+        $db = $this->mongo_db->customQuery();
+        //if (!empty($this->input->request_headers('Authorization'))) {
+
+           // $received_Token_Array = $this->input->request_headers('Authorization');
+            //$received_Token = '';
+            //$received_Token = $received_Token_Array['authorization'];
+            //if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+            //    $received_Token = $received_Token_Array['Authorization'];
+           // }
+           // $token = trim(str_replace("Token: ", "", $received_Token));
+            //$tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            //if (!empty($tokenArray->admin_id)) {
+
+                $order_id = $this->post('order_id');
+                $sender_id = $this->post('sender_id');
+                $reciver_id = $this->post('reciver_id');               
+                $chat = [
+                    'order_id' => $this->post('order_id'), 
+                    'sender_id' => $this->post('sender_id'),                    
+                    'reciver_id' => $this->post('reciver_id'),                    
+                    'time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s'))
+                ];
+
+                $checkStatus = $this->Mod_chat->checkChatAlreadyExists($order_id, $sender_id, $reciver_id);
+                $dynamicStatus = '';
+                if ($checkStatus == true || $checkStatus == 1) {
+                    $dynamicStatus = 'Chat is Already added with same Details';
+                    $type = '500';
+                } else {
+
+                    $db->chat->insertOne($chat);
+                    $dynamicStatus = 'Successfully Added';
+                    $type = '200';
+                }
+
+                $chatID = $this->Mod_chat->getChatID($order_id, $sender_id, $reciver_id); 
+
+                $response_array = [
+                    'status' => $dynamicStatus,
+                    'chat_id' => $chatID,                    
+                ];
+                
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            //} else {
+
+              //  $response_array['status'] = 'Authorization Failed!!';
+              //  $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+           // }
+
+       // } else {
+
+         //   $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+          //  $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        //}
+    }//end function
+
+    public function addChatMessages_post()
+    {
+        $db = $this->mongo_db->customQuery();
+        //if (!empty($this->input->request_headers('Authorization'))) {
+
+            //$received_Token_Array = $this->input->request_headers('Authorization');
+            //$received_Token = '';
+            //$received_Token = $received_Token_Array['authorization'];
+            //if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+            //    $received_Token = $received_Token_Array['Authorization'];
+           // }
+            ///$token = trim(str_replace("Token: ", "", $received_Token));
+            //$tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            //if (!empty($tokenArray->admin_id)) {
+
+                $sender = $this->post('sender');
+                $chat_id = $this->post('chat_id');
+                $sender_id = $this->post('sender_id');             
+                //$findArray = json_decode($_POST['currentMessage']);        
+                $findArray = json_decode(stripslashes($_POST['currentMessage']));    
+                
+                //$findArray = json_decode(stripslashes($_GET['findArray']));
+                
+                //$json = '{"Peter":65,"Harry":80,"John":78,"Clark":90}';
+                //$findArray2 =  json_decode( $json );
+                
+                
+                $chat = [
+
+                    'sender_id' => $this->post('sender_id'),                    
+                    //'currentMessage' => $this->post('currentMessage'),                       
+                    'currentMessage' =>  $findArray,       
+                    'time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
+                    'chat_id' => $this->post('chat_id'),                    
+                    'is_read' => false,
+                    'sender' => $this->post('sender'),                                                                                                                     
+                ];
+
+                $db->chat_messages->insertOne($chat);
+                $dynamicStatus = 'Successfully Added';
+                $type = '200';
+
+                $response_array = [
+                    'status' => $dynamicStatus,                                         
+                ];
+                
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            //} else {
+
+              //  $response_array['status'] = 'Authorization Failed!!';
+               // $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            //}
+
+        //} else {
+
+          //  $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+           // $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+       // }
+    }//end function    
+
 
 }//end controller                                
 

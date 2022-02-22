@@ -320,4 +320,43 @@ class Mod_chat extends CI_Model {
     $messagesRes =  iterator_to_array($messages);
     return $messagesRes;
   }//end
+
+  public function checkChatAlreadyExists($order_id, $sender_id, $reciver_id){
+    $db = $this->mongo_db->customQuery();
+
+    $where['order_id']  =  $order_id; 
+    $where['sender_id'] =  $sender_id ;
+    $where['reciver_id'] =  $reciver_id;    
+
+    $getData = $db->chat->find($where);
+    $records = iterator_to_array($getData);
+
+    if(count($records) > 0){
+        return true;
+    }
+    else{
+
+        return false;
+    }
+  } //end model function
+
+  public function getChatID($order_id, $sender_id, $reciver_id){
+    $db = $this->mongo_db->customQuery();
+
+    $where['order_id']  =  $order_id; 
+    $where['sender_id'] =  $sender_id ;
+    $where['reciver_id'] =  $reciver_id;    
+
+    $getData = $db->chat->find($where);
+    $records = iterator_to_array($getData);
+
+    if(count($records) > 0){
+        return $records[0]['_id'];        
+    }
+    else{
+
+        return 0;
+    }
+  } //end model function
+
 }
