@@ -28,6 +28,7 @@ class Rest_calls extends REST_Controller
         $this->load->model('Mod_rating');
         $this->load->model('Mod_activity');
         $this->load->model('Mod_ticket');
+        $this->load->model('Mod_card');
         ini_set("display_errors", 1);
         error_reporting(1);
     }
@@ -2553,6 +2554,122 @@ class Rest_calls extends REST_Controller
         }
     }//end
 
+    public function createCard_post()
+    {
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) { 
+                $admin_id = (string)$this->post('admin_id');
+                $insertCard = [
+                    'admin_id' => $admin_id,
+                    'card_number' => $this->post('card_number'),
+                    'expiry_date' => $this->post('expiry_date'),
+                    'cvv' => $this->post('cvv'),
+                    'card_name' => $this->post('card_name'),    
+                    'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),                
+                ];                
+
+                $db = $this->mongo_db->customQuery();
+
+                $db->card->insertOne($insertCard);
+                
+                $response_array['status'] = 'Card is Submitted';
+                $response_array['data'] = $cardResponseData;
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+                
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        } 
+    }//end    
+
+    public function getCard_post()
+    {     
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {      
+                $card_id = (string)$this->post('card_id');                                
+                $tData = $this->Mod_card->getCardInfo($card_id);
+
+                $response_array['data'] = $tData;                
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+                
+            } else {
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        } 
+    }
+
+    public function editCard_post()
+    {
+        $db = $this->mongo_db->customQuery();
+        if (!empty($this->input->request_headers('Authorization'))) {
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+                $card_id = (string)$this->post('card_id');
+                $admin_id = (string)$this->post('admin_id');
+                $card_number = (string)$this->post('card_number');
+                $expiry_date = (string)$this->post('expiry_date');
+                $cvv = (string)$this->post('cvv');
+                $card_name = (string)$this->post('card_name');
+                                    
+                $this->Mod_card->updateCard($card_id, $admin_id, $card_number, $expiry_date, $cvv, $card_name);
+                                    
+                $response_array = [                        
+                    'status' => 'Card Update Successfully!',                        
+                ];
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);                
+            } else {
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }        
+    }//end
+
 
     public function getAllTickets_post()
     {
@@ -2877,19 +2994,11 @@ class Rest_calls extends REST_Controller
                 $sender = $this->post('sender');
                 $chat_id = $this->post('chat_id');
                 $sender_id = $this->post('sender_id');             
-                //$findArray = json_decode($_POST['currentMessage']);        
                 $findArray = json_decode(stripslashes($_POST['currentMessage']));    
-                
-                //$findArray = json_decode(stripslashes($_GET['findArray']));
-                
-                //$json = '{"Peter":65,"Harry":80,"John":78,"Clark":90}';
-                //$findArray2 =  json_decode( $json );
-                
-                
+                            
                 $chat = [
 
-                    'sender_id' => $this->post('sender_id'),                    
-                    //'currentMessage' => $this->post('currentMessage'),                       
+                    'sender_id' => $this->post('sender_id'),                                        
                     'currentMessage' =>  $findArray,       
                     'time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                     'chat_id' => $this->post('chat_id'),                    
