@@ -49,4 +49,10 @@ class Mod_card extends CI_Model {
     return true ;
   }
 
+  public function getAllCards() {   
+    $db   =  $this->mongo_db->customQuery();    
+    $all_cards =  $db->card->find();
+    $getData   =  iterator_to_array($all_cards);
+    return $getData;      
+  }
 }
