@@ -1277,9 +1277,14 @@ class Rest_calls extends REST_Controller
 
                     $search['name'] = ['$regex' => trim($this->post('product_name')), '$options' => 'si'];
                 }
-                if (!empty($this->post('starting_price')) && !empty($this->post('ending_price'))) {
+                if (!empty($this->post('store_name'))) {
 
-                    $search['product_price'] = ['$gte' => $this->post('starting_price'), '$lte' => $this->post('ending_price')];
+                    $search['store_name'] = ['$regex' => trim($this->post('store_name')), '$options' => 'si'];
+                }
+                if (!empty($this->post('starting_price')) && !empty($this->post('ending_price'))) {                 
+                    $start_price = (float)$this->post('starting_price');
+                    $end_price = (float)$this->post('ending_price');
+                    $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];
                 }
 
                 $sorted_by = trim($this->post('sorted_by'));
@@ -1316,6 +1321,7 @@ class Rest_calls extends REST_Controller
                             'product_dilivery_country_name' => '$product_dilivery_country_name',
                             'product_dilivery_city_name' => '$product_dilivery_city_name',
                             'product_dilivery_date' => '$product_dilivery_date',
+                            'store_name' => '$store_name',
                             'flighteno_cost' => '$flighteno_cost',
                             'status' => '$status',
                             'tax' => '$tax',
@@ -1360,7 +1366,7 @@ class Rest_calls extends REST_Controller
                             ],
                             'as' => 'profile_data'
                         ]
-                    ],
+                    ],                    
 
                     [
                         '$sort' => [$sorted_by => $sort]
