@@ -211,6 +211,7 @@ class Rest_calls extends REST_Controller
                         $img_true_url = $html->find("img[id=icImg]", 0);
                         preg_match('@src="([^"]+)"@', $img_true_url, $match_img_url);
                         $img_src_highres = array_pop($match_img_url);
+                        $img_src_highres = str_replace('s-l300', 's-l1600', $img_src_highres);
                       
                         /*
                         file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
