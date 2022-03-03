@@ -176,12 +176,13 @@ Class Rest_calls extends REST_Controller {
                             $price =  $html->find("div.display-price", 0)->plaintext; 
                         } 
 
-                        $name   =  $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
+                        // $name   =  $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
+                        $name   =  $html->find(".product-title", 0)->plaintext;
                         
 
-                        $data  = $html->find("div.fs_imgc", 0);  //get all images
-                        preg_match( '@src="([^"]+)"@' , $data, $match );
-                        $img_src = array_pop($match);
+                        $data  = $html->find(".vi-image-gallery__image", 0);  //get all images
+                        preg_match( '@src=([^"]+ )@' , $data, $match );
+                        $img_src = trim(array_pop($match));
 
                         $price = str_replace( "US $" ,"", $price);
                         $price = str_replace( "(including shipping)" ,"", $price);
