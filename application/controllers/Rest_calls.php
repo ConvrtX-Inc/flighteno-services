@@ -190,21 +190,32 @@ class Rest_calls extends REST_Controller
                         $html = file_get_html($url);
 
                         $price = $html->find("span#convbidPrice", 0)->plaintext;
+                        $price_data_souce = 0;
                         if (empty($price)) {  //notranslate
 
                             $price = $html->find("span#convbinPrice", 0)->plaintext;
+                            $price_data_souce = 1;
                         }
                         if (empty($price)) {
 
                             $price = $html->find("span.notranslate", 0)->plaintext;
+                            $price_data_souce = 2;
                         }
 
                         if (empty($price)) {
 
                             $price = $html->find("div.display-price", 0)->plaintext;
+                            $price_data_souce = 3;
                         }
 
                         $name = $html->find("span#vi-lkhdr-itmTitl", 0)->plaintext;
+                        $name_data_source = 0;
+
+                        //  Get product name for 2nd view template
+                        if (empty($name)) {
+                            $name = $html->find(".product-title", 0)->plaintext;
+                            $name_data_source = 1;
+                        }
 
 
                        /* $data = $html->find("div.fs_imgc", 0);  //get all images
@@ -216,12 +227,32 @@ class Rest_calls extends REST_Controller
                         $img_true_url = $html->find("img[id=icImg]", 0);
                         preg_match('@src="([^"]+)"@', $img_true_url, $match_img_url);
                         $img_src_highres = array_pop($match_img_url);
+                        $img_src_highres = str_replace('s-l300', 's-l1600', $img_src_highres);
+                        $img_data_source = 0;
+
+                        // Get image for 2nd view template
+                        if (empty($img_src_highres)) {
+                            $data = $html->find(".vi-image-gallery__image", 0);
+                            preg_match( '@src=([^"]+ )@' , $data, $match );
+                            $img_src_highres = trim(array_pop($match));
+                            $img_data_source = 1;
+                        }
                       
                         /*
                         file_put_contents("php://stderr", "SCRAPED IMAGE #2x\n");
                         file_put_contents("php://stderr", "img tag:".$img_true_url."\n");
                         file_put_contents("php://stderr", "img source:".$img_src_highres."\n");
                         */
+
+                        // Get store name for 1st template
+                        $store_name = $html->find("div.ux-seller-section__item--seller>a>span", 0)->plaintext;
+                        $store_name_source = 0;
+
+                        // Get store name for 2nd template
+                        if (empty($store_name)) {
+                            $store_name = $html->find("div.seller-persona>span>a", 0)->plaintext;
+                            $store_name_source = 1;
+                        }
 
                         $price = str_replace("US $", "", $price);
                         $price = str_replace("(including shipping)", "", $price);
@@ -230,7 +261,13 @@ class Rest_calls extends REST_Controller
                             'url' => $this->post('url'),
                             'product_image' => $img_src_highres,
                             'price' => (float)$price,
-                            'name' => $name
+                            'name' => $name,
+                            'store_name' => $store_name,
+                            /*----- for debugging, to track where data came from -----*/
+                            // 'price_data_souce' => $price_data_souce,
+                            // 'name_data_source' => $name_data_source,
+                            // 'img_data_source' => $img_data_source,
+                            // 'store_name_source' => $store_name_source,
                         ];
                         $this->set_response($reponseArray, REST_Controller::HTTP_CREATED);
                     } else {
