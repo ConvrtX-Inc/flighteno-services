@@ -299,6 +299,8 @@ class Mod_order extends CI_Model {
       $getOfferRes =  iterator_to_array($getOffer);
 
       $this->updateOrderStatusAndUpdateRecord($getOfferRes[0]['order_id'], $getOfferRes[0]['estimateDelivery']);
+      $this->insertOrderDetailsHistory($getOfferRes[0]['order_id'], '0', 'accepted');
+
       $insertBuyerTrasection = [
 
         'type'         =>  'buyer',
@@ -899,5 +901,25 @@ class Mod_order extends CI_Model {
 
     return $getData;
   }
+
+  public function getOrderDetailsHistory($order_id) {
+    $db   =  $this->mongo_db->customQuery();
+    $history =  $db->order_detail->find(['order_id' => $order_id]);
+    $getData   =  iterator_to_array($history);
+
+    return $getData;
+  }
+
+  public function insertOrderDetailsHistory($order_id, $admin_id, $status) {
+    $db   =  $this->mongo_db->customQuery();
+    $orderHistoryData = [
+      'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),                            
+      'status' => $status,                            
+      'admin_id' => (string)$admin_id,
+      'order_id' => (string)$order_id
+    ];
+    $db->order_history->insertOne($orderHistoryData);
+  }  
+
 }
 
