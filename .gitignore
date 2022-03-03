@@ -6,6 +6,8 @@
 # Node artifact files
 node_modules/
 dist/
+config/
+config.php
 
 # Compiled Java class files
 *.class
@@ -48,3 +50,5 @@ Thumbs.db
 *.mov
 *.wmv
 
+#Vendor
+/vendor/
