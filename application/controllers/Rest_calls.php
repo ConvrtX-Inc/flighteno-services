@@ -562,7 +562,7 @@ class Rest_calls extends REST_Controller
                         $db->users->updateOne(['phone_number' => $phone_number], ['$set' => ['password' => $password]]);
 
                         $response_array = [
-                            'status' => 'Your Password Is Successfully Updated!!!!!!!!!!!',
+                            'status' => 'Your Password Is Successfully Updated!',
                             'type' => 200
                         ];
                         $this->set_response($response_array, REST_Controller::HTTP_CREATED);
@@ -571,7 +571,7 @@ class Rest_calls extends REST_Controller
                     } else {
 
                         $response_array = [
-                            'status' => 'Password and Confirmed_Password are not Matched!!!!!!!!!!!',
+                            'status' => 'Password and Confirmed_Password are not Matched!',
                             'type' => 400
                         ];
                         $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
@@ -580,7 +580,7 @@ class Rest_calls extends REST_Controller
                 } else {
 
                     $response_array = [
-                        'status' => 'Authorization Failled!!!!!!!!!!!',
+                        'status' => 'Authorization Failed!',
                         'type' => 400,
                     ];
                     $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
@@ -597,7 +597,7 @@ class Rest_calls extends REST_Controller
         } else {
 
             $response_array = [
-                'status' => 'Payload is Missing!!!!!!!!!!!',
+                'status' => 'Payload is Missing!',
                 'type' => 400,
             ];
             $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
