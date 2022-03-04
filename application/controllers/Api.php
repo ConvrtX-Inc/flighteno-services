@@ -180,12 +180,14 @@ class Api extends CI_Controller{
 					$data = new stdClass;
 					$data->Status = 200;
 					$data->Message = 'SMS sent Successfully';
+					$data->phone   =  $phoneNumber;
 					echo json_encode($data);
 				}else{
 					http_response_code(400);
 					$data = new stdClass;
 					$data->Status = 400;
 					$data->Message = 'SMS sending Failed';
+					$data->phone   =  $phoneNumber;
 					echo json_encode($data);
 				}
 

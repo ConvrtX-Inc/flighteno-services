@@ -56,7 +56,7 @@ class Rest_calls extends REST_Controller
 
                 if ($replyChecking == true || $replyChecking == 1) {
 
-                    if ($this->post()) {
+                    if ($this->post()) { 
 
                         $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + 
                                             ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
@@ -116,7 +116,11 @@ class Rest_calls extends REST_Controller
                             'message' => 'created order',
                             'admin_id' => (string)$this->post('admin_id')
                         ];
-                        $this->Mod_activity->saveActivity($activityData);//lock the activity
+                        $this->Mod_activity->saveActivity($activityData);//lock the activity                        
+                        
+                        $order_id = $order_status->getInsertedId();                  
+                        $this->Mod_order->insertOrderDetailsHistory($order_id, $this->post('admin_id'), 'new');
+
                         $totalCharges = (float)((float)$this->post('product_price')) + (float)$this->post('estimated_dilivery_fee') + ((float)$this->post('vip_service_fee')) + ((float)$this->post('flighteno_cost')) + ((float)$this->post('tax'));
                         $responseArray = [
 
@@ -154,6 +158,7 @@ class Rest_calls extends REST_Controller
             $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
             $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
         }
+        
 
     }//end function
 
@@ -1747,6 +1752,7 @@ class Rest_calls extends REST_Controller
                 $admin_id = (string)$this->post('admin_id');
 
                 $orders = $this->Mod_order->makeAsCancelled($order_id, $admin_id);
+                $this->Mod_order->insertOrderDetailsHistory($order_id, $admin_id, 'cancelled');
                 if ($orders == true || $orders == 1) {
 
                     //lock the activity
@@ -1987,6 +1993,7 @@ class Rest_calls extends REST_Controller
 
                 $this->Mod_users->sendNotification($reciver_admin_id, $message, $type, $sender_admin_id, $order_id);
                 $this->Mod_order->markCompete($order_id);
+                $this->Mod_order->insertOrderDetailsHistory($order_id, $sender_admin_id, 'complete');
 
                 //lock the activity
                 $activityData = [
@@ -2434,7 +2441,7 @@ class Rest_calls extends REST_Controller
 
 
     public function getOrderDetails_post()
-    {
+    {        
         $db = $this->mongo_db->customQuery();
 
         if (!empty($this->input->request_headers('Authorization'))) {
@@ -2449,12 +2456,12 @@ class Rest_calls extends REST_Controller
             $token = trim(str_replace("Token: ", "", $received_Token));
             $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
 
-            if (!empty($tokenArray->admin_id)) {
+            if (!empty($tokenArray->admin_id)) { 
 
                 $order_id = (string)$this->post('order_id');
                 $orderData = $this->Mod_order->getOrderDetails($order_id);
                 $userProfileData = $this->Mod_users->getUserProfileStatus($orderData['admin_id']);
-                $orderHistory = $this->Mod_order->getOrderNotificationHistory($order_id);
+                $orderHistory = $this->Mod_order->getOrderDetailsHistory($order_id);
 
                 $response_array = [
                     'data' => $orderData,
@@ -2462,7 +2469,7 @@ class Rest_calls extends REST_Controller
                     'order_history' => $orderHistory,
                     'status' => 'Successfully Fetched!',
                 ];
-                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);                
             } else {
 
                 $response_array['status'] = 'Authorization Failed!!';
@@ -2472,7 +2479,7 @@ class Rest_calls extends REST_Controller
 
             $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
             $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
-        }
+        }        
     }//end
 
 
