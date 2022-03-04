@@ -258,7 +258,6 @@ class Rest_calls extends REST_Controller
                             'price' => (float)$price,
                             'name' => $name,
                             'store_name' => $store_name,
-                            /*----- for debugging, to track where data came from -----*/
                             // 'price_data_souce' => $price_data_souce,
                             // 'name_data_source' => $name_data_source,
                             // 'img_data_source' => $img_data_source,
