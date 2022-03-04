@@ -2521,6 +2521,39 @@ class Rest_calls extends REST_Controller
     }
 
 
+    public function getStoreNames_get()
+    {
+        if (!empty($this->input->request_headers('Authorization'))) {
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+                $store_names = $this->Mod_order->getStoreNames();
+                $response_array = [
+                    'store_names' => $store_names,
+                    'status' => 'Successfully Fetched!',
+                ];
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            } else {
+                $response_array['status'] = 'Authorization Failed!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+            
+        } else {
+            $response_array['status'] = 'Headers Are Missing!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+
     public function trendingOrders_post()
     {
         if (!empty($this->input->request_headers('Authorization'))) {

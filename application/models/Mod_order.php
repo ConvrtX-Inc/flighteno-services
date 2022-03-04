@@ -911,6 +911,12 @@ class Mod_order extends CI_Model {
     return $getData[0]['store_name'];
   }
 
+  public function getStoreNames(){
+    $db = $this->mongo_db->customQuery();
+    $data = $db->orders->distinct('store_name');
+    return $data;
+  }
+
   public function getOrderDetailsHistory($order_id) {
     $db   =  $this->mongo_db->customQuery();
     $history =  $db->order_history->find(['order_id' => (string)$order_id]);
