@@ -1322,6 +1322,10 @@ class Rest_calls extends REST_Controller
 
                     $search['store_name'] = ['$regex' => trim($this->post('store_name')), '$options' => 'si'];
                 }
+                if (!empty($this->post('admin_id'))) {
+
+                    $search['admin_id'] = ['$regex' => trim($this->post('admin_id')), '$options' => 'si'];
+                }
                 if (!empty($this->post('starting_price')) && !empty($this->post('ending_price'))) {                 
                     $start_price = (float)$this->post('starting_price');
                     $end_price = (float)$this->post('ending_price');
