@@ -334,6 +334,7 @@ class Rest_calls extends REST_Controller
                             'profile_status' => '$profile_status',
                             'password' => '$password',
                             'conected_account_id' => '$conected_account_id',
+                            'customer_id' => '$customer_id',
                             'Geometry' => '$Geometry',
                             ' Postal Code ' => '$postal_code',
                             'country' => '$country',
