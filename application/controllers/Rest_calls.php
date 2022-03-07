@@ -2698,6 +2698,7 @@ class Rest_calls extends REST_Controller
                 $insertCard = [
                     'admin_id' => $admin_id,
                     'card_number' => $this->post('card_number'),
+                    'card_type' => $this->post('card_type'),
                     'expiry_date' => $this->post('expiry_date'),
                     'cvv' => $this->post('cvv'),
                     'card_name' => $this->post('card_name'),    
@@ -2774,11 +2775,12 @@ class Rest_calls extends REST_Controller
                 $card_id = (string)$this->post('card_id');
                 $admin_id = (string)$this->post('admin_id');
                 $card_number = (string)$this->post('card_number');
+                $card_type = (string)$this->post('card_type');                
                 $expiry_date = (string)$this->post('expiry_date');
                 $cvv = (string)$this->post('cvv');
                 $card_name = (string)$this->post('card_name');
                                     
-                $this->Mod_card->updateCard($card_id, $admin_id, $card_number, $expiry_date, $cvv, $card_name);
+                $this->Mod_card->updateCard($card_id, $admin_id, $card_number, $card_type, $expiry_date, $cvv, $card_name);
                                     
                 $response_array = [                        
                     'status' => 'Card Update Successfully!',                        

@@ -18,7 +18,7 @@ class Mod_card extends CI_Model {
     return $getData;      
   }
 
-  public function updateCard($card_id, $admin_id, $card_number, $expiry_date, $cvv, $card_name){
+  public function updateCard($card_id, $admin_id, $card_number, $card_type, $expiry_date, $cvv, $card_name){
     $db = $this->mongo_db->customQuery();
 
     $update = [];
@@ -28,6 +28,10 @@ class Mod_card extends CI_Model {
 
     if(!empty($card_number) && !is_null($card_number) ){
       $update['card_number'] = $card_number;
+    }
+
+    if(!empty($card_type) && !is_null($card_type) ){
+      $update['card_type'] = $card_type;
     }
 
     if(!empty($expiry_date) && !is_null($expiry_date) ){
