@@ -594,4 +594,12 @@ class Mod_users extends CI_Model {
         }
         return true ;
     }
+
+  public function updateVerification($id, $data){
+      $db = $this->mongo_db->customQuery();
+      if( !empty($data) && !is_null($data) ){
+          $db->users->updateOne(['_id' => $this->mongo_db->mongoId($id) ], ['$set' => $data ] );
+      }
+      return true ;
+  }
 }//end model
