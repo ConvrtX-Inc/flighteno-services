@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-//$config['base_url'] = 'http://localhost/flighteno-services/';
+//$config['base_url'] = 'https://localhost:443/flighteno-services/';
 $config['base_url'] = 'https://dev-flighteno-convrtx.herokuapp.com/';
 //$config['base_url'] = 'https://dev-flighteno-convrtx.herokuapp.com/';
 //$config['base_url'] = 'http://3.124.117.144/flighteno-services';
@@ -106,7 +106,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------

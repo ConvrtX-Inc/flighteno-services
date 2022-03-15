@@ -2,6 +2,8 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
 // use Twilio\Rest\Client;
+use Stripe\Stripe;
+require 'vendor/autoload.php';
 
 /**
  * This is an example of a few basic user interaction methods you could use
@@ -3195,6 +3197,81 @@ class Rest_calls extends REST_Controller
            // $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
        // }
     }//end function    
+
+    public function createverificationsession_post(){
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->set_response([
+                'error'         => true,
+                'response'      => [
+                    'message'   => 'Invalid request',
+                ],
+                'status_code'   => REST_Controller::HTTP_BAD_REQUEST
+
+            ], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+        
+                // Load `.env` file from the server directory so that
+                // environment variables are available in $_ENV or via
+                // getenv().
+                $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
+                $dotenv->load();
+
+                // Set your secret key. Remember to switch to your live secret key in production.
+                // See your keys here: https://dashboard.stripe.com/apikeys
+                $stripe = new \Stripe\StripeClient([
+                    'api_key' => $_ENV['STRIPE_SECRET_KEY'],
+                    'stripe_version' => '2020-08-27',
+                ]);
+
+                // Create the session
+                $verification_session = $stripe->identity->verificationSessions->create([
+                    'type' => 'document',
+                    'options' => ['document' => ['require_matching_selfie' => true]],
+                    'metadata' => [
+                    'user_id' => '{{USER_ID}}',
+                    ]
+                ]);
+
+                // Return only the client secret to the frontend.
+                $client_secret = $verification_session->client_secret;
+                $url = $verification_session->url;
+
+                $response_array = [
+                    'error'         => false,
+                    'client_secret'     => $client_secret,
+                    'url'     => $url,
+                    'status_code'   => REST_Controller::HTTP_OK
+
+                ];
+                $this->set_response($response_array, REST_Controller::HTTP_OK);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
 
 
 }//end controller                                
