@@ -306,7 +306,7 @@ class Rest_calls extends REST_Controller
         if ($this->post('email_address') && $this->post('password')) {
 
             $validateCredentials = varify_basic_auth($passwordAuth, $usernameAuth);
-
+            //$validateCredentials=true;
             if ($validateCredentials == true || $validateCredentials == 1) {
 
                 $email = strtolower(trim($this->post('email_address')));
@@ -3198,7 +3198,7 @@ class Rest_calls extends REST_Controller
        // }
     }//end function    
 
-    public function createverificationsession_post(){
+    public function createVerificationSession_post(){
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
             $this->set_response([
                 'error'         => true,
@@ -3245,7 +3245,8 @@ class Rest_calls extends REST_Controller
                     'type' => 'document',
                     'options' => ['document' => ['require_matching_selfie' => true]],
                     'metadata' => [
-                    'user_id' => '{{USER_ID}}',
+                    //'user_id' => '{{USER_ID}}',
+                    'user_id' => $tokenArray->admin_id
                     ]
                 ]);
 
@@ -3255,11 +3256,87 @@ class Rest_calls extends REST_Controller
 
                 $response_array = [
                     'error'         => false,
+                    //'verification_session' => $verification_session,
+                    'verification_session_id' => $verification_session->id,
                     'client_secret'     => $client_secret,
                     'url'     => $url,
                     'status_code'   => REST_Controller::HTTP_OK
 
                 ];
+                //$this->createverificationsession_post=TRUE;
+                $this->set_response($response_array, REST_Controller::HTTP_OK);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function retrieveVerificationSession_post(){
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->set_response([
+                'error'         => true,
+                'response'      => [
+                    'message'   => 'Invalid request',
+                ],
+                'status_code'   => REST_Controller::HTTP_BAD_REQUEST
+
+            ], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+                $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
+                $dotenv->load();
+
+                // Set your secret key. Remember to switch to your live secret key in production.
+                // See your keys here: https://dashboard.stripe.com/apikeys
+                $stripe = new \Stripe\StripeClient([
+                    'api_key' => $_ENV['STRIPE_SECRET_KEY'],
+                    'stripe_version' => '2020-08-27',
+                ]);
+
+                $expandedSession = $stripe->identity->verificationSessions->retrieve(
+                    $this->post('verification_session_id'),
+                    //'vs_1Kd4bIGwymx5JE4T5mnRqa2T',
+                    [
+                    'expand' => [
+                        'verified_outputs',
+                    ],
+                    ]
+                );
+
+                $response_array = [
+                    'error'         => false,
+                    'expanded_session' =>$expandedSession,
+                    'is_verified' => $expandedSession->status,
+                    'status_code'   => REST_Controller::HTTP_OK
+
+                ];
+
+                $updateData['is_verified']=$expandedSession->status;
+                $updateData['verification_result_data']=$expandedSession->verified_outputs;
+                $this->Mod_users->updateVerification($tokenArray->admin_id, $updateData);
+
                 $this->set_response($response_array, REST_Controller::HTTP_OK);
             } else {
 
