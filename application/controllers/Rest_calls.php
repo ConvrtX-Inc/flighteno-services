@@ -1332,10 +1332,20 @@ class Rest_calls extends REST_Controller
                     $end_price = (float)$this->post('ending_price');
                     $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];
                 }
-
-                $sorted_by = trim($this->post('sorted_by'));
-                $sort = trim((float)$this->post('sort'));//    asc/dec
-                $sort = (int)$sort;
+                
+                if (!empty($this->post('sorted_by'))) {
+                    $sorted_by = trim($this->post('sorted_by'));
+                }
+                else {
+                    $sorted_by = 'order_created_date';
+                }
+                if (!empty($this->post('sort'))) {
+                    $sort = trim((float)$this->post('sort'));
+                    $sort = (int)$sort;
+                }
+                else {
+                    $sort = 1;
+                }
 
                 $search['Total'] = ['$exists' => true];
 
