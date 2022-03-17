@@ -344,7 +344,8 @@ class Rest_calls extends REST_Controller
                             'full_name' => '$full_name',
                             'last_login_time' => '$last_login_time',
                             'location' => '$location',
-                            'login_status' => '$login_status',
+                            'login_status' => '$login_status',                            
+                            'kyc_status_verified' => ['$ifNull' => ['$kyc_status_verified', false] ],
                             'phone_number' => '$phone_number',
                             'rating' => '$rating',
                             'signup_source' => '$signup_source',
@@ -434,6 +435,7 @@ class Rest_calls extends REST_Controller
                 'user_role' => 2,
                 'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                 'login_status' => true,
+                'kyc_status_verified' => false,
                 'profile_image' => (string)$this->post('profile_image'),
                 'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                 'status' => 'user',
@@ -464,6 +466,7 @@ class Rest_calls extends REST_Controller
                     'user_role' => 2,
                     'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                     'login_status' => true,
+                    'kyc_status_verified' => false,
                     'profile_image' => (string)$this->post('profile_image'),
                     'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                     'status' => 'user',
@@ -826,7 +829,7 @@ class Rest_calls extends REST_Controller
                     'email_address' => (string)$this->post('email_address'),
                     'user_role' => 2,
                     'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-                    'login_status' => true,
+                    'login_status' => true,                    
                     'password' => md5((string)$this->post('password')),
                     'profile_image' => (string)$this->post('profile_image'),
                     'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
@@ -867,7 +870,7 @@ class Rest_calls extends REST_Controller
                         'password' => md5((string)$this->post('password')),
                         'user_role' => 2,
                         'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-                        'login_status' => true,
+                        'login_status' => true,                        
                         'profile_image' => (string)$this->post('profile_image'),
                         'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                         'status' => 'user',
@@ -2415,6 +2418,7 @@ class Rest_calls extends REST_Controller
                                 'last_login_time' => '$last_login_time',
                                 'location' => '$location',
                                 'login_status' => '$login_status',
+                                'kyc_status_verified' => '$kyc_status_verified',
                                 'phone_number' => '$phone_number',
                                 'rating' => '$rating',
                                 'signup_source' => '$signup_source',
@@ -3030,9 +3034,10 @@ class Rest_calls extends REST_Controller
                         'location'       => (string)$data['address_line_2'],
                         'birth_date'     => (string)$data['birth_date'],
                         'phone_number'   => (string)$data['phone_number'],
+                        'kyc_status_verified' => true,                        
                     ];
                     $updateData = array_filter($updateData, fn($value) => !is_null($value) && $value !== '');
-                    $this->Mod_users->kycUpdate($data['user_id'], $updateData);
+                    $this->Mod_users->kycUpdate($data['user_id'], $updateData); 
                     $activityData = [
                         'created_date'  => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                         'message'       => 'KYC Update',
