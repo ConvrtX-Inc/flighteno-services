@@ -2,6 +2,8 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
 // use Twilio\Rest\Client;
+use Stripe\Stripe;
+require 'vendor/autoload.php';
 
 /**
  * This is an example of a few basic user interaction methods you could use
@@ -304,7 +306,7 @@ class Rest_calls extends REST_Controller
         if ($this->post('email_address') && $this->post('password')) {
 
             $validateCredentials = varify_basic_auth($passwordAuth, $usernameAuth);
-
+            //$validateCredentials=true;
             if ($validateCredentials == true || $validateCredentials == 1) {
 
                 $email = strtolower(trim($this->post('email_address')));
@@ -334,6 +336,7 @@ class Rest_calls extends REST_Controller
                             'profile_status' => '$profile_status',
                             'password' => '$password',
                             'conected_account_id' => '$conected_account_id',
+                            'customer_id' => '$customer_id',
                             'Geometry' => '$Geometry',
                             ' Postal Code ' => '$postal_code',
                             'country' => '$country',
@@ -341,7 +344,8 @@ class Rest_calls extends REST_Controller
                             'full_name' => '$full_name',
                             'last_login_time' => '$last_login_time',
                             'location' => '$location',
-                            'login_status' => '$login_status',
+                            'login_status' => '$login_status',                            
+                            'kyc_status_verified' => ['$ifNull' => ['$kyc_status_verified', false] ],
                             'phone_number' => '$phone_number',
                             'rating' => '$rating',
                             'signup_source' => '$signup_source',
@@ -431,6 +435,7 @@ class Rest_calls extends REST_Controller
                 'user_role' => 2,
                 'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                 'login_status' => true,
+                'kyc_status_verified' => false,
                 'profile_image' => (string)$this->post('profile_image'),
                 'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                 'status' => 'user',
@@ -461,6 +466,7 @@ class Rest_calls extends REST_Controller
                     'user_role' => 2,
                     'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                     'login_status' => true,
+                    'kyc_status_verified' => false,
                     'profile_image' => (string)$this->post('profile_image'),
                     'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                     'status' => 'user',
@@ -823,7 +829,7 @@ class Rest_calls extends REST_Controller
                     'email_address' => (string)$this->post('email_address'),
                     'user_role' => 2,
                     'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-                    'login_status' => true,
+                    'login_status' => true,                    
                     'password' => md5((string)$this->post('password')),
                     'profile_image' => (string)$this->post('profile_image'),
                     'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
@@ -864,7 +870,7 @@ class Rest_calls extends REST_Controller
                         'password' => md5((string)$this->post('password')),
                         'user_role' => 2,
                         'created_date' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
-                        'login_status' => true,
+                        'login_status' => true,                        
                         'profile_image' => (string)$this->post('profile_image'),
                         'last_login_time' => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                         'status' => 'user',
@@ -1322,15 +1328,29 @@ class Rest_calls extends REST_Controller
 
                     $search['store_name'] = ['$regex' => trim($this->post('store_name')), '$options' => 'si'];
                 }
+                if (!empty($this->post('admin_id'))) {
+
+                    $search['admin_id'] = ['$regex' => trim($this->post('admin_id')), '$options' => 'si'];
+                }
                 if (!empty($this->post('starting_price')) && !empty($this->post('ending_price'))) {                 
                     $start_price = (float)$this->post('starting_price');
                     $end_price = (float)$this->post('ending_price');
                     $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];
                 }
-
-                $sorted_by = trim($this->post('sorted_by'));
-                $sort = trim((float)$this->post('sort'));//    asc/dec
-                $sort = (int)$sort;
+                
+                if (!empty($this->post('sorted_by'))) {
+                    $sorted_by = trim($this->post('sorted_by'));
+                }
+                else {
+                    $sorted_by = 'order_created_date';
+                }
+                if (!empty($this->post('sort'))) {
+                    $sort = trim((float)$this->post('sort'));
+                    $sort = (int)$sort;
+                }
+                else {
+                    $sort = 1;
+                }
 
                 $search['Total'] = ['$exists' => true];
 
@@ -2398,6 +2418,7 @@ class Rest_calls extends REST_Controller
                                 'last_login_time' => '$last_login_time',
                                 'location' => '$location',
                                 'login_status' => '$login_status',
+                                'kyc_status_verified' => '$kyc_status_verified',
                                 'phone_number' => '$phone_number',
                                 'rating' => '$rating',
                                 'signup_source' => '$signup_source',
@@ -2694,6 +2715,7 @@ class Rest_calls extends REST_Controller
                 $insertCard = [
                     'admin_id' => $admin_id,
                     'card_number' => $this->post('card_number'),
+                    'card_type' => $this->post('card_type'),
                     'expiry_date' => $this->post('expiry_date'),
                     'cvv' => $this->post('cvv'),
                     'card_name' => $this->post('card_name'),    
@@ -2770,11 +2792,12 @@ class Rest_calls extends REST_Controller
                 $card_id = (string)$this->post('card_id');
                 $admin_id = (string)$this->post('admin_id');
                 $card_number = (string)$this->post('card_number');
+                $card_type = (string)$this->post('card_type');                
                 $expiry_date = (string)$this->post('expiry_date');
                 $cvv = (string)$this->post('cvv');
                 $card_name = (string)$this->post('card_name');
                                     
-                $this->Mod_card->updateCard($card_id, $admin_id, $card_number, $expiry_date, $cvv, $card_name);
+                $this->Mod_card->updateCard($card_id, $admin_id, $card_number, $card_type, $expiry_date, $cvv, $card_name);
                                     
                 $response_array = [                        
                     'status' => 'Card Update Successfully!',                        
@@ -3011,9 +3034,10 @@ class Rest_calls extends REST_Controller
                         'location'       => (string)$data['address_line_2'],
                         'birth_date'     => (string)$data['birth_date'],
                         'phone_number'   => (string)$data['phone_number'],
+                        'kyc_status_verified' => true,                        
                     ];
                     $updateData = array_filter($updateData, fn($value) => !is_null($value) && $value !== '');
-                    $this->Mod_users->kycUpdate($data['user_id'], $updateData);
+                    $this->Mod_users->kycUpdate($data['user_id'], $updateData); 
                     $activityData = [
                         'created_date'  => $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s')),
                         'message'       => 'KYC Update',
@@ -3178,6 +3202,158 @@ class Rest_calls extends REST_Controller
            // $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
        // }
     }//end function    
+
+    public function createVerificationSession_post(){
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->set_response([
+                'error'         => true,
+                'response'      => [
+                    'message'   => 'Invalid request',
+                ],
+                'status_code'   => REST_Controller::HTTP_BAD_REQUEST
+
+            ], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+        
+                // Load `.env` file from the server directory so that
+                // environment variables are available in $_ENV or via
+                // getenv().
+                $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
+                $dotenv->load();
+
+                // Set your secret key. Remember to switch to your live secret key in production.
+                // See your keys here: https://dashboard.stripe.com/apikeys
+                $stripe = new \Stripe\StripeClient([
+                    'api_key' => $_ENV['STRIPE_SECRET_KEY'],
+                    'stripe_version' => '2020-08-27',
+                ]);
+
+                // Create the session
+                $verification_session = $stripe->identity->verificationSessions->create([
+                    'type' => 'document',
+                    'options' => ['document' => ['require_matching_selfie' => true]],
+                    'metadata' => [
+                    //'user_id' => '{{USER_ID}}',
+                    'user_id' => $tokenArray->admin_id
+                    ]
+                ]);
+
+                // Return only the client secret to the frontend.
+                $client_secret = $verification_session->client_secret;
+                $url = $verification_session->url;
+
+                $response_array = [
+                    'error'         => false,
+                    //'verification_session' => $verification_session,
+                    'verification_session_id' => $verification_session->id,
+                    'client_secret'     => $client_secret,
+                    'url'     => $url,
+                    'status_code'   => REST_Controller::HTTP_OK
+
+                ];
+                //$this->createverificationsession_post=TRUE;
+                $this->set_response($response_array, REST_Controller::HTTP_OK);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function retrieveVerificationSession_post(){
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->set_response([
+                'error'         => true,
+                'response'      => [
+                    'message'   => 'Invalid request',
+                ],
+                'status_code'   => REST_Controller::HTTP_BAD_REQUEST
+
+            ], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $token = trim(str_replace("Bearer ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+                $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
+                $dotenv->load();
+
+                // Set your secret key. Remember to switch to your live secret key in production.
+                // See your keys here: https://dashboard.stripe.com/apikeys
+                $stripe = new \Stripe\StripeClient([
+                    'api_key' => $_ENV['STRIPE_SECRET_KEY'],
+                    'stripe_version' => '2020-08-27',
+                ]);
+
+                $expandedSession = $stripe->identity->verificationSessions->retrieve(
+                    $this->post('verification_session_id'),
+                    //'vs_1Kd4bIGwymx5JE4T5mnRqa2T',
+                    [
+                    'expand' => [
+                        'verified_outputs',
+                    ],
+                    ]
+                );
+
+                $response_array = [
+                    'error'         => false,
+                    'expanded_session' =>$expandedSession,
+                    'is_verified' => $expandedSession->status,
+                    'status_code'   => REST_Controller::HTTP_OK
+
+                ];
+
+                $updateData['is_verified']=$expandedSession->status;
+                $updateData['verification_result_data']=$expandedSession->verified_outputs;
+                $this->Mod_users->updateVerification($tokenArray->admin_id, $updateData);
+
+                $this->set_response($response_array, REST_Controller::HTTP_OK);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
 
 
 }//end controller                                

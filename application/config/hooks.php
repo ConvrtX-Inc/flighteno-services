@@ -11,3 +11,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	https://codeigniter.com/user_guide/general/hooks.html
 |
 */
+
+/*$hook['post_controller'] = array(
+    //'class'    => 'StripeVerification',
+    'function' => 'verifyTransaction',
+    'filename' => 'stripe-verification.php',
+    'filepath' => 'hooks',
+    //'params'   => array('beer', 'wine', 'snacks')
+);*/

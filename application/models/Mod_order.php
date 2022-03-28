@@ -919,9 +919,8 @@ class Mod_order extends CI_Model {
 
   public function getOrderDetailsHistory($order_id) {
     $db   =  $this->mongo_db->customQuery();
-    $history =  $db->order_detail->find(['order_id' => $order_id]);
-    $getData   =  iterator_to_array($history);
-
+    $history =  $db->order_history->find(['order_id' => (string)$order_id]);
+    $getData   =  iterator_to_array($history); 
     return $getData;
   }
 
