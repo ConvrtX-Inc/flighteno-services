@@ -50,7 +50,7 @@ defined('FOPEN_READ_WRITE_CREATE_STRICT')       OR define('FOPEN_READ_WRITE_CREA
 
 
 // define('SURL', 'https://localhost/flighteno-services/');
-define('SURL', 'https://flighteno-dev.herokuapp.com/');
+define('SURL', 'https://flighteno-api-dev.herokuapp.com/');
 
 /*
 |--------------------------------------------------------------------------

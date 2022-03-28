@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //$config['base_url'] = 'http://localhost/flighteno-services/';
-$config['base_url'] = 'https://flighteno-dev.herokuapp.com/';
+$config['base_url'] = 'https://flighteno-api-dev.herokuapp.com/';
 
 /*
 |--------------------------------------------------------------------------
