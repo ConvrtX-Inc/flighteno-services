@@ -1337,9 +1337,11 @@ class Rest_calls extends REST_Controller
                     $end_price = (float)$this->post('ending_price');
                     $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];
                 }
-
-                if (!empty($this->post('estimated_dilivery_fee'))) {                                     
-                    $search['estimated_dilivery_fee'] = (float)$this->post('estimated_dilivery_fee');
+            
+                if (!empty($this->post('starting_estimated_dilivery_fee')) && !empty($this->post('ending_estimated_dilivery_fee'))) {                 
+                    $start_estimated_dilivery_fee = (float)$this->post('starting_estimated_dilivery_fee');
+                    $end_estimated_dilivery_fee = (float)$this->post('ending_estimated_dilivery_fee');
+                    $search['estimated_dilivery_fee'] = ['$gte' => $start_estimated_dilivery_fee, '$lte' => $end_estimated_dilivery_fee];
                 }
                                 
                 if (!empty($this->post('sorted_by'))) {
