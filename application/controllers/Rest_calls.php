@@ -2375,8 +2375,9 @@ class Rest_calls extends REST_Controller
                     $admin_id = (string)$this->post('admin_id');
                     $full_name = (string)$this->post('full_name');
                     $profile_image = (string)$this->post('profile_image');
+                    $phone_number = (string)$this->post('phone_number');
 
-                    $this->Mod_users->updateProfile($admin_id, $full_name, $profile_image);
+                    $this->Mod_users->updateProfile($admin_id, $full_name, $profile_image, $phone_number);
 
                     //lock the activity
                     $activityData = [
