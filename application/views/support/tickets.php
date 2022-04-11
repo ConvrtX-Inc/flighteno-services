@@ -182,6 +182,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 
+        <!-- sweetalert2 -->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <script type="module">
             import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js'
             import insertText from 'https://cdn.jsdelivr.net/npm/insert-text-at-cursor@0.3.0/index.js'
@@ -191,6 +194,54 @@
                 insertText(document.querySelector('#text-msg'), e.detail.unicode);
                 tooltip.classList.toggle('shown');
             });
+        </script>
+
+        <!-- Firebase Setup -->
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+                apiKey: "AIzaSyCmN7lbq-oAVzfC2NAtrufFRajse7x5GZk",
+                authDomain: "flighteno-convrtx.firebaseapp.com",
+                projectId: "flighteno-convrtx",
+                storageBucket: "flighteno-convrtx.appspot.com",
+                messagingSenderId: "451344766522",
+                appId: "1:451344766522:web:a37807be2143eadf150703",
+                measurementId: "G-GX8L0EPGTT"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+
+            function firebaseUpload(file) {
+                return new Promise(resolve => {
+                    console.log("uploading file on firebase ...")
+                    const storage = getStorage();
+                    const storageRef = ref(storage, "admin/support/" + file.name);
+
+                    // Create file metadata including the content type
+                    const metadata = { contentType: file.type };
+
+                    // Upload the file and metadata
+                    const uploadTask = uploadBytes(storageRef, file, metadata);
+                    uploadTask.then(() => {
+                        console.log("getting download url ...")
+                        getDownloadURL(storageRef).then(url => {
+                            resolve(url);
+                        });
+                    });
+                });
+            }
+
+            window.firebaseUpload = firebaseUpload;
         </script>
 
         <script type="text/javascript">
@@ -300,6 +351,7 @@
                             return;
                         }
 
+                        toggleClassOnSend(1);
                         $.ajax({
                             'url': '<?php echo base_url();?>index.php/admin/Support/sendMessage',
                             'type': 'POST',
@@ -307,10 +359,12 @@
                             'success': function (response) {
                                 ticketMessagesHistoryContainer.append(response);
                                 scrollToLatest(ticketMessagesHistoryContainer);
+                                toggleClassOnSend(1);
                                 resetMessageArea();
                             }
                         });
                     } else {
+                        toggleClassOnSend(2);
                         if (isUploadingImage) {
                             imageUpload();
                         } else if (isUploadingFile) {
@@ -329,11 +383,18 @@
             function imageUploadOnChange() { 
                 const ticketId = activeTicketId;
                 const files = $("#upload-image").get(0).files;
+
+                let isFileValid = validateFile(2, files[0]);
+                if (!isFileValid) {
+                    return;
+                }
+
                 let data = new FormData();
+                let newFileName = generateNewFileName();
                 
                 // Prepare data
                 if (files.length > 0)
-                    data.append("image", files[0]);
+                    data.append("image", files[0], newFileName);
                 data.append("ticketId", ticketId);
                 data.append("profileImage", userSession["profile_image"]);
 
@@ -345,7 +406,12 @@
                 return;
             }
 
-            function imageUpload() {
+            async function imageUpload() {
+                const imageData = activeFile.get("image")
+                const downloadURL = await window.firebaseUpload(imageData);
+                activeFile.append("imagePath", downloadURL);
+                
+                console.log("saving image ...")
                 $.ajax({
                     url: '<?php echo base_url();?>index.php/admin/Support/imageSendUpload',
                     type: "POST",
@@ -356,12 +422,28 @@
                         $('#upload-image').val('');
                         ticketMessagesHistoryContainer.append(response);
                         scrollToLatest(ticketMessagesHistoryContainer);
+                        toggleClassOnSend(2);
                         resetMessageArea();
                     },
                     error: function (er) {
-                        console.log(er)
+                        let errMsg = "";
+
                         if (er.status == 415)
-                            alert("The filetype you are attempting to upload is not allowed.");
+                            errMsg = "Invalid image file. Please upload JPG, PNG or GIF.";
+                        else if (er.status == 413)
+                            errMsg = "File size must not exceed 6MB.";
+                        else
+                            errMsg = "Something went wrong. Please try again later.";
+                        
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops!",
+                            text: errMsg,
+                            confirmButtonColor: "#f33636",
+                            confirmButtonText: "Close"
+                        });
+
+                        toggleClassOnSend(2);
                     }
                 });
             }
@@ -370,13 +452,23 @@
             function fileUploadOnChange() {
                 const ticketId = activeTicketId;
                 const files = $("#fileUploaded").get(0).files;
+
+                let isFileValid = validateFile(1, files[0]);
+                if (!isFileValid) {
+                    return;
+                }
+
                 let data = new FormData();
+                let oldFileName = files[0]["name"];
+                let extension = oldFileName.split(".").pop();
+                let newFileName = generateNewFileName();
 
                 // Prepare data
                 if (files.length > 0)
-                    data.append("file", files[0]);
+                    data.append("file", files[0], newFileName);
                 data.append("ticketId", ticketId);
                 data.append("profileImage", userSession["profile_image"]);
+                data.append("fileType", extension.toUpperCase());
 
                 activeFile = data;
                 isUploadingImage = false;
@@ -386,7 +478,12 @@
                 return;
             }
 
-            function fileUpload() {
+            async function fileUpload() {
+                const fileData = activeFile.get("file")
+                const downloadURL = await window.firebaseUpload(fileData);
+                activeFile.append("filePath", downloadURL);
+
+                console.log("saving file ...")
                 $.ajax({
                     url: '<?php echo base_url();?>index.php/admin/Support/fileSendUpload',
                     type: "POST",
@@ -397,14 +494,36 @@
                         $('#fileUploaded').val('');
                         ticketMessagesHistoryContainer.append(response);
                         scrollToLatest(ticketMessagesHistoryContainer);
+                        toggleClassOnSend(2);
                         resetMessageArea();
                     },
                     error: function (er) {
-                        console.log(er)
+                        let errMsg = "";
+
                         if (er.status == 415)
-                            alert("The filetype you are attempting to upload is not allowed.");
+                            errMsg = "Invalid file type. Please upload DOC, TXT or MP4.";
+                        else if (er.status == 413)
+                            errMsg = "File size must not exceed 6MB.";
+                        else
+                            errMsg = "Something went wrong. Please try again later.";
+                        
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops!",
+                            text: errMsg,
+                            confirmButtonColor: "#f33636",
+                            confirmButtonText: "Close"
+                        });
+
+                        toggleClassOnSend(2);
                     }
                 });
+            }
+
+            function generateNewFileName() {
+                return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
             }
 
             function scrollToLatest(container) {
@@ -431,6 +550,63 @@
                 textMessageContainer.val("");
                 textMessageContainer.show();
                 textMessageContainer.focus();
+            }
+
+            function validateFile(type, file) {
+                let errorTitle = "", errorMsg = "";
+                let validFileSize = 6000000, validFileExtensions = [];
+                let fileExtension = file.name.split('.').pop();
+                fileExtension = fileExtension.toLowerCase();
+
+                if (file.size > validFileSize) {
+                    errorTitle = "Invalid file!";
+                    errorMsg = "File size must not exceed 6MB.";
+                }
+
+                if (type == 1) {
+                    // for file upload
+                    validFileExtensions = ["pdf", "doc", "csv", "ppt", "docx", "txt", "avi", "mkv", "mp4"];
+                    if (!validFileExtensions.includes(fileExtension)) {
+                        errorTitle = "Invalid file!";
+                        errorMsg = "Please upload PDF, DOC, CSV, PPT, TXT, AVI, MKV or MP4.";
+                    }
+                } else if (type == 2) {
+                    // for image upload
+                    validFileExtensions = ["jpg", "jpeg", "gif", "tiff", "tif", "png"];
+                    if (!validFileExtensions.includes(fileExtension)) {
+                        errorTitle = "Invalid image!";
+                        errorMsg = "Please upload JPG, PNG, GIF or TIF.";
+                    }
+                }
+
+                if (errorMsg) {
+                    Swal.fire({
+                        icon: "error",
+                        title: errorTitle,
+                        text: errorMsg,
+                        confirmButtonColor: "#f33636",
+                        confirmButtonText: "Close"
+                    });
+                    return false;
+                }
+
+                return true;
+            }
+
+            function toggleClassOnSend(type) {
+                const btnSend = $("#btn-send");
+                const btnFileClose = $(".file-close");
+
+                if (type == 1) {
+                    // for text message
+                    textMessageContainer.prop("disabled", function(i, v) { return !v; });
+                } else if (type == 2) {
+                    // for image and file upload
+                    fileLabelContainer.toggleClass("sending");
+                    btnFileClose.toggleClass("d-none");
+                }
+
+                btnSend.toggleClass("sending");
             }
         </script>
     </body>

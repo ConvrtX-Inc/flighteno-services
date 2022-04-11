@@ -667,6 +667,15 @@ body {
   resize: none;
 }
 
+.tickets-messages-textarea #text-msg:disabled {
+  background: none;
+  opacity: .5;
+}
+
+.tickets-messages-textarea .file-label.sending {
+  opacity: .5;
+}
+
 .tickets-messages-textarea .file-label a,
 .tickets-messages-textarea .file-label a:hover,
 .tickets-messages-textarea .file-label a i {
@@ -680,6 +689,12 @@ body {
   width: 45px;
   height: 45px;
   position: relative;
+}
+
+.tickets-messages-textarea #btn-send.sending {
+  background: #EAEAEA;
+  cursor: default;
+  pointer-events: none;
 }
 
 
