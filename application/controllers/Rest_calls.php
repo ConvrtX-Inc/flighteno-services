@@ -1296,6 +1296,219 @@ class Rest_calls extends REST_Controller
     }//end function 
 
 
+    public function getUserOrdersOnTheBasisOnCountryFilter_post()
+    {        
+        $db = $this->mongo_db->customQuery();
+        if (!empty($this->input->request_headers('Authorization'))) {
+
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+                $traveling_from = '';
+                $traveling_to = '';
+                $depart_dateGet = '';
+
+
+                $admin_id = (string)$this->post('admin_id');
+
+                $getLocations = [
+                    [
+                        '$match' => [
+                            'admin_id' => $admin_id,
+                            'status' => 'new',
+                            '$or' => [
+                                ['accepted_buyer_admin_id' => ['$exists' => false]],
+                                ['accepted_traveler_admin_id' => ['$exists' => false]]
+                            ]
+                        ]
+                    ],
+
+                    [
+                        '$group' => [
+                            '_id' => ['$toString' => '$_id'],
+                            'traveling_from' => ['$first' => '$Traveling_from'],
+                            'traveling_to' => ['$first' => '$Traveling_to'],
+                            'depart_date' => ['$first' => '$depart_date']
+                        ]
+                    ],
+                    [
+                        '$sort' => ['created_date' => -1, '_id' => -1]
+                    ],
+
+
+                    [
+                        '$limit' => 1
+                    ],
+                ];
+
+                $trip1 = $db->user_trip->aggregate($getLocations);
+                $tripLocation = iterator_to_array($trip1);
+
+                if (count($tripLocation) > 0) {
+
+                    $traveling_from = $tripLocation[0]['traveling_from'];
+                    $traveling_to = $tripLocation[0]['traveling_to'];
+                    $depart_dateGet = $tripLocation[0]['depart_date'];
+                    
+                    $search['product_buy_country_name'] = ['$regex' => $traveling_from, '$options' => 'si'];
+                    $search['product_dilivery_country_name'] = ['$regex' => $traveling_to, '$options' => 'si'];
+                    $search['status'] = 'new';
+                    $search['preferred_date'] = ['$gte' => $depart_dateGet];  
+                    
+                    if (!empty($this->post('product_type'))) {
+                        $search['product_type'] = ['$regex' => trim($this->post('product_type')), '$options' => 'si'];
+                    }
+
+                    if (!empty($this->post('product_name'))) {
+                        $search['name'] = ['$regex' => trim($this->post('product_name')), '$options' => 'si'];
+                    }
+
+                    if (!empty($this->post('store_name'))) {
+                        $search['store_name'] = ['$regex' => trim($this->post('store_name')), '$options' => 'si'];
+                    }
+                    
+                    if (!empty($this->post('starting_price')) && !empty($this->post('ending_price'))) {                 
+                        $start_price = (float)$this->post('starting_price');
+                        $end_price = (float)$this->post('ending_price');
+                        $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];
+                    }
+
+                    if (!empty($this->post('starting_estimated_dilivery_fee')) && !empty($this->post('ending_estimated_dilivery_fee'))) {                 
+                        $start_estimated_dilivery_fee = (float)$this->post('starting_estimated_dilivery_fee');
+                        $end_estimated_dilivery_fee = (float)$this->post('ending_estimated_dilivery_fee');
+                        $search['estimated_dilivery_fee'] = ['$gte' => $start_estimated_dilivery_fee, '$lte' => $end_estimated_dilivery_fee];
+                    }
+
+                    if (!empty($this->post('sorted_by'))) {
+                        $sorted_by = trim($this->post('sorted_by'));
+                    }
+                    else {
+                        $sorted_by = 'order_created_date';
+                    }
+                    if (!empty($this->post('sort'))) {
+                        $sort = trim((float)$this->post('sort'));
+                        $sort = (int)$sort;
+                    }
+                    else {
+                        $sort = 1;
+                    }                    
+
+                    $lookup = [
+                        [
+                            '$match' => $search
+                        ],
+
+                        [
+                            '$project' => [
+
+                                '_id' => ['$toString' => '$_id'],
+                                'admin_id' => '$admin_id',
+                                'url' => '$url',
+                                'order_type' => '$order_type',
+                                'product_image' => '$product_image',
+                                'name' => '$name',
+                                'preferred_date' => '$preferred_date',
+                                'preferred_dilivery_start_time' => '$preferred_dilivery_start_time',
+                                'preferred_dilivery_end_time' => '$preferred_dilivery_end_time',
+                                'quantity' => '$quantity',
+                                'box_status' => '$box_status',
+                                'vip_service_status' => '$vip_service_status',
+                                'vip_service_fee' => '$vip_service_fee',
+                                'product_price' => '$product_price',
+                                'product_discription' => '$product_discription',
+                                'product_weight' => '$product_weight',
+                                'product_buy_country_name' => '$product_buy_country_name',
+                                'product_buy_city_name' => '$product_buy_city_name',
+                                'product_dilivery_country_name' => '$product_dilivery_country_name',
+                                'product_dilivery_city_name' => '$product_dilivery_city_name',
+                                'product_dilivery_date' => '$product_dilivery_date',
+                                'flighteno_cost' => '$flighteno_cost',
+                                'status' => '$status',
+                                'tax' => '$tax',
+                                'order_created_date' => '$order_created_date',
+                                'use_item_for_testing' => '$use_item_for_testing',
+                                'open_box_check_phisical_apperance' => '$open_box_check_phisical_apperance',
+                                'product_type' => '$product_type',
+                                'payment_status' => '$payment_status',
+                                'estimated_dilivery_fee' => '$estimated_dilivery_fee',
+                                'Total' => '$Total',
+                                'offer_sender_account_ids' => '$offer_sender_account_ids',
+                                'rated_admin_id' => '$rated_admin_id',                       
+                                'store_name' => '$store_name'
+
+                            ]
+                        ],
+
+                        [
+                            '$lookup' => [
+                                "from" => "users",
+                                "let" => [
+                                    "admin_id" => ['$toObjectId' => '$admin_id']
+                                ],
+                                "pipeline" => [
+                                    [
+                                        '$match' => [
+                                            '$expr' => [
+                                                '$eq' => [
+                                                    '$_id',
+                                                    '$$admin_id'
+                                                ]
+                                            ],
+
+                                        ],
+                                    ],
+
+                                    [
+                                        '$project' => [
+                                            '_id' => ['$toString' => '$_id'],
+                                            'profile_image' => '$profile_image',
+                                            'full_name' => '$full_name'
+                                        ]
+                                    ]
+                                ],
+                                'as' => 'profile_data'
+                            ]
+                        ],
+                        [
+                            //'$sort' => ['order_created_date' => -1]
+                            '$sort' => [$sorted_by => $sort]
+                        ]
+
+                    ];
+
+                    $trip = $db->orders->aggregate($lookup);
+                    $orderRes = iterator_to_array($trip);
+                }
+                $response_array = [
+                    'status' => 'Successfully Fetched',
+                    'type' => '200',
+                    'orders' => $orderRes
+                ];
+
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }//end function 
+
+
+
     public function filterApi_post()
     {
 
@@ -1440,7 +1653,7 @@ class Rest_calls extends REST_Controller
                     ]
 
                 ];
-
+                
                 $result = $db->orders->aggregate($lookUp);
                 $orders = iterator_to_array($result);
 
