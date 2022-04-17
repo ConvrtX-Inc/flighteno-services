@@ -911,6 +911,106 @@ class Mod_order extends CI_Model {
     return $getData[0]['store_name'];
   }
 
+  public function getUserTransactionHistory($admin_id){
+    $db  =  $this->mongo_db->customQuery();
+    $getTransaction = [
+      [
+        '$match' => [     
+          '$or' => [
+            ['traveler_id' => $admin_id],
+            ['buyer_id' => $admin_id]
+          ],
+          'status'      =>  ['$in' => ['complete']]                    
+        ]
+      ],
+
+      [
+        '$project' => [
+          '_id'           =>  ['$toString' => '$_id'],
+          'traveler_id'   =>  '$traveler_id',
+          'buyer_id'   =>  '$buyer_id',          
+          'status'     => '$status',
+          'total'     => '$total',          
+          'created_date' => '$created_date',
+        ]
+      ],
+
+      [
+        '$lookup' => [
+          "from" => "users",
+          "let" => [
+            "admin_id" =>  ['$toObjectId' => '$buyer_id']
+          ],
+          "pipeline" => [
+            [
+              '$match' => [
+                '$expr' => [
+                  '$eq' => [
+                    '$_id',
+                    '$$admin_id'
+                  ]
+                ],
+                
+              ],
+            ],
+
+            [
+              '$project' => [
+                '_id'           =>  ['$toString' => '$_id'],
+                'full_name'     =>  '$full_name',
+                'profile_image' =>  '$profile_image'
+              ]
+            ],
+          ],
+          'as' => 'buyer_details'
+        ]
+      ],
+
+      [
+        '$lookup' => [
+          "from" => "users",
+          "let" => [
+            "admin_id" =>  ['$toObjectId' => '$traveler_id']
+          ],
+          "pipeline" => [
+            [
+              '$match' => [
+                '$expr' => [
+                  '$eq' => [
+                    '$_id',
+                    '$$admin_id'
+                  ]
+                ],
+                
+              ],
+            ],
+
+            [
+              '$project' => [
+                '_id'           =>  ['$toString' => '$_id'],
+                'full_name'     =>  '$full_name',
+                'profile_image' =>  '$profile_image'
+              ]
+            ],
+          ],
+          'as' => 'traveller_details'
+        ]
+      ],
+
+     
+      [
+        '$sort' => ['created_date' => -1]
+      ],
+      
+      [
+        '$limit' => 20
+      ]
+    ];
+    $userTrans    =  $db->accepted_offers->aggregate($getTransaction);
+    $userTransResult =  iterator_to_array($userTrans);
+    return $userTransResult;
+  }
+
   public function getStoreNames(){
     $db = $this->mongo_db->customQuery();
     $data = $db->orders->distinct('store_name');

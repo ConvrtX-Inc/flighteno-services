@@ -1220,7 +1220,7 @@ class Rest_calls extends REST_Controller
                                 'product_buy_city_name' => '$product_buy_city_name',
                                 'product_dilivery_country_name' => '$product_dilivery_country_name',
                                 'product_dilivery_city_name' => '$product_dilivery_city_name',
-                                'product_dilivery_date' => '$product_dilivery_date',
+                                'product_dilivery_date' => '$product_dilivery_date', 
                                 'flighteno_cost' => '$flighteno_cost',
                                 'status' => '$status',
                                 'tax' => '$tax',
@@ -3563,6 +3563,38 @@ class Rest_calls extends REST_Controller
                 $this->Mod_users->updateVerification($tokenArray->admin_id, $updateData);
 
                 $this->set_response($response_array, REST_Controller::HTTP_OK);
+            } else {
+
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function getUserLatestTransactions_post()
+    {        
+        if (!empty($this->input->request_headers('Authorization'))) {
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+
+                $admin_id = (string)$this->post('admin_id');
+                $latestTransactions = $this->Mod_order->getUserTransactionHistory($admin_id);
+                $response_array['status'] = 'Fetched Successfully!';
+                $response_array['user_latest_transactions'] = $latestTransactions;
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
             } else {
 
                 $response_array['status'] = 'Authorization Failed!!';
