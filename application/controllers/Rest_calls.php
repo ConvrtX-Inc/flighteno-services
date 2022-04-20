@@ -1376,13 +1376,13 @@ class Rest_calls extends REST_Controller
                         $search['store_name'] = ['$regex' => trim($this->post('store_name')), '$options' => 'si'];
                     }
                     
-                    if (!empty($this->post('starting_price')) && !empty($this->post('ending_price'))) {                 
-                        $start_price = (float)$this->post('starting_price');
-                        $end_price = (float)$this->post('ending_price');
-                        $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];
+                    if (((($this->post('starting_price') === '0')) or (!empty($this->post('starting_price')))) && ((($this->post('ending_price') === '0')) or (!empty($this->post('ending_price'))))){                    
+                        $start_price = (float)($this->post('starting_price'));
+                        $end_price = (float)($this->post('ending_price'));                    
+                        $search['product_price'] = ['$gte' => $start_price, '$lte' => $end_price];                        
                     }
 
-                    if (!empty($this->post('starting_estimated_dilivery_fee')) && !empty($this->post('ending_estimated_dilivery_fee'))) {                 
+                    if (((($this->post('starting_estimated_dilivery_fee') === '0')) or (!empty($this->post('starting_estimated_dilivery_fee')))) && ((($this->post('ending_estimated_dilivery_fee') === '0')) or (!empty($this->post('ending_estimated_dilivery_fee'))))){                                        
                         $start_estimated_dilivery_fee = (float)$this->post('starting_estimated_dilivery_fee');
                         $end_estimated_dilivery_fee = (float)$this->post('ending_estimated_dilivery_fee');
                         $search['estimated_dilivery_fee'] = ['$gte' => $start_estimated_dilivery_fee, '$lte' => $end_estimated_dilivery_fee];
