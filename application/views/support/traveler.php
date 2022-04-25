@@ -153,14 +153,14 @@
                                         <th class="table-col-name">Name</th>
                                         <th class="table-col-large">Subject</th>
                                         <th class="table-col-medium">Order No.</th>
-                                        <th class="table-col-small"></th>
+                                        <!-- <th class="table-col-small"></th> -->
                                     </tr>
                                     <?php foreach ($traveler_res as $key=>$value){ ?>
                                     <?php
                                         $this_ticket_id = $value['_id'];
                                         $this_user_id = json_decode(json_encode($value["profileData"]))[0]->_id;
-                                        // $chat_url = base_url().'index.php/admin/Support/traveler/tickets/'.$this_user_id.'/'.$this_ticket_id;
-                                        $chat_url = base_url().'index.php/admin/Support/traveler/tickets';
+                                        $chat_url = base_url().'index.php/admin/Support/traveler/tickets/'.$this_user_id.'/'.$this_ticket_id;
+                                        // $chat_url = base_url().'index.php/admin/Support/traveler/tickets';
                                     ?>
                                     <tr>
                                         <td class="checkbox-col"><input type="checkbox" data-id="<?=$this_ticket_id?>" data-userid="<?=$this_user_id?>" id="check<?=$this_ticket_id?>"/><label for="check<?=$this_ticket_id?>"></label></td>
@@ -178,16 +178,16 @@
                                                 <img src="<?php echo $imageSource;?>" alt="" class="rounded-circle images avatar-sm bx-shadow-lg image2">
                                             </center>
                                         </td>
-                                        <td class ="userNameColorChange"><?php echo json_decode(json_encode($value["profileData"]))[0]->full_name; ?></td>
+                                        <td class ="userNameColorChange"><a href="<?=$chat_url?>"><?php echo json_decode(json_encode($value["profileData"]))[0]->full_name; ?></a></td>
                                         <td><?php echo empty($value['subject']) || is_null($value['subject']) ? 'N/A' : $value['subject']; ?></td>
                                         <td><?php echo $value['order_number']; ?></td>
-                                        <td class="more-options-col">
+                                        <!-- <td class="more-options-col">
                                             <a class="more-options" href="#""><img src="<?php echo SURL;?>assets/images/icon-options.png" alt="" /></a>
                                             <div class="more-options-box" style="display: none;">
                                                 <p><a class="option-chat" href="<?=$chat_url?>">Chat User</a></p>
                                                 <p><a class="option-disable" href="#">Disable User</a></p>
                                             </div>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <?php } ?>
                                 </table>
