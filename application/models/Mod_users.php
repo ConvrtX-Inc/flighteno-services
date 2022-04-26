@@ -10,26 +10,19 @@ class Mod_users extends CI_Model {
     // error_reporting(1);
   }
 
-  public function active_InactiveUsers(){
-
+  public function countActiveUsers(){
       $db = $this->mongo_db->customQuery();
 
-      $startingTime   =  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s', strtotime('-2 month') ));
-      $endingTime     =  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s', strtotime('-1 month') ));
-
+      $startingTime   =  $this->mongo_db->converToMongodttime(date('Y-m-d H:i:s', strtotime('-1 week')));
       $lookUp = [
           [
-              '$match' => [ 
-
-                'created_date'  =>  ['$gte' =>   $startingTime,  '$lte' =>  $endingTime],
-              ]
-          ],
-          [
-            '$group' => [
-            
-              '_id'  => '$admin_id'
+            '$match' => [ 
+              'status' => 'user', 
+              'user_role' => 2,
+              'last_login_time' => ['$gte' => $startingTime], 
+              '$or' => array(['profile_status' => 'buyer'], ['profile_status' => 'traveler'])
             ]
-          ],
+          ]
       ];
 
       $usersCount  =  $db->users->aggregate($lookUp);
