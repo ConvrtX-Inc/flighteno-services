@@ -19,6 +19,23 @@
 
         <!-- Global admin style -->
         <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
+        <style>
+            .titleStyle {
+                color: #18243C;
+                font-size: 40px;
+            }
+
+            .filter-search {
+                float: right;
+                width: 350px;
+            }
+
+            .filter-search #filter_search {
+                max-width: 350px;
+
+            }
+        </style>
     </head>
 
     <body>
@@ -33,17 +50,35 @@
                 <div class="content">
                     <!-- Start Content-->
                     <div class="container-fluid main-container" style="padding-left: 4%; padding-right: 4%;">
-                        <div class="row">
-                            <div class="col-12 mt-3 mb-3">
-                                <h4 class="page-title styleHeader titleStyle">Messages</h4>
-                            </div> 
+                        <div class="row mt-3 mb-3">
+                            <div class="col-lg-5 col-xxl-4">
+                                <h4 class="page-title styleHeader titleStyle m-0">Messages</h4>
+                            </div>
+
+                            <div class="col-lg-7 col-xxl-8 filter-row">
+                                <?php
+                                    // initialize search form url
+                                    $search_url = base_url().'index.php/admin';
+                                    if ($profile_status == 'buyer') {
+                                        $search_url .= '/Support/buyer/tickets';
+                                    } elseif ($profile_status == 'traveler') {
+                                        $search_url .= '/Support/traveler/tickets';
+                                    }
+                                ?>
+                                <form method="POST" action="<?php echo $search_url;?>">
+                                    <div class="inner-addon left-addon filter-search">
+                                        <img src="<?php echo SURL.'assets/images/icon-search.png';?>" alt="" class="image-icon">
+                                        <input type="text" id ="filter_search" class="form-control filters_style" placeholder="Search"  name="searchValue" value="<?=isset($_POST['searchValue']) ? $_POST['searchValue'] : ""  ?>"/>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                         <div class="row mb-5 tickets-container">
                             <div class="col-lg-5 col-xxl-4">
                                 <div class="tickets-list d-flex flex-column">
                                     <div class="tickets-list-tabs">
-                                         <a href="<?php echo base_url();?>admin/Support/buyer/tickets" class="<?=($profile_status === 'buyer')? 'active':''?>">Buyers</a>
-                                         <a href="<?php echo base_url();?>admin/Support/traveler/tickets" class="<?=($profile_status === 'traveler')? 'active':''?>">Travelers</a>
+                                         <a href="<?php echo base_url();?>index.php/admin/Support/buyer/tickets" class="<?=($profile_status === 'buyer')? 'active':''?>">Buyers</a>
+                                         <a href="<?php echo base_url();?>index.php/admin/Support/traveler/tickets" class="<?=($profile_status === 'traveler')? 'active':''?>">Travelers</a>
                                     </div>
 
                                     <div class="tickets-list-main">
@@ -288,10 +323,10 @@
                     activeTicketId = activeTicket.data("id");
                     const userId = activeTicket.data("user-id");
                     const profileStatus = "<?=$profile_status?>";
-                    const newUrl = "<?=SURL?>admin/Support/" + profileStatus + "/tickets/" + userId + "/" + activeTicketId;
+                    // const newUrl = "<?=SURL?>admin/Support/" + profileStatus + "/tickets/" + userId + "/" + activeTicketId;
 
                     // replace url
-                    window.history.replaceState(null, null, newUrl);
+                    // window.history.replaceState(null, null, newUrl);
 
                     ticketMessagesContainer.addClass("loading");
                     $(".tickets-list-user.active").removeClass("active");

@@ -217,6 +217,19 @@ Class Mongo_db {
         }
     }
 
+    //Function For Check a value is correct objec id
+    function isValid2($value) {
+        if ($value instanceof MongoDB\BSON\ObjectID) {
+            return true;
+        }
+        try {
+            new \MongoDB\BSON\ObjectID($value);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     /**
      * --------------------------------------------------------------------------------
      * //! Insert
