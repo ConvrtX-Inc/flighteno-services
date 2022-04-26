@@ -18,7 +18,7 @@ require 'vendor/autoload.php';
  */
 class Rest_calls extends REST_Controller
 {
-
+    private $stripe = null;
     function __construct()
     {
         parent::__construct();
@@ -33,6 +33,12 @@ class Rest_calls extends REST_Controller
         $this->load->model('Mod_card');
         ini_set("display_errors", 1);
         error_reporting(1);
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
+        $dotenv->load();
+        $this->stripe  = new \Stripe\StripeClient([
+            'api_key' => $_ENV['STRIPE_SECRET_KEY'],
+            'stripe_version' => '2020-08-27',
+        ]);
     }
 
     public function createOrder_post()
@@ -3607,34 +3613,167 @@ class Rest_calls extends REST_Controller
         }
     }
 
+    //This is create account first to enable bank transfer',
     public function createStripeAccount_post()
     {
-        if (!empty($this->input->request_headers('Authorization'))) {
-            $received_Token_Array = $this->input->request_headers('Authorization');
-            $received_Token = '';
-            $received_Token = $received_Token_Array['authorization'];
-            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
-                $received_Token = $received_Token_Array['Authorization'];
-            }
-            $token = trim(str_replace("Token: ", "", $received_Token));
-            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+        try {
+            if (!empty($this->input->request_headers('Authorization'))) {
+                $body = $this->post();
+                $email = (string)$body['email'];
+                $params = [
+                    'required' => [ 'product_description','phone','first_name','company_name','country','email'],
+                    'optional' => [ 'maiden_name','last_name','state','postal_code','line2','line1','city']
+                ];
+                $data = array_keys( $body);
+                if(!in_array('product_description',$data) ||
+                    !in_array('phone',$data) ||
+                    !in_array('first_name',$data) ||
+                    !in_array('company_name',$data) ||
+                    !in_array('email',$data) ||
+                    !in_array('country',$data)
+                ) {
+                    $response_array['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                    $response_array['status'] = 'error';
+                    $response_array['message'] = 'Missing required param! Please see the list for required params.';
+                    $response_array['params'] = $params;
+                    $response_array['sent_data'] = $body;
+                    $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
+                    return json_encode($response_array);
+                }
+                if(strlen($body['country']) != 2) {
+                    $response_array['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                    $response_array['status'] = 'error';
+                    $response_array['message'] = 'Two-letter country code (ISO 3166-1 alpha-2).';
+                    $response_array['sent_data'] = $body['country'];
+                    $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
+                    return json_encode($response_array);
+                }
 
-            if (!empty($tokenArray->admin_id)) {
-                $stripe = new \Stripe\StripeClient([
-                    'api_key' => $_ENV['STRIPE_SECRET_KEY'],
-                    'stripe_version' => '2020-08-27',
-                ]);
-                $response_array['status'] = 'Fetched Successfully!';
-                $response_array['stripe_account_id'] = $stripe_account_id;
-                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+                $checkEmailStatus = isEmailExists($email);
+                if(!$checkEmailStatus) {
+                    $response_array['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                    $response_array['status'] = 'error';
+                    $response_array['message'] = 'User not found with email:'.$email;
+                    $response_array['sent_data'] = $body;
+                    $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
+                    return json_encode($response_array);
+                }
+                $received_Token_Array = $this->input->request_headers('Authorization');
+                $received_Token = '';
+                $received_Token = $received_Token_Array['authorization'];
+                if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                    $received_Token = $received_Token_Array['Authorization'];
+                }
+                $token = trim(str_replace("Token: ", "", $received_Token));
+                $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+                if (!empty($tokenArray->admin_id)) {
+                    $db = $this->mongo_db->customQuery();
+                    $lookup = [ [ '$match' => [ 'email_address' => $email,  ]  ],  ];
+
+                    $getUser = $db->users->aggregate($lookup);
+                    $userData = iterator_to_array($getUser);
+                    $userData = $userData[0];
+                    if(!$userData['stripe_account_id']) {
+
+                        $externalContent = file_get_contents('http://checkip.dyndns.com/');
+                        preg_match('/Current IP Address: \[?([:.0-9a-fA-F]+)\]?/', $externalContent, $m);
+                        $externalIp = $m[1];
+                        $account = $this->stripe->accounts->create([
+                            'type' => 'custom',
+                            'country' => $body['country'],
+                            'email' => $body['email'],
+                            'business_type' => 'individual',
+                            'company' => [
+                                'address' => [
+                                    'city' => $body['city'],
+                                    'line1' => $body['line1'],
+                                    'line2' => $body['line2'],
+                                    'postal_code' => $body['postal_code'],
+                                    'state' => $body['state'],
+                                    'country' => $body['country'],
+                                ],
+                                'name' => $body['company_name'],
+                                'owners_provided' => true,
+                                'phone' => $body['phone'],
+                            ],
+                            'individual' => [
+                                'address' => [
+                                    'city' => $body['city'],
+                                    'line1' => $body['line1'],
+                                    'line2' => $body['line2'],
+                                    'postal_code' => $body['postal_code'],
+                                    'state' => $body['state'],
+                                    'country' => $body['country'],
+                                ],
+                            ],
+                            'tos_acceptance' => [
+                                'date' => time(),
+                                'ip' => $externalIp,
+                            ],
+                            'business_profile' => [
+                                'name' => $body['company_name'],
+                                'product_description' => $body['product_description'],
+                                'support_address' => [
+                                    'city' => $body['city'],
+                                    'line1' => $body['line1'],
+                                    'line2' => $body['line2'],
+                                    'postal_code' => $body['postal_code'],
+                                    'state' => $body['state'],
+                                    'country' => $body['country'],
+                                ],
+                                'support_email' => $body['email'],
+                                'support_phone' => $body['phone'],
+                            ],
+                            'capabilities' => [
+                                'card_payments' => ['requested' => true],
+                                'transfers' => ['requested' => true],
+                            ],
+                        ]);
+                        var_dump($account);die;
+                        $db->users->updateOne(['email' => $email], ['$set' => ['stripe_account_id' => false]]);
+
+                    } else {
+                        var_dump('found');die;
+                    }
+                    $response_array['status'] = 'Fetched Successfully!';
+                    $response_array['stripe_account_id'] = $stripe_account_id;
+                    $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+                } else {
+                    $response_array['status'] = 'Authorization Failed!!';
+                    $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+                }
             } else {
-                $response_array['status'] = 'Authorization Failed!!';
+                $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
                 $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
             }
-        } else {
-            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
-            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        } catch (Exception $exception) {
+            $response_array['status'] = $exception->getMessage();
+            $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
         }
+    }
+
+    // 'This is to onboard the account so that the user can transfer money to account',
+    public function onBoardAccount_post()
+    {
+
+    }
+
+    //'This is to add external bank account for connect Please see https://jsfiddle.net/ywain/L2cefvtp/ for the external_account',
+    public function connectBankToAccount_post()
+    {
+
+    }
+
+    //This is to transfer money to bank account
+    public function transferToAccount_post()
+    {
+
+    }
+    //This is to confirm the transfer
+    public function confirmTransferToAccount_post()
+    {
+
     }
 
 }//end controller                                
