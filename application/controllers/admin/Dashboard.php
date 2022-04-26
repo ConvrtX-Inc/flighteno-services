@@ -24,12 +24,18 @@ class Dashboard extends CI_Controller {
         $data['trasections']  =  $trasections;
 
         //find all users Only 
-        $usersCount     =  $db->users->find([ 'status' => 'user', 'user_role' => 2 ]);
+        $usersCount     =  $db->users->find([ 'status' => 'user', 'user_role' => 2, '$or' => array(['profile_status' => 'buyer'], ['profile_status' => 'traveler'])]);
         $usersAll       =  iterator_to_array($usersCount);
         $data['users']  =  count($usersAll);
 
         //find active users
-        $activeUsers =  $this->Mod_users->active_InactiveUsers();
+        $activeUsers =  $this->Mod_users->countActiveUsers();
+        // $date1 = date('Y-m-d H:i:s');
+        // $date2 = date('Y-m-d H:i:s', strtotime('-4 months'));
+        // var_dump($date1);
+        // var_dump($date2);
+        // var_dump($date1 > $date2);
+        // exit;
         $data['active_users']   = $activeUsers;  
         $data['inActive_users'] =  count($usersAll) -   $activeUsers;
         //end find active users
