@@ -812,9 +812,16 @@ class Rest_calls extends REST_Controller
 
             if ($checkEmailStatus['status'] == true) {
 
+                $userData = $checkEmailStatus['data'];
+                $userData['rating'] = $this->Mod_rating->getUserAvgRatting((string)$admin_id);
+
+                $token = $this->Mod_isValidUser->GenerateJWT((string)$userData['_id']);
+
                 $response_array = [
-                    'status' => 'Email Already Exists Please Try With Another Email',
-                    'type' => 400
+                    'status' => 'Login Success',
+                    'data' => $checkEmailStatus['data'],
+                    'type' => 200,
+                    'token' => $token,
                 ];
 
                 $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
