@@ -179,73 +179,8 @@
                         <div class="row dashboardStyle">
                             <h4 class="page-title styleHeader titleStyle">Dashboard</h4>
                         </div>
-                        <!-- end page title --> 
-                        <!-- <div class="row">
-                            <div class="col-xl-4 card-box boxStyle">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="muteText">Total Users Signed Up </span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <span class = "textColor" ><?php echo $users; ?></span>      
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/first.png" alt="money" class="avatar-lg bx-shadow-lg" style="float:right" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="numberCard <?php echo $signedUpUserColor;?>" > <?php echo number_format($percentageSignedUp, 1).'%'; ?></span>         
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="col-xl-4 card-box boxStyle">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="muteText">Active Users </span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <span class="textColor" ><?php echo $active_users; ?></span>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/second.png" alt="money" class="rounded-circle avatar-lg bx-shadow-lg" style="float:right"  />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-12">    
-                                        <span class="numberCard <?php echo $active_user_color;?>"><?php echo number_format($active_user_percentage , 1).'%'; ?></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 card-box boxStyle">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="muteText">Inactive Users</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <span class="textColor"><?php echo $inActive_users; ?></span>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/third.png" alt="money" class="rounded-circle avatar-lg bx-shadow-lg" style="float:right" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="numberCardLast  <?php echo $inactiveUserColor; ?>"><?php echo number_format( $inactiveUserPercentage , 1).'%'; ?></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
-
-                        <div class="row statistics">
+                        <div class="row statistics mb-4">
                             <div class="col-xl-4">
                                 <div class="this-box">
                                     <h5 class="mt-0 mb-1 this-title">Total Users Signed Up</h5>
@@ -275,15 +210,13 @@
                                         <p class="m-0 this-total"><?php echo $inActive_users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector03.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage"><?php echo number_format($inactiveUserPercentage, 0).'%'; ?></h5>
+                                    <h5 class="m-0 this-percentage text-red"><?php echo number_format($inactiveUserPercentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- end row -->
-        
                         <div class="row">
-                            <div class="col-xl-9">
+                            <div class="col-xl-8">
                                 <div class="row">
                                     <div class="col-xl-12">
                                         <div class="card-box boxStyle">
@@ -306,45 +239,41 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <div class="card-box boxStyle">
-                                            <div class="media">
-                                                <div class="media-body table-responsive">
-                                                    <h5 class="mt-0">Recent Users</h5>
-                                                    <p class="text-muted"><?php echo date('Y-m-d'); ?></p>
-                                                    <table class="">
-                                                        <?php foreach ($recentActivity as $activity) { ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="row" style= "margin-top: 30%">
-                                                                        <div class="col-xl-6">
+                            <div class="col-xl-4">
+                                <div class="recent-users mb-4">
+                                    <div class="this-box">
+                                        <h4 class="mt-0 mb-1">Recent Users</h4>
+                                        <p class="date-now text-gray mt-0 mb-1"><?php echo date('d M Y'); ?></p>
 
-                                                                            <?php if(empty($activity['profileData'][0]['profile_image']) || $activity['profileData'][0]['profile_image'] == ''|| is_null($activity['profileData'][0]['profile_image']) ){ 
-                                                                
-                                                                                $imageSource = SURL.'assets/images/male.png';
-                                                                            }else{
-
-                                                                                $imageSource = $activity['profileData'][0]['profile_image'];
-                                                                            } ?>
-                                                                            <img src="<?php echo $imageSource;?>" class="rounded-circle avatar-sm bx-shadow-lg">
-                                                                        </div>
-                                                                        <div class="col-xl-6">
-                                                                            <span class="nameDesign" class="ml-2"><?php echo $activity['profileData'][0]['full_name'][0]; ?></span><br/>
-                                                                            <span class="text-muted desigination"><?php echo  $activity['message']; ?></span> 
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </table>
-                                                    <div class="pagination" style= "padding-top: 6%;" ><?php  echo $this->pagination->create_links(); ?></div>
+                                        <div class="activities-list">
+                                            <?php 
+                                            foreach ($recentActivity as $activity) { ?>
+                                                <div class="activities-list-item">
+                                                    <div class="d-flex">
+                                                        <?php 
+                                                        if(empty($activity['profileData'][0]['profile_image']) || $activity['profileData'][0]['profile_image'] == ''|| is_null($activity['profileData'][0]['profile_image']) ){ 
+                                                            $imageSource = SURL.'assets/images/male.png';
+                                                        } else {
+                                                            $imageSource = $activity['profileData'][0]['profile_image'];
+                                                        } 
+                                                        ?>
+                                                        <div class="this-profile">
+                                                            <img src="<?php echo $imageSource;?>" class="rounded-circle avatar-sm bx-shadow-lg">
+                                                        </div>
+                                                        <div class="this-details">
+                                                            <p class="this-name"><?php echo $activity['profileData'][0]['full_name']; ?></p>
+                                                            <p class="mb-0 this-message"><?php echo  $activity['message']; ?></p> 
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div> <!-- end card-box-->
+                                            <?php 
+                                            } ?>
+                                        </div>
+
+                                        <a href="#" class="btn-see-all">See all</a>
                                     </div>
                                 </div>
+                                
                                 <div class="row">
                                     <div class="col-xl-12 card-box boxStyle" style= "background-color : #0BB3EA">
                                         <div class="row">
