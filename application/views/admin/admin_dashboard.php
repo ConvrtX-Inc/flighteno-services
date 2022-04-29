@@ -22,6 +22,9 @@
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
 
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
 
             .pagination a {
@@ -143,6 +146,15 @@
                 line-height: 31px;
                 /* color: #FB0000; */
             }
+            .titleStyle{
+                font-style: normal;
+                font-weight: 800;
+                font-size: 40px;
+                color: #18243C;
+                margin-top: 2%;
+                margin-left: 0%;
+                margin-bottom: 1%;
+            }
         </style>
     </head>
 
@@ -161,26 +173,14 @@
             <!-- Start Page Content here -->
             <!-- ============================================================== -->
             <div class="content-page">
-                <div class="content">
+                <div class="content dashboard-page">
                     <!-- Start Content-->
                     <div class="container-fluid">
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                </div>
-                            </div>
-                        </div>     
-
                         <div class="row dashboardStyle">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                </div>
-                            </div>
-                            Dashboard
+                            <h4 class="page-title styleHeader titleStyle">Dashboard</h4>
                         </div>
                         <!-- end page title --> 
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-xl-4 card-box boxStyle">
                                 <div class="row">
                                     <div class="col-xl-12">
@@ -192,7 +192,7 @@
                                         <span class = "textColor" ><?php echo $users; ?></span>      
                                     </div>
                                     <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/first.png" alt="money" class="rounded-circle avatar-lg bx-shadow-lg" style="float:right" />
+                                        <img src="<?php echo SURL;?>assets/images/first.png" alt="money" class="avatar-lg bx-shadow-lg" style="float:right" />
                                     </div>
                                 </div>
                                 <div class="row">
@@ -243,7 +243,43 @@
                                     </div>
                                 </div>
                             </div>
+                        </div> -->
+
+                        <div class="row statistics">
+                            <div class="col-xl-4">
+                                <div class="this-box">
+                                    <h5 class="mt-0 mb-1 this-title">Total Users Signed Up</h5>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="m-0 this-total"><?php echo $users; ?></p>
+                                        <img src="<?php echo SURL;?>assets/images/vector01.png" class="" />
+                                    </div>
+                                    <h5 class="m-0 this-percentage"><?php echo number_format($percentageSignedUp, 0).'%'; ?></h5>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4">
+                                <div class="this-box">
+                                    <h5 class="mt-0 mb-1 this-title">Active Users</h5>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="m-0 this-total"><?php echo $active_users; ?></p>
+                                        <img src="<?php echo SURL;?>assets/images/vector02.png" class="" />
+                                    </div>
+                                    <h5 class="m-0 this-percentage"><?php echo number_format($active_user_percentage, 0).'%'; ?></h5>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xl-4">
+                                <div class="this-box">
+                                    <h5 class="mt-0 mb-1 this-title">Inactive Users</h5>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="m-0 this-total"><?php echo $inActive_users; ?></p>
+                                        <img src="<?php echo SURL;?>assets/images/vector03.png" class="" />
+                                    </div>
+                                    <h5 class="m-0 this-percentage"><?php echo number_format($inactiveUserPercentage, 0).'%'; ?></h5>
+                                </div>
+                            </div>
                         </div>
+
                         <!-- end row -->
         
                         <div class="row">

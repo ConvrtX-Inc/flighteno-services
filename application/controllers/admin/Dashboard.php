@@ -28,40 +28,18 @@ class Dashboard extends CI_Controller {
         $usersAll       =  iterator_to_array($usersCount);
         $data['users']  =  count($usersAll);
 
-        //find active users
+        // count active/inactive users
         $activeUsers =  $this->Mod_users->countActiveUsers();
-        // $date1 = date('Y-m-d H:i:s');
-        // $date2 = date('Y-m-d H:i:s', strtotime('-4 months'));
-        // var_dump($date1);
-        // var_dump($date2);
-        // var_dump($date1 > $date2);
-        // exit;
-        $data['active_users']   = $activeUsers;  
-        $data['inActive_users'] =  count($usersAll) -   $activeUsers;
-        //end find active users
+        $data['active_users'] = $activeUsers;  
+        $data['inActive_users'] = count($usersAll) - $activeUsers;
 
-        //find active users Percentage
-        $activeUserPercentage = $this->Mod_users->findActivePercentage();    
-        $data['active_user_percentage']  = $activeUserPercentage['activePercentage']; 
-        $data['active_user_color']       = $activeUserPercentage['activeColor'];
-        //end active users Percentage
-
-        $inactivUserLastMonth = count($usersAll) -  $activeUserPercentage['lastMonthActiveUsers'];
-        $inactivUserPreMonth  = count($usersAll) -  $activeUserPercentage['preMonthAtiveUsers'];
-
-        $data['inactiveUserPercentage'] = ($inactivUserLastMonth / $inactivUserPreMonth ) * 100 ;
-
-        if( (count($usersAll) -   $activeUserPercentage['preMonthAtiveUsers']) >  (count($usersAll) -   $activeUserPercentage['lastMonthActiveUsers']) ){
-
-            $data['inactiveUserColor']       =  'text-success';
-        }else{
-
-            $data['inactiveUserColor']       =  'text-danger';
-        }
+        // calculate active/inactive users percentage
+        $activeUserPercentage = ($activeUsers / $data['users'] ) * 100;
+        $data['active_user_percentage']  = $activeUserPercentage; 
+        $data['inactiveUserPercentage']  = 100 - $activeUserPercentage;
 
         //find total signed up users
         $getSignedUpUsersDetails = $this->Mod_users->findSignedUpUsers();
-        $data['signedUpUserColor']   = $getSignedUpUsersDetails['signedUpUserColor'];
         $data['percentageSignedUp']  = $getSignedUpUsersDetails['percentageSignedUp'];
         $data['totalEarnedCost']     = $this->Mod_order->calculateCost();
         //end total signed up users
