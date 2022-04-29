@@ -22,6 +22,9 @@
         <link href="<?php echo SURL;?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo SURL;?>assets/css/app.min.css" rel="stylesheet" type="text/css" />
 
+        <!-- Global admin style -->
+        <link href="<?php echo SURL;?>assets/css/styles.css" rel="stylesheet" type="text/css" />
+
         <style>
 
             .pagination a {
@@ -143,6 +146,15 @@
                 line-height: 31px;
                 /* color: #FB0000; */
             }
+            .titleStyle{
+                font-style: normal;
+                font-weight: 800;
+                font-size: 40px;
+                color: #18243C;
+                margin-top: 2%;
+                margin-left: 0%;
+                margin-bottom: 1%;
+            }
         </style>
     </head>
 
@@ -161,176 +173,123 @@
             <!-- Start Page Content here -->
             <!-- ============================================================== -->
             <div class="content-page">
-                <div class="content">
+                <div class="content dashboard-page">
                     <!-- Start Content-->
                     <div class="container-fluid">
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                </div>
-                            </div>
-                        </div>     
-
                         <div class="row dashboardStyle">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                </div>
-                            </div>
-                            Dashboard
+                            <h4 class="page-title styleHeader titleStyle">Dashboard</h4>
                         </div>
-                        <!-- end page title --> 
-                        <div class="row">
-                            <div class="col-xl-4 card-box boxStyle">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="muteText">Total Users Signed Up </span>
+
+                        <div class="row statistics mb-4">
+                            <div class="col-xl-4">
+                                <div class="this-box">
+                                    <h5 class="mt-0 mb-1 this-title">Total Users Signed Up</h5>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="m-0 this-total"><?php echo $users; ?></p>
+                                        <img src="<?php echo SURL;?>assets/images/vector01.png" class="" />
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <span class = "textColor" ><?php echo $users; ?></span>      
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/first.png" alt="money" class="rounded-circle avatar-lg bx-shadow-lg" style="float:right" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="numberCard <?php echo $signedUpUserColor;?>" > <?php echo number_format($percentageSignedUp, 1).'%'; ?></span>         
-                                    </div>
+                                    <h5 class="m-0 this-percentage"><?php echo number_format($percentageSignedUp, 0).'%'; ?></h5>
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 card-box boxStyle">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="muteText">Active Users </span>
+                            <div class="col-xl-4">
+                                <div class="this-box">
+                                    <h5 class="mt-0 mb-1 this-title">Active Users</h5>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="m-0 this-total"><?php echo $active_users; ?></p>
+                                        <img src="<?php echo SURL;?>assets/images/vector02.png" class="" />
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <span class="textColor" ><?php echo $active_users; ?></span>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/second.png" alt="money" class="rounded-circle avatar-lg bx-shadow-lg" style="float:right"  />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-12">    
-                                        <span class="numberCard <?php echo $active_user_color;?>"><?php echo number_format($active_user_percentage , 1).'%'; ?></span>
-                                    </div>
+                                    <h5 class="m-0 this-percentage"><?php echo number_format($active_user_percentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
-
-                            <div class="col-xl-4 card-box boxStyle">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="muteText">Inactive Users</span>
+                            
+                            <div class="col-xl-4">
+                                <div class="this-box">
+                                    <h5 class="mt-0 mb-1 this-title">Inactive Users</h5>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="m-0 this-total"><?php echo $inActive_users; ?></p>
+                                        <img src="<?php echo SURL;?>assets/images/vector03.png" class="" />
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <span class="textColor"><?php echo $inActive_users; ?></span>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <img src="<?php echo SURL;?>assets/images/third.png" alt="money" class="rounded-circle avatar-lg bx-shadow-lg" style="float:right" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <span class="numberCardLast  <?php echo $inactiveUserColor; ?>"><?php echo number_format( $inactiveUserPercentage , 1).'%'; ?></span>
-                                    </div>
+                                    <h5 class="m-0 this-percentage text-red"><?php echo number_format($inactiveUserPercentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
                         </div>
-                        <!-- end row -->
-        
+
                         <div class="row">
-                            <div class="col-xl-9">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <div class="card-box boxStyle">
-                                            <h4 class="header-title mb-3"  style="color: black; font-size: 30px">User Activity</h4>
-                                            <div class="boxStyle" style="background-color : #0BB3EA; max-width: 95%">
-                                                <canvas id="user_activity" width="800" height="300"></canvas>
-                                            </div>
-                                        </div>
+                            <div class="col-xl-8">
+                                <div class="chart-box mb-4">
+                                    <div class="this-title mb-3">
+                                        <h4 class="mt-0">User Activity</h4>
                                     </div>
 
-                                    <div class="col-xl-12">
-                                        <div class="card-box boxStyle">
-                                            <h4 class="header-title mb-3" style="color: black; font-size: 30px">Total orders of travelers</h4>
-                                            
-                                            <div class="boxStyle" style ="max-width: 95%">
-                                                <canvas id="travelers" width="800" height="300"></canvas>
-                                            </div>
-                                    
-                                        </div>
+                                    <div class="this-chart user-activity">
+                                        <canvas id="user_activity" width="800" height="300"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="chart-box">
+                                    <div class="this-title mb-3 d-flex align-items-center justify-content-between">
+                                        <h4 class="mt-0">Total order of travelers</h4>
+                                        <a href="#">See all</a>
+                                    </div>
+
+                                    <div class="this-chart traveler-orders">
+                                        <canvas id="travelers" width="800" height="300"></canvas>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <div class="card-box boxStyle">
-                                            <div class="media">
-                                                <div class="media-body table-responsive">
-                                                    <h5 class="mt-0">Recent Users</h5>
-                                                    <p class="text-muted"><?php echo date('Y-m-d'); ?></p>
-                                                    <table class="">
-                                                        <?php foreach ($recentActivity as $activity) { ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="row" style= "margin-top: 30%">
-                                                                        <div class="col-xl-6">
+                            <div class="col-xl-4">
+                                <div class="recent-users mb-4">
+                                    <div class="this-box">
+                                        <h4 class="mt-0 mb-1">Recent Users</h4>
+                                        <p class="date-now text-gray mt-0 mb-1"><?php echo date('d M Y'); ?></p>
 
-                                                                            <?php if(empty($activity['profileData'][0]['profile_image']) || $activity['profileData'][0]['profile_image'] == ''|| is_null($activity['profileData'][0]['profile_image']) ){ 
-                                                                
-                                                                                $imageSource = SURL.'assets/images/male.png';
-                                                                            }else{
+                                        <div class="activities-list">
+                                            <?php 
+                                            foreach ($recentActivity as $activity) { ?>
+                                                <div class="activities-list-item">
+                                                    <div class="d-flex">
+                                                        <?php 
+                                                        if(empty($activity['profileData'][0]['profile_image']) || $activity['profileData'][0]['profile_image'] == ''|| is_null($activity['profileData'][0]['profile_image']) ){ 
+                                                            $imageSource = SURL.'assets/images/male.png';
+                                                        } else {
+                                                            $imageSource = $activity['profileData'][0]['profile_image'];
+                                                        } 
 
-                                                                                $imageSource = $activity['profileData'][0]['profile_image'];
-                                                                            } ?>
-                                                                            <img src="<?php echo $imageSource;?>" class="rounded-circle avatar-sm bx-shadow-lg">
-                                                                        </div>
-                                                                        <div class="col-xl-6">
-                                                                            <span class="nameDesign" class="ml-2"><?php echo $activity['profileData'][0]['full_name'][0]; ?></span><br/>
-                                                                            <span class="text-muted desigination"><?php echo  $activity['message']; ?></span> 
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </table>
-                                                    <div class="pagination" style= "padding-top: 6%;" ><?php  echo $this->pagination->create_links(); ?></div>
+                                                        $fullname = $activity['profileData'][0]['full_name'];
+                                                        if (empty($fullname) || is_null($fullname)) {
+                                                            $fullname = $activity['profileData'][0]['email_address'];
+                                                        }
+                                                        ?>
+                                                        <div class="this-profile">
+                                                            <img src="<?php echo $imageSource;?>" class="rounded-circle avatar-sm bx-shadow-lg">
+                                                        </div>
+                                                        <div class="this-details">
+                                                            <p class="this-name"><?php echo $fullname; ?></p>
+                                                            <p class="mb-0 this-message"><?php echo  $activity['message']; ?></p> 
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div> <!-- end card-box-->
+                                            <?php 
+                                            } ?>
+                                        </div>
+
+                                        <a href="#" class="btn-see-all">See all</a>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-xl-12 card-box boxStyle" style= "background-color : #0BB3EA">
-                                        <div class="row">
-                                            <div class="col-xl-12">
-                                                <h4 class="header-title" style="color:white; font-size :20px; font-weight:bold">30 Days</h4>
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-xl-6">
-                                                <h5 style= "color: white; font-size: 12px;">Money Make Last</h5>
-                                            </div>
-                                            <div class="col-xl-6">
-                                                <img src="<?php echo SURL;?>assets/images/ddd.png" alt="money" class="rounded-circle avatar-xlg bx-shadow-lg"style="float:right;" />
-                                            </div>
-                                        </div>
+                                <div class="total-30 d-flex align-items-center justify-content-between">
+                                    <div class="this-details">
+                                        <h5 class="m-0">30 Days</h5>
+                                        <p class="">Money Make Last</p>
+                                        <?php
+                                        $totalEarnedCost = (is_null($totalEarnedCost) || empty($totalEarnedCost)? '0.00' : $totalEarnedCost );
+                                        ?>
+                                        <h4 class="m-0"><?php echo '$'.$totalEarnedCost; ?></h4>
+                                    </div>
 
-                                        <div class="row">
-                                            <div class="col-xl-12" >
-                                                <h5 style= "color: white; font-weight: bold; font-size: 45px"><?php echo '$'.$totalEarnedCost; ?></h5>
-                                            </div>
-                                        </div>
+                                    <div class="this-image">
+                                        <img src="<?php echo SURL;?>assets/images/money.png" class="" />
                                     </div>
                                 </div>
                             </div>
@@ -354,7 +313,7 @@
         <!-- KNOB JS -->
         <script src="<?php echo SURL;?>assets/libs/jquery-knob/jquery.knob.min.js"></script>
         <!-- Chart JS -->
-        <script src="<?php echo SURL;?>assets/libs/chart-js/Chart.bundle.min.js"></script>
+        <!-- <script src="<?php echo SURL;?>assets/libs/chart-js/Chart.bundle.min.js"></script> -->
         <!-- Jvector map -->
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.min.js"></script>
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.usa.js"></script>
@@ -368,97 +327,125 @@
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script>
 
             window.onload = function() {
                 new Chart(document.getElementById("user_activity"), {
                     type: 'bar',
                     data: {
-                        labels:  ['00AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12AM','14PM','16PM', '18PM','20PM','22PM'],
+                        labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
                         datasets: [
                             {    
-                                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
                                 backgroundColor: ["#ffffff" ,"#ffffff" ,"#ffffff","#ffffff","#ffffff", "#ffffff","#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff", "#ffffff"],
                                 label: "user",
-                                borderColor: "#0BB3EA",
-                                fill: false,
-                                display:false,
-                            }
-                        ]
-                    },
-
-                options: {
-                    title: {
-                        display: true,
-                        text: 'Last 24 Hours',
-                        fontColor: "white",
-                        
-                    },  
-                    legend: {
-                        labels: {
-                            fontColor: "white",
-                            fontSize: 18
-                        }
-                    },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                fontColor: "white",
-                                fontSize: 12,
-                                stepSize: 1,
-                                beginAtZero: true
-                            },gridLines: {
-                                display: false
-                            }
-                        }],
-                        xAxes: [{
-                            ticks: {
-                                fontColor: "white",
-                                fontSize: 14,
-                                stepSize: 1,
-                                beginAtZero: true
-                            },gridLines: {
-                                display: false
-                            }    
-                        }]
-                    }
-                }
-
-                });
-
-                new Chart(document.getElementById("travelers"), {
-                    type: 'bar',
-                    data: {
-                        labels: ['00AM', '2AM', '4AM', '6AM', '8AM', '10AM', '12AM','14PM','16PM', '18PM','20PM','22PM'],
-                        datasets: [
-                            { 
-                                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ],
-                                backgroundColor: ["#027EF2" ,"#027EF2" ,"#027EF2","#027EF2","#027EF2", "#027EF2","#027EF2", "#027EF2","#027EF2","#027EF2","#027EF2", "#027EF2"],
-
-                                label: "orders",
-                                borderColor: "white",
-                                fill: false,
                                 display:false,
                             }
                         ]
                     },
                     options: {
-                        title: {
-                        }, scales: {
-                        yAxes: [{
-                            ticks: {
-                            },gridLines: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Last 24 Hours',
+                                color: "white",
+                                align: "end"
+                            },  
+                            legend: {
                                 display: false
+                            },
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: "white",
+                                    fontSize: 12,
+                                    stepSize: 200,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "white",
+                                },
+                                title: {
+                                    text: "Users",
+                                    color: "white",
+                                    display: true,
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: "white",
+                                    fontSize: 12,
+                                    stepSize: 1,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "white",
+                                }   
                             }
-                        }],
-                        xAxes: [{
-                            ticks: {
-                            },gridLines: {
-                                display: false
-                            }    
-                        }]
+                        },
+                        borderRadius: 8,
+                        maxBarThickness: 8
                     }
+                });
+
+                new Chart(document.getElementById("travelers"), {
+                    type: 'bar',
+                    data: {
+                        labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
+                        datasets: [
+                            { 
+                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
+                                backgroundColor: ["#0F6FC8" ,"#0F6FC8" ,"#0F6FC8","#0F6FC8","#0F6FC8", "#0F6FC8","#0F6FC8", "#0F6FC8","#0F6FC8","#0F6FC8","#0F6FC8", "#0F6FC8"],
+                                label: "orders",
+                                display: false,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: false,
+                            },  
+                            legend: {
+                                display: false
+                            },
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: "#CFCFCF",
+                                    fontSize: 12,
+                                    stepSize: 200,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "#CFCFCF",
+                                },
+                                title: {
+                                    text: "Orders",
+                                    color: "#CFCFCF",
+                                    display: true,
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: "#CFCFCF",
+                                    fontSize: 12,
+                                    stepSize: 1,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "#CFCFCF",
+                                }   
+                            }
+                        },
+                        borderRadius: 8,
+                        maxBarThickness: 8
                     }
                 });
             

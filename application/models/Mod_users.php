@@ -30,6 +30,59 @@ class Mod_users extends CI_Model {
       return count($usersAll);
   }
 
+  public function getRecentUserActivities() {
+    $db = $this->mongo_db->customQuery();
+
+    $month = (int)date('m');
+    $year = (int)date('Y');
+
+    $query = [
+      [
+        '$project' => [
+          '_id' => ['$toString' => '$_id'],
+          'message'  => '$message',
+          'admin_id' => '$admin_id',
+          'created_date' => '$created_date',
+          'created_date_month' => ['$month' => '$created_date'],
+          'created_date_year' => ['$year' => '$created_date']
+        ]
+      ],
+      [
+        '$lookup' => [
+          'from' => 'users',
+          'let' => ['admin_id' => ['$toObjectId' => '$admin_id']],
+          'pipeline' => [
+            [
+              '$match' => [
+                  '$expr' => [
+                    '$eq' => ['$_id', '$$admin_id'],
+                  ],
+              ],
+            ],
+            [
+              '$project' => [
+                '_id' => ['$toString' => '$_id'],
+                'full_name' => '$full_name',
+                'email_address' => '$email_address',
+                'profile_image' => '$profile_image',
+              ]
+            ],
+          ],
+          'as' => 'profileData'
+        ]
+      ],
+      ['$match' => ['profileData' => ['$ne' => []]]],
+      ['$match' => ['created_date_month' => $month, 'created_date_year' => $year]],
+      ['$sort' => ['created_date' => -1]],
+      ['$skip' => 0],
+      ['$limit' => 5],
+    ];
+
+    $result = $db->activities->aggregate($query);
+    $resultArr = iterator_to_array($result);
+    return $resultArr;
+  }
+
   public function findActivePercentage(){
       
     $db = $this->mongo_db->customQuery();
