@@ -217,25 +217,24 @@
 
                         <div class="row">
                             <div class="col-xl-8">
-                                <div class="row">
-                                    <div class="col-xl-12">
-                                        <div class="card-box boxStyle">
-                                            <h4 class="header-title mb-3"  style="color: black; font-size: 30px">User Activity</h4>
-                                            <div class="boxStyle" style="background-color : #0BB3EA; max-width: 95%">
-                                                <canvas id="user_activity" width="800" height="300"></canvas>
-                                            </div>
-                                        </div>
+                                <div class="chart-box mb-4">
+                                    <div class="this-title mb-3">
+                                        <h4 class="mt-0">User Activity</h4>
                                     </div>
 
-                                    <div class="col-xl-12">
-                                        <div class="card-box boxStyle">
-                                            <h4 class="header-title mb-3" style="color: black; font-size: 30px">Total orders of travelers</h4>
-                                            
-                                            <div class="boxStyle" style ="max-width: 95%">
-                                                <canvas id="travelers" width="800" height="300"></canvas>
-                                            </div>
-                                    
-                                        </div>
+                                    <div class="this-chart user-activity">
+                                        <canvas id="user_activity" width="800" height="300"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="chart-box">
+                                    <div class="this-title mb-3 d-flex align-items-center justify-content-between">
+                                        <h4 class="mt-0">Total order of travelers</h4>
+                                        <a href="#">See all</a>
+                                    </div>
+
+                                    <div class="this-chart traveler-orders">
+                                        <canvas id="travelers" width="800" height="300"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -309,7 +308,7 @@
         <!-- KNOB JS -->
         <script src="<?php echo SURL;?>assets/libs/jquery-knob/jquery.knob.min.js"></script>
         <!-- Chart JS -->
-        <script src="<?php echo SURL;?>assets/libs/chart-js/Chart.bundle.min.js"></script>
+        <!-- <script src="<?php echo SURL;?>assets/libs/chart-js/Chart.bundle.min.js"></script> -->
         <!-- Jvector map -->
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.min.js"></script>
         <script src="<?php echo SURL;?>assets/libs/jqvmap/jquery.vmap.usa.js"></script>
@@ -323,97 +322,125 @@
         <!-- App js -->
         <script src="<?php echo SURL;?>assets/js/app.min.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script>
 
             window.onload = function() {
                 new Chart(document.getElementById("user_activity"), {
                     type: 'bar',
                     data: {
-                        labels:  ['00AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12AM','14PM','16PM', '18PM','20PM','22PM'],
+                        labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
                         datasets: [
                             {    
-                                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
                                 backgroundColor: ["#ffffff" ,"#ffffff" ,"#ffffff","#ffffff","#ffffff", "#ffffff","#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff", "#ffffff"],
                                 label: "user",
-                                borderColor: "#0BB3EA",
-                                fill: false,
-                                display:false,
-                            }
-                        ]
-                    },
-
-                options: {
-                    title: {
-                        display: true,
-                        text: 'Last 24 Hours',
-                        fontColor: "white",
-                        
-                    },  
-                    legend: {
-                        labels: {
-                            fontColor: "white",
-                            fontSize: 18
-                        }
-                    },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                fontColor: "white",
-                                fontSize: 12,
-                                stepSize: 1,
-                                beginAtZero: true
-                            },gridLines: {
-                                display: false
-                            }
-                        }],
-                        xAxes: [{
-                            ticks: {
-                                fontColor: "white",
-                                fontSize: 14,
-                                stepSize: 1,
-                                beginAtZero: true
-                            },gridLines: {
-                                display: false
-                            }    
-                        }]
-                    }
-                }
-
-                });
-
-                new Chart(document.getElementById("travelers"), {
-                    type: 'bar',
-                    data: {
-                        labels: ['00AM', '2AM', '4AM', '6AM', '8AM', '10AM', '12AM','14PM','16PM', '18PM','20PM','22PM'],
-                        datasets: [
-                            { 
-                                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ],
-                                backgroundColor: ["#027EF2" ,"#027EF2" ,"#027EF2","#027EF2","#027EF2", "#027EF2","#027EF2", "#027EF2","#027EF2","#027EF2","#027EF2", "#027EF2"],
-
-                                label: "orders",
-                                borderColor: "white",
-                                fill: false,
                                 display:false,
                             }
                         ]
                     },
                     options: {
-                        title: {
-                        }, scales: {
-                        yAxes: [{
-                            ticks: {
-                            },gridLines: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Last 24 Hours',
+                                color: "white",
+                                align: "end"
+                            },  
+                            legend: {
                                 display: false
+                            },
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: "white",
+                                    fontSize: 12,
+                                    stepSize: 200,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "white",
+                                },
+                                title: {
+                                    text: "Users",
+                                    color: "white",
+                                    display: true,
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: "white",
+                                    fontSize: 12,
+                                    stepSize: 1,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "white",
+                                }   
                             }
-                        }],
-                        xAxes: [{
-                            ticks: {
-                            },gridLines: {
-                                display: false
-                            }    
-                        }]
+                        },
+                        borderRadius: 8,
+                        maxBarThickness: 8
                     }
+                });
+
+                new Chart(document.getElementById("travelers"), {
+                    type: 'bar',
+                    data: {
+                        labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
+                        datasets: [
+                            { 
+                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
+                                backgroundColor: ["#0F6FC8" ,"#0F6FC8" ,"#0F6FC8","#0F6FC8","#0F6FC8", "#0F6FC8","#0F6FC8", "#0F6FC8","#0F6FC8","#0F6FC8","#0F6FC8", "#0F6FC8"],
+                                label: "orders",
+                                display: false,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: false,
+                            },  
+                            legend: {
+                                display: false
+                            },
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: "#CFCFCF",
+                                    fontSize: 12,
+                                    stepSize: 200,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "#CFCFCF",
+                                },
+                                title: {
+                                    text: "Orders",
+                                    color: "#CFCFCF",
+                                    display: true,
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: "#CFCFCF",
+                                    fontSize: 12,
+                                    stepSize: 1,
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "#CFCFCF",
+                                }   
+                            }
+                        },
+                        borderRadius: 8,
+                        maxBarThickness: 8
                     }
                 });
             
