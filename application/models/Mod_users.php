@@ -63,6 +63,7 @@ class Mod_users extends CI_Model {
               '$project' => [
                 '_id' => ['$toString' => '$_id'],
                 'full_name' => '$full_name',
+                'email_address' => '$email_address',
                 'profile_image' => '$profile_image',
               ]
             ],
@@ -71,8 +72,8 @@ class Mod_users extends CI_Model {
         ]
       ],
       ['$match' => ['profileData' => ['$ne' => []]]],
-      // ['$match' => ['created_date_month' => $month, 'created_date_year' => $year]],
-      // ['$sort' => ['created_date' => -1]],
+      ['$match' => ['created_date_month' => $month, 'created_date_year' => $year]],
+      ['$sort' => ['created_date' => -1]],
       ['$skip' => 0],
       ['$limit' => 5],
     ];

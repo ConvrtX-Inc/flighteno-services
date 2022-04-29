@@ -255,12 +255,17 @@
                                                         } else {
                                                             $imageSource = $activity['profileData'][0]['profile_image'];
                                                         } 
+
+                                                        $fullname = $activity['profileData'][0]['full_name'];
+                                                        if (empty($fullname) || is_null($fullname)) {
+                                                            $fullname = $activity['profileData'][0]['email_address'];
+                                                        }
                                                         ?>
                                                         <div class="this-profile">
                                                             <img src="<?php echo $imageSource;?>" class="rounded-circle avatar-sm bx-shadow-lg">
                                                         </div>
                                                         <div class="this-details">
-                                                            <p class="this-name"><?php echo $activity['profileData'][0]['full_name']; ?></p>
+                                                            <p class="this-name"><?php echo $fullname; ?></p>
                                                             <p class="mb-0 this-message"><?php echo  $activity['message']; ?></p> 
                                                         </div>
                                                     </div>

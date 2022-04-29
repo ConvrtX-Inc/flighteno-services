@@ -809,6 +809,7 @@ body {
 
 .dashboard-page .recent-users .this-details {
   margin-left: 25px;
+  overflow-x: hidden;
 }
 
 .dashboard-page .recent-users .this-details .this-name {
@@ -817,6 +818,9 @@ body {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 8px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .dashboard-page .recent-users .this-details .this-message {
