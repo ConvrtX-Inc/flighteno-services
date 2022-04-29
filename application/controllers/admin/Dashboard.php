@@ -41,7 +41,8 @@ class Dashboard extends CI_Controller {
         //find total signed up users
         $getSignedUpUsersDetails = $this->Mod_users->findSignedUpUsers();
         $data['percentageSignedUp']  = $getSignedUpUsersDetails['percentageSignedUp'];
-        $data['totalEarnedCost']     = $this->Mod_order->calculateCost();
+        $data['totalEarnedCost'] = number_format($this->Mod_order->calculateCost(), 2);
+        $data['totalEarnedCost'] = str_replace(",", "", $data['totalEarnedCost']);
         //end total signed up users
         
         $activities      =  $db->activities->find([]);

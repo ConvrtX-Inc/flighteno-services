@@ -273,29 +273,19 @@
                                         <a href="#" class="btn-see-all">See all</a>
                                     </div>
                                 </div>
-                                
-                                <div class="row">
-                                    <div class="col-xl-12 card-box boxStyle" style= "background-color : #0BB3EA">
-                                        <div class="row">
-                                            <div class="col-xl-12">
-                                                <h4 class="header-title" style="color:white; font-size :20px; font-weight:bold">30 Days</h4>
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-xl-6">
-                                                <h5 style= "color: white; font-size: 12px;">Money Make Last</h5>
-                                            </div>
-                                            <div class="col-xl-6">
-                                                <img src="<?php echo SURL;?>assets/images/ddd.png" alt="money" class="rounded-circle avatar-xlg bx-shadow-lg"style="float:right;" />
-                                            </div>
-                                        </div>
+                                <div class="total-30 d-flex align-items-center justify-content-between">
+                                    <div class="this-details">
+                                        <h5 class="m-0">30 Days</h5>
+                                        <p class="">Money Make Last</p>
+                                        <?php
+                                        $totalEarnedCost = (is_null($totalEarnedCost) || empty($totalEarnedCost)? '0.00' : $totalEarnedCost );
+                                        ?>
+                                        <h4 class="m-0"><?php echo '$'.$totalEarnedCost; ?></h4>
+                                    </div>
 
-                                        <div class="row">
-                                            <div class="col-xl-12" >
-                                                <h5 style= "color: white; font-weight: bold; font-size: 45px"><?php echo '$'.$totalEarnedCost; ?></h5>
-                                            </div>
-                                        </div>
+                                    <div class="this-image">
+                                        <img src="<?php echo SURL;?>assets/images/money.png" class="" />
                                     </div>
                                 </div>
                             </div>
