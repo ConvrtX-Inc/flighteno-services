@@ -412,7 +412,42 @@
                     e.preventDefault();
                     resetMessageArea();
                 });
+
+                $(".tickets-messages-history").on("click", ".link-download", function(e) {
+                    e.preventDefault();
+                    const downloadURL = $(this).attr("href");
+                    // downloadImage(downloadURL);
+                    downloadResource(downloadURL);
+                });
             });
+
+            function forceDownload(blob, filename) {
+                var a = document.createElement('a');
+                a.download = filename;
+                a.href = blob;
+                // For Firefox https://stackoverflow.com/a/32226068
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+
+            // Current blob size limit is around 500MB for browsers
+            function downloadResource(url, filename) {
+                console.log("location origin", location.origin)
+                if (!filename) filename = url.split('\\').pop().split('/').pop();
+                fetch(url, {
+                    headers: new Headers({
+                        'Origin': location.origin
+                    }),
+                    mode: 'cors'
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                let blobUrl = window.URL.createObjectURL(blob);
+                forceDownload(blobUrl, filename);
+                })
+                .catch(e => console.error(e));
+            }
 
             // Preparing image file
             function imageUploadOnChange() { 
@@ -496,7 +531,7 @@
                 let data = new FormData();
                 let oldFileName = files[0]["name"];
                 let extension = oldFileName.split(".").pop();
-                let newFileName = generateNewFileName();
+                let newFileName = generateNewFileName() + "." + extension;
 
                 // Prepare data
                 if (files.length > 0)
