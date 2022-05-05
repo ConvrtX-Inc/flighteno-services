@@ -3805,7 +3805,7 @@ class Rest_calls extends REST_Controller
 
                 if (!empty($tokenArray->admin_id)) {
                     $account = $this->stripe->accountLinks->create([
-                        'account' => $data['stripe_account_id'],
+                        'account' => $body['stripe_account_id'],
                         'refresh_url' => 'https://flighteno-dev.herokuapp.com/signin',
                         'return_url' => 'https://flighteno-dev.herokuapp.com',
                         'type' => 'account_onboarding',
