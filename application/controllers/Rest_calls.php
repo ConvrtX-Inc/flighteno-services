@@ -338,6 +338,8 @@ class Rest_calls extends REST_Controller
                             'last_name' => '$last_name',
                             'username' => '$username',
                             'email_address' => '$email_address',
+                            'stripe_customer_id' => '$stripe_customer_id',
+                            'stripe_account_id' => '$stripe_account_id',
                             'profile_image' => '$profile_image',
                             'profile_status' => '$profile_status',
                             'password' => '$password',
@@ -374,7 +376,15 @@ class Rest_calls extends REST_Controller
                     //removed temporarily for testing
                     //if (md5($password) == $userData['password']) {
                     if (count($userData) > 0) {
-
+                        if(!isset($userData['stripe_customer_id'])) {
+                            $customer = $this->stripe->customers->create(['name' => $userData['full_name'],'email' => $userData['email_address']]);
+                            $stripe_customer_id = $customer->id;
+                            $userData['stripe_customer_id'] = $stripe_customer_id;
+                            $db->users->updateOne(['email_address' => $userData['email_address']], ['$set' => ['stripe_customer_id' => $stripe_customer_id]]);
+                        }
+                        if(!isset($userData['stripe_account_id'])) {
+                            $userData['stripe_account_id'] = '';
+                        }
                         makeLoginStatusTrue($email);
                         $token = $this->Mod_isValidUser->GenerateJWT((string)$userData['_id']);
                         $response_array = [
@@ -429,7 +439,9 @@ class Rest_calls extends REST_Controller
         } else {
             //user information check
             $userLocationData = $this->Mod_users->getUserLocation();
-
+            $customer = $this->stripe->customers->create(['name' => (string)$this->post('full_name'),
+                'email' => strtolower(trim((string)$this->post('email')))]);
+            $stripe_customer_id = $customer->id;
             $signupData = [
 
                 'first_name' => (string)$this->post('first_name'),
@@ -452,6 +464,7 @@ class Rest_calls extends REST_Controller
                 'country' => $userLocationData['country'],
                 'Postal Code' => $userLocationData['postal'],
                 'country_code' => (string)$this->post('country_code'),
+                'stripe_customer_id' => $stripe_customer_id,
             ];
 
             $checkStatus = $db->users->insertOne($signupData);
@@ -482,6 +495,7 @@ class Rest_calls extends REST_Controller
                     'country' => $userLocationData['country'],
                     'Postal Code' => $userLocationData['postal'],
                     'country_code' => (string)$this->post('country_code'),
+                    'stripe_customer_id' => $stripe_customer_id,
                 ];
 
                 $getRatting = $this->Mod_rating->getUserAvgRatting((string)$checkStatus->getInsertedId());
@@ -3805,9 +3819,9 @@ class Rest_calls extends REST_Controller
 
                 if (!empty($tokenArray->admin_id)) {
                     $account = $this->stripe->accountLinks->create([
-                        'account' => $data['stripe_account_id'],
+                        'account' => $body['stripe_account_id'],
                         'refresh_url' => 'https://flighteno-dev.herokuapp.com/signin',
-                        'return_url' => 'https://flighteno-dev.herokuapp.com',
+                        'return_url' => 'https://flighteno-dev.herokuapp.com/success',
                         'type' => 'account_onboarding',
                     ]);
                     $response_array['code'] = REST_Controller::HTTP_CREATED;
@@ -3955,7 +3969,7 @@ class Rest_calls extends REST_Controller
                     }
 
                     if (!$userData['stripe_customer_id']) {
-                        $customer = $this->stripe->customers->create([$userData['full_name'],$userData['email_address']]);
+                        $customer = $this->stripe->customers->create(['name' => $userData['full_name'],'email' => $userData['email_address']]);
                         $stripe_customer_id = $customer->id;
                         $db->users->updateOne(['email_address' => $userData['email_address']], ['$set' => ['stripe_customer_id' => $stripe_customer_id]]);
                     } else {
@@ -4016,6 +4030,83 @@ class Rest_calls extends REST_Controller
     }
 
 
+    //This is to generate stripe customer id
+    public function createStripeCustomer_post() {
+        try {
+            if (!empty($this->input->request_headers('Authorization'))) {
+                $body = $this->post();
+                $data = array_keys( $body);
+                if( !in_array('email_address',$data)  ) {
+                    $response_array['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                    $response_array['status'] = 'error';
+                    $response_array['message'] = 'Missing required param!';
+                    $response_array['param'] = [
+                        'email_address'
+                    ];
+                    $response_array['sent_data'] = $body;
+                    $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
+                    return json_encode($response_array);
+                }
+
+                $received_Token_Array = $this->input->request_headers('Authorization');
+                $received_Token = $received_Token_Array['authorization'];
+                if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                    $received_Token = $received_Token_Array['Authorization'];
+                }
+                $token = trim(str_replace("Token: ", "", $received_Token));
+                $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+                if (!empty($tokenArray->admin_id)) {
+                    $db = $this->mongo_db->customQuery();
+                    $lookup = [ [ '$match' => [ 'email_address' => $body['email_address'],  ]  ],  ];
+                    $getUser = $db->users->aggregate($lookup);
+                    $userData = iterator_to_array($getUser);
+                    $userData = $userData[0];
+                    if (!$userData) {
+                        $response_array['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                        $response_array['status'] = 'error';
+                        $response_array['message'] = 'User not found with email:' . $body['email_address'];
+                        $response_array['sent_data'] = $body;
+                        $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
+                        return json_encode($response_array);
+                    }
+                    if (!$userData['stripe_customer_id']) {
+                        $customer = $this->stripe->customers->create(['name' => $userData['full_name'],'email' => $userData['email_address']]);
+                        $stripe_customer_id = $customer->id;
+                        $userData['stripe_customer_id'] = $stripe_customer_id;
+                        $db->users->updateOne(['email_address' => $userData['email_address']], ['$set' => ['stripe_customer_id' => $stripe_customer_id]]);
+                    }
+                    $response_array['code'] = REST_Controller::HTTP_OK;
+                    $response_array['status'] = 'success';
+                    $response_array['message'] = 'Successfully attached payment method';
+                    $response_array['response'] = $userData;
+                    $response_array['sent_data'] = $body;
+                    $this->set_response($response_array, REST_Controller::HTTP_OK);
+                    return json_encode($response_array);
+                } else {
+                    $response_array['code'] = REST_Controller::HTTP_NOT_FOUND;
+                    $response_array['status'] = 'error';
+                    $response_array['message'] = 'Authorization Failed!!';
+                    $response_array['sent_data'] = $body;
+                    $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+                    return json_encode($response_array);
+                }
+            } else {
+                $response_array['code'] = REST_Controller::HTTP_NOT_FOUND;
+                $response_array['status'] = 'error';
+                $response_array['message'] = 'Headers Are Missing!!!!!!!!!!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+                return json_encode($response_array);
+            }
+        } catch (Exception $exception) {
+            $response_array['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response_array['status'] = 'error';
+            $response_array['message'] = $exception->getMessage();
+            $this->set_response($response_array, REST_Controller::HTTP_BAD_REQUEST);
+            return json_encode($response_array);
+        }
+    }
+
     //This is to confirm the transfer
     public function createPaymentMethod_post()
     {
@@ -4062,7 +4153,7 @@ class Rest_calls extends REST_Controller
                          return json_encode($response_array);
                      }
                      if (!$userData['stripe_customer_id']) {
-                         $customer = $this->stripe->customers->create([$userData['full_name'],$userData['email_address']]);
+                         $customer = $this->stripe->customers->create(['name' => $userData['full_name'],'email' => $userData['email_address']]);
                          $stripe_customer_id = $customer->id;
                          $db->users->updateOne(['email_address' => $userData['email_address']], ['$set' => ['stripe_customer_id' => $stripe_customer_id]]);
                      } else {
