@@ -227,7 +227,7 @@
                                 <div class="chart-box">
                                     <div class="this-title mb-3 d-flex align-items-center justify-content-between">
                                         <h4 class="mt-0">Total order of travelers</h4>
-                                        <a href="#">See all</a>
+                                        <a href="<?php echo base_url();?>index.php/admin/Trasection/trasectionTraveler">See all</a>
                                     </div>
 
                                     <div class="this-chart traveler-orders">
@@ -271,7 +271,7 @@
                                             } ?>
                                         </div>
 
-                                        <a href="#" class="btn-see-all">See all</a>
+                                        <a href="<?php echo base_url();?>index.php/admin/Users/index" class="btn-see-all">See all</a>
                                     </div>
                                 </div>
 
