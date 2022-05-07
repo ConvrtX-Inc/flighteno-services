@@ -136,7 +136,9 @@ class Dashboard extends CI_Controller {
         $activities    =  $db->activities->aggregate($queryActivity);
         $activitiesRes =  iterator_to_array($activities);
         $data['recentActivity']  = $this->Mod_users->getRecentUserActivities();
+        $data['recentActivityToday']  = $this->Mod_users->getRecentUserActivitiesToday();
         // var_dump($data['recentActivity']);exit;
+        // var_dump($data['recentActivityToday']);exit;
 
         $this->load->view('admin/admin_dashboard', $data);
     }//end

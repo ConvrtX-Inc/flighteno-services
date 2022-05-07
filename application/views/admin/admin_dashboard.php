@@ -327,6 +327,18 @@
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script>
+            let recentActivityToday = '<?=json_encode($recentActivityToday)?>';
+            recentActivityToday = JSON.parse(recentActivityToday);
+
+            let dataUserActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let dataTravelers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            
+            recentActivityToday.forEach(function (item, index) {
+                let thisHour = item['_id'];
+                let thisCount = item['count'];
+                let dataIndex = Math.floor(thisHour / 2);
+                dataUserActivity[dataIndex] += thisCount;
+            });
 
             window.onload = function() {
                 new Chart(document.getElementById("user_activity"), {
@@ -335,7 +347,7 @@
                         labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
                         datasets: [
                             {    
-                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
+                                data: dataUserActivity,
                                 backgroundColor: ["#ffffff" ,"#ffffff" ,"#ffffff","#ffffff","#ffffff", "#ffffff","#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff", "#ffffff"],
                                 label: "user",
                                 display:false,
