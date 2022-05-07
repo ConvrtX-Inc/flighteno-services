@@ -188,7 +188,6 @@
                                         <p class="m-0 this-total"><?php echo $users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector01.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage"><?php echo number_format($percentageSignedUp, 0).'%'; ?></h5>
                                 </div>
                             </div>
 
@@ -199,7 +198,6 @@
                                         <p class="m-0 this-total"><?php echo $active_users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector02.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage"><?php echo number_format($active_user_percentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
                             
@@ -210,7 +208,6 @@
                                         <p class="m-0 this-total"><?php echo $inActive_users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector03.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage text-red"><?php echo number_format($inactiveUserPercentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
                         </div>

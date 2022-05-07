@@ -763,7 +763,8 @@ body {
 
 .dashboard-page .statistics img {
   /* width: 200px; */
-  height: 90px;
+  /* height: 90px; */
+  width: 120px;
 }
 
 .dashboard-page .statistics .this-percentage {
