@@ -267,7 +267,8 @@ class Mod_order extends CI_Model {
                     '$project' => [
                       '_id'           =>  ['$toString' => '$_id'],
                       'full_name'     =>  '$full_name',
-                      'profile_image' =>  '$profile_image'
+                      'profile_image' =>  '$profile_image',
+                      'email_address' =>  '$email_address'
                     ]
                   ],
                 ],
