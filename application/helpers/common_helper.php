@@ -154,13 +154,18 @@ if(!function_exists('socialExistsCheck')){
         $countRec    = iterator_to_array($getUserData);
         if(count($countRec) > 0 ){
 
-            if(isset($countRec[0]['signup_source']) && $countRec[0]['signup_source']  ==  $source){
+            // if(isset($countRec[0]['signup_source']) && $countRec[0]['signup_source']  ==  $source){
 
-                return ['status' => false, 'id' => (string)$countRec[0]['_id'], 'phone_number' =>  $countRec[0]['phone_number']];
-            }else{
+            //     return ['status' => false, 'id' => (string)$countRec[0]['_id'], 'phone_number' =>  $countRec[0]['phone_number']];
+            // }else{
 
-                return ['status' => true, 'id' => '', 'phone_number' => ''];
-            }
+            //     return ['status' => true, 'id' => '', 'phone_number' => ''];
+            // }
+
+            $userData = $countRec[0];
+            $userData['_id'] = (string)$countRec[0]['_id'];
+            return ['status' => true, 'data' => $userData];
+
         }else{
 
             return ['status' => false, 'id' => '', 'phone_number' => ''];

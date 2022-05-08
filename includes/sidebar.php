@@ -140,13 +140,13 @@
 
                     <ul class="collapse4 styleClass" id="menu-style6">
                         <li class="">
-                            <a href="<?php echo base_url();?>index.php/admin/Support/index">
+                            <a href="<?php echo base_url();?>index.php/admin/Support/buyer/tickets">
                                 <i class="fas fa-user-lock"></i>
                                 <span> Buyer </span>
                             </a>      
                         </li>
                         <li class="mt-2">                        
-                            <a href="<?php echo base_url();?>index.php/admin/Support/traveler">
+                            <a href="<?php echo base_url();?>index.php/admin/Support/traveler/tickets">
                                 <i class="fas fa-user-lock"></i>
                                 <span> Traveler </span>
                             </a>

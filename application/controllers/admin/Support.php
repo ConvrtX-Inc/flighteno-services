@@ -272,14 +272,101 @@ class Support extends CI_Controller {
             show_404();
         }
 
+        $searchValue = '';
+        $searchMongoIdObject = '';
+        if(!empty($_POST['searchValue'])) {
+            $searchValue = $_POST['searchValue'];
+            if ($this->mongo_db->isValid2($searchValue)) {
+                $searchMongoIdObject = $this->mongo_db->mongoId($searchValue);
+                $search['_id'] = $searchMongoIdObject;
+                $searchValue = ''; // to skip searching for full_name
+            }
+        }
+
+        $config['per_page'] = 99;
+        $page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
+        if($page !=0) {
+            $page = ($page-1) * $config['per_page'];
+        }
+
+        $getTickets = [
+            ['$match' => $search],
+            [
+                '$project' => [
+                    '_id'           =>  ['$toString' => '$_id'],
+                    'admin_id'      =>  '$admin_id',
+                    'message'       =>  '$message',
+                    'subject'       =>  '$subject',
+                    'status'        =>  '$status',
+                    'image'         =>  '$image',
+                    'video'         =>  '$video',
+                    'order_number'  =>  '$order_number',
+                    'created_date'  =>  '$created_date'
+                ]
+            ],
+            [
+                '$lookup' => [
+                    'from' => 'ticket_reply',
+                    'let' => ['ticketId' => '$_id'],
+                    'pipeline' => [
+                        [
+                            '$match' => [
+                                '$expr' => ['$eq' => ['$ticket_id', '$$ticketId']],
+                                'status' => 'new'
+                            ],
+                        ],
+                        [
+                            '$group' => [
+                                '_id'    =>  '$ticket_id',
+                                'count'  =>  ['$sum' => 1]
+                            ]
+                        ]
+                    ],
+                    'as' => 'unreadMessageCount'
+                ]
+            ],
+            [
+                '$lookup' => [
+                    'from' => 'users',
+                    'let' => ['admin_id' => ['$toObjectId' => '$admin_id']],
+                    'pipeline' => [
+                        [
+                            '$match' => [
+                                '$expr' => ['$eq' => ['$_id', '$$admin_id']],
+                                'full_name' => [
+                                    '$regex' => $searchValue,
+                                    '$options' => 'i'
+                                ]
+                            ],
+                        ],
+                        [
+                            '$project' => [
+                                '_id'           =>  1,
+                                'full_name'     => '$full_name',
+                                'profile_image' => '$profile_image'
+                            ]
+                        ]
+                    ],
+                    'as' => 'ticketUserData'
+                ]
+            ],
+            ['$match' => ['ticketUserData' => ['$ne' => []]]],
+            ['$sort' => ['created_date' => -1 ]],
+            ['$skip' => intval($page)],
+            ['$limit'  => intval($config['per_page'])],
+        ];
+
+        $tickets    = $db->ticket->aggregate($getTickets);
+        $ticketData = iterator_to_array($tickets);
+
+        $totalTickets  =  $db->ticket->count($search);
+
         $data['profile_status'] = $profile_status;
         $data['id_user'] = $id_user;
         $data['id_ticket'] = $id_ticket;
-        $totalTickets  =  $db->ticket->count($search);
 
         $config['base_url']         =   SURL . 'index.php/admin/Support/tickets';
         $config['total_rows']       =   $totalTickets;
-        $config['per_page']         =   15;
         $config['num_links']        =   2;
         $config['use_page_numbers'] =   TRUE;
         $config['uri_segment']      =   4;
@@ -304,113 +391,9 @@ class Support extends CI_Controller {
         $config['num_tag_close']    =   '</li>';
 
         $this->pagination->initialize($config);
-        $page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
         
-        if($page !=0) 
-        {
-        $page = ($page-1) * $config['per_page'];
-        }
         $data["links"] = $this->pagination->create_links();
-
-        $getTickets = [
-            [
-                '$match' => $search
-
-            ],
-    
-            [
-                '$project' => [
-                    '_id'           =>  ['$toString' => '$_id'],
-                    'admin_id'      =>  '$admin_id',
-                    'message'       =>  '$message',
-                    'subject'       =>  '$subject',
-                    'status'        =>  '$status',
-                    'image'         =>  '$image',
-                    'video'         =>  '$video',
-                    'order_number'  =>  '$order_number',
-                    'created_date'  =>  '$created_date'
-                ]
-            ],
-            [
-                '$lookup' => [
-                    'from' => 'ticket_reply',
-                    'let' => [
-                        'ticketId' =>  '$_id',
-                    ],
-                    'pipeline' => [
-                        [
-                        '$match' => [
-                            '$expr' => [
-                                '$eq' => [
-                                    '$ticket_id',
-                                    '$$ticketId'
-                                ]
-                            ],
-                            'status' => 'new'
-                        ],
-                    ],
-                    
-                    [
-                        '$group' => [
-                            '_id'    =>  '$ticket_id',
-                            'count'  =>  ['$sum' => 1] 
-                            
-                        ]
-                    ]
-                ],
-                'as' => 'unreadMessageCount'
-                ]
-            ],
-
-            [
-                '$lookup' => [
-                'from' => 'users',
-                'let' => [
-                    'admin_id' =>    ['$toObjectId' => '$admin_id'],
-                ],
-                'pipeline' => [
-                    [
-                    '$match' => [
-                        '$expr' => [
-                        '$eq' => [
-                            '$_id',
-                            '$$admin_id'
-                        ]
-                        ],
-                    ],
-                    ],
-                    
-                    [
-                        '$project' => [
-                            '_id'           =>  1,
-                            'full_name'     => '$full_name',
-                            'profile_image' => '$profile_image'
-                            
-                        ]
-                    ]
-                ],
-                'as' => 'ticketUserData'
-                ]
-            ],
-
-            [
-                '$sort' => ['created_date' => -1 ]
-            ],
-            [
-                '$skip' => intval($page)
-            ],
-            [
-                '$limit'  => intval($config['per_page'])
-            ],
-        ];
-
-        $tickets    = $db->ticket->aggregate($getTickets);
-        $ticketData = iterator_to_array($tickets);
         $data['tickets'] = $ticketData;
-
-        // var_dump($data['tickets'][0]["unreadMessageCount"][0]['count']);
-        // exit();
-
         $this->load->view('support/tickets', $data);
     }//end
     
@@ -578,7 +561,7 @@ class Support extends CI_Controller {
         $first_message = $messagesData[0]['message'];
 
         if (!empty($first_image)) {
-            $ticketMainData['message'] = '<img src="'. $first_image . '"><a class="link-download" href="'. $first_image .'" target="_blank"><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
+            $ticketMainData['message'] = '<img src="'. $first_image . '"><a class="link-download" href="'. $first_image .'"><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
             $messagesHTML .= $this->parser->parse('support/template-ticket', $ticketMainData, TRUE);
         }
 
@@ -621,7 +604,7 @@ class Support extends CI_Controller {
                 $url_file = $res['file'];
 
                 if (empty($url_file) || $url_file == ''|| is_null($url_file)) {
-                    $template_data['message'] = '<img src="'. $url_image . '"><a class="link-download" href="'. $url_image .'" download><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
+                    $template_data['message'] = '<img src="'. $url_image . '"><a class="link-download" href="'. $url_image .'"><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
                     // $template_data['message'] = '<img src="'.SURL.'assets/uploads/'. $res['image'] . '">';
                 } else {
                     $file_extension = $res['file_type'];
@@ -774,7 +757,7 @@ class Support extends CI_Controller {
             // Generate html template
             $ticketMainData = array();
             $ticketMainData['profile_image'] = $this->input->post('profileImage');
-            $ticketMainData['message'] = '<img src="'.$imagePath.'"><a class="link-download" href="'. $imagePath .'" download><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
+            $ticketMainData['message'] = '<img src="'.$imagePath.'"><a class="link-download" href="'. $imagePath .'"><img src="'.SURL.'assets/images/arrow-bottom-right-r.png"></a>';
             $ticketMainData['div_class1'] = 'msg msg-outgoing w-75 ml-auto';
             $ticketMainData['div_class2'] = 'this-top d-flex justify-content-end';
             $ticketMainData['time_lapsed'] = $last_time_ago;

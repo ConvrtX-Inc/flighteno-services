@@ -44,6 +44,8 @@ class Users extends CI_Controller {
             }
         }
 
+        $findArray['status'] = 'user';
+        $findArray['user_role'] = 2;
         $findArray['profile_status'] = 'buyer';
        
         $buyer      =  $db->users->find($findArray);
@@ -135,6 +137,8 @@ class Users extends CI_Controller {
             }
         }
 
+        $findArray['status'] = 'user';
+        $findArray['user_role'] = 2;
         $findArray['profile_status'] = 'traveler';
 
         $traveler      =  $db->users->find($findArray);
