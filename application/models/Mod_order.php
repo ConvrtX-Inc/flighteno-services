@@ -863,6 +863,75 @@ class Mod_order extends CI_Model {
     return $getPaymentData[0]['totalCost'];
   }//end
 
+
+  public function countOrdersBuyerToday() {
+    $db = $this->mongo_db->customQuery();
+
+    $month = (int)date('m');
+    $year = (int)date('Y');
+    $day = (int)date('d');
+
+    // for demo purposes, with sample data
+    // $month = 12;
+    // $day = 2;
+    // $year = 2021;
+
+    $query = [
+      [
+        '$project' => [
+          '_id'            =>  ['$toString' => '$_id'],
+          'created_date'  =>  '$created_date',
+          'buyer_id'      =>  '$buyer_id',
+          'order_id'      =>  '$order_id',
+          'price'         =>  '$price',
+          'created_date_month' => ['$month' => '$created_date'],
+          'created_date_year' => ['$year' => '$created_date'],
+          'created_date_day' => ['$dayOfMonth' => '$created_date'],
+          'created_date_hour' => ['$hour' => '$created_date'],
+        ]
+      ],
+      [
+        '$lookup' => [
+          'from' => 'users',
+          'let' => [
+            'admin_id' =>  ['$toObjectId' => '$buyer_id'],
+          ],
+          'pipeline' => [
+            [
+              '$match' => [
+                '$expr' => [
+                  '$eq' => ['$_id','$$admin_id']
+                ],
+              ],
+            ],
+            [
+              '$project' => [
+                '_id' => ['$toString' => '$_id'],
+                'profile_status' => '$profile_status'
+              ]
+            ],
+          ],
+          'as' => 'profileData'
+        ]
+      ],
+      [
+        '$match'=>['profileData.profile_status'=>'buyer']
+      ],
+      ['$match' => ['created_date_month' => $month, 'created_date_year' => $year, 'created_date_day' => $day]],
+      [
+        '$group' => [
+          '_id' => '$created_date_hour',
+          'count' => ['$sum' => 1]
+        ]
+      ],
+      ['$sort' => ['_id' => 1]],
+    ];
+
+    $result = $db->payment_details->aggregate($query);
+    $resultArr = iterator_to_array($result);
+    return $resultArr;
+  }
+
   public function checkStatus($order_id, $admin_id){
     $db = $this->mongo_db->customQuery();
 

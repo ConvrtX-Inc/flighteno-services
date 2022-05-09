@@ -193,9 +193,9 @@ class Trasection extends CI_Controller {
       [
         '$match'=>['profileData.profile_status'=>'buyer']
       ],
+      ['$sort' => [ 'created_date'=> -1]],
       ['$skip' =>  $page],
       ['$limit' =>  $config['per_page'], ],
-      ['$sort' => [ 'created_date'=> -1]]
     ];
     $buyer_trasec     =  $db->payment_details->aggregate($getData);
     $buyerRes_trasec  =  iterator_to_array($buyer_trasec);
@@ -284,7 +284,7 @@ class Trasection extends CI_Controller {
     //echo '<pre>';var_dump($buyerRes);echo '</pre>';exit;
     $total_rows = count($buyerRes);
     
-    $config['base_url'] = SURL . 'index.php/admin/Trasection/index';
+    $config['base_url'] = SURL . 'index.php/admin/Trasection/trasectionTraveler';
     $config['total_rows'] = $total_rows;
     $config['per_page'] = !empty($paginationData['per_page'])? intval($paginationData['per_page']) : 3;
     $config['num_links'] = 0;
@@ -365,15 +365,9 @@ class Trasection extends CI_Controller {
       [
         '$match'=>['profileData.profile_status'=>'traveler']
       ],
-      [
-        '$skip' =>  $page
-      ],
-      [
-        '$limit' => $config['per_page'] , 
-      ],
-      [
-        '$sort' => [ 'created_date'=> -1]
-      ],
+      ['$sort' => [ 'created_date'=> -1]],
+      ['$skip' =>  $page],
+      ['$limit' =>  $config['per_page'], ],
     ];
 
     $traveler     =  $db->payment_details->aggregate($getData);
