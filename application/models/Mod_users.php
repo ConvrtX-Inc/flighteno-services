@@ -678,7 +678,7 @@ class Mod_users extends CI_Model {
   }
 
 
-  public function updateProfile($admin_id, $full_name, $profile_image){
+  public function updateProfile($admin_id, $full_name, $profile_image, $phone_number){
     $db = $this->mongo_db->customQuery();
 
     $update = [];
@@ -689,6 +689,10 @@ class Mod_users extends CI_Model {
 
     if( !empty($profile_image) && !is_null($profile_image) ){
       $update['profile_image'] = $profile_image;
+    }
+
+    if( !empty($phone_number) && !is_null($phone_number) ){
+      $update['phone_number'] = $phone_number;
     }
 
     if( !empty($update) && !is_null($update) ){
