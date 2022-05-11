@@ -1827,7 +1827,8 @@ class Rest_calls extends REST_Controller
 
                 $offer_id = (string)$this->post('offer_id');
                 $status = $this->post('status');
-                $getOrder = $this->Mod_order->acceptTheOfferAndChangeTheOrderStatus($offer_id, $status);
+                $payment_method_id = $this->post('payment_method_id');
+                $getOrder = $this->Mod_order->acceptTheOfferAndChangeTheOrderStatus($offer_id, $status, $payment_method_id);
 
                 $offerData = $this->Mod_order->getOfferDetails($offer_id);
                 $reciver_admin_id = (string)$offerData[0]['traveler_id'];
