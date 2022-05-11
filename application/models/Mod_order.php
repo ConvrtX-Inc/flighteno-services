@@ -289,12 +289,12 @@ class Mod_order extends CI_Model {
     return $orderTravelerRes;
   }
 
-  public function acceptTheOfferAndChangeTheOrderStatus($offerId, $status){
+  public function acceptTheOfferAndChangeTheOrderStatus($offerId, $status, $payment_method_id){
 
     $db  =  $this->mongo_db->customQuery();
     if($status == 'accept'){
 
-      $getOffer    =  $db->accepted_offers->updateOne(['_id' => $this->mongo_db->mongoId($offerId) ], ['$set' => ['status' => 'accepted']] );
+      $getOffer    =  $db->accepted_offers->updateOne(['_id' => $this->mongo_db->mongoId($offerId) ], ['$set' => ['status' => 'accepted', 'payment_method_id' => $payment_method_id]] );
 
       $getOffer    =  $db->accepted_offers->find(['_id' => $this->mongo_db->mongoId((string)$offerId) ]);
       $getOfferRes =  iterator_to_array($getOffer);
@@ -1104,6 +1104,14 @@ class Mod_order extends CI_Model {
     ];
     $db->order_history->insertOne($orderHistoryData);
   }  
+
+  public function getPaymentMethodFromAcceptedOffers($order_id) {
+    $db   =  $this->mongo_db->customQuery();
+
+    $offerData =  $db->accepted_offers->find(['order_id' => $order_id]);
+    $getData   =  iterator_to_array($offerData);
+    return $getData[0]['payment_method_id'];
+  }
 
 }
 
