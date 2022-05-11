@@ -188,7 +188,6 @@
                                         <p class="m-0 this-total"><?php echo $users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector01.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage"><?php echo number_format($percentageSignedUp, 0).'%'; ?></h5>
                                 </div>
                             </div>
 
@@ -199,7 +198,6 @@
                                         <p class="m-0 this-total"><?php echo $active_users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector02.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage"><?php echo number_format($active_user_percentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
                             
@@ -210,7 +208,6 @@
                                         <p class="m-0 this-total"><?php echo $inActive_users; ?></p>
                                         <img src="<?php echo SURL;?>assets/images/vector03.png" class="" />
                                     </div>
-                                    <h5 class="m-0 this-percentage text-red"><?php echo number_format($inactiveUserPercentage, 0).'%'; ?></h5>
                                 </div>
                             </div>
                         </div>
@@ -229,8 +226,8 @@
 
                                 <div class="chart-box">
                                     <div class="this-title mb-3 d-flex align-items-center justify-content-between">
-                                        <h4 class="mt-0">Total order of travelers</h4>
-                                        <a href="#">See all</a>
+                                        <h4 class="mt-0">Total order of buyers</h4>
+                                        <a href="<?php echo base_url();?>index.php/admin/Trasection/index">See all</a>
                                     </div>
 
                                     <div class="this-chart traveler-orders">
@@ -274,7 +271,7 @@
                                             } ?>
                                         </div>
 
-                                        <a href="#" class="btn-see-all">See all</a>
+                                        <a href="<?php echo base_url();?>index.php/admin/Users/index" class="btn-see-all">See all</a>
                                     </div>
                                 </div>
 
@@ -330,6 +327,27 @@
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script>
+            let recentActivityToday = '<?=json_encode($recentActivityToday)?>';
+            let countOrderBuyersToday = '<?=json_encode($countOrderBuyersToday)?>';
+            recentActivityToday = JSON.parse(recentActivityToday);
+            countOrderBuyersToday = JSON.parse(countOrderBuyersToday);
+
+            let dataUserActivity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let dataBuyers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            
+            recentActivityToday.forEach(function (item, index) {
+                let thisHour = item['_id'];
+                let thisCount = item['count'];
+                let dataIndex = Math.floor(thisHour / 2);
+                dataUserActivity[dataIndex] += thisCount;
+            });
+            
+            countOrderBuyersToday.forEach(function (item, index) {
+                let thisHour = item['_id'];
+                let thisCount = item['count'];
+                let dataIndex = Math.floor(thisHour / 2);
+                dataBuyers[dataIndex] += thisCount;
+            });
 
             window.onload = function() {
                 new Chart(document.getElementById("user_activity"), {
@@ -338,7 +356,7 @@
                         labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
                         datasets: [
                             {    
-                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
+                                data: dataUserActivity,
                                 backgroundColor: ["#ffffff" ,"#ffffff" ,"#ffffff","#ffffff","#ffffff", "#ffffff","#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff", "#ffffff"],
                                 label: "user",
                                 display:false,
@@ -398,7 +416,7 @@
                         labels:  ['12AM', '2AM', '4AM', '6AM', '8PM', '10AM', '12PM','14PM','16PM', '18PM','20PM','22PM'],
                         datasets: [
                             { 
-                                data: [100, 25, 0, 48, 500, 65, 0, 750, 91, 120, 420, 250],
+                                data: dataBuyers,
                                 backgroundColor: ["#0F6FC8" ,"#0F6FC8" ,"#0F6FC8","#0F6FC8","#0F6FC8", "#0F6FC8","#0F6FC8", "#0F6FC8","#0F6FC8","#0F6FC8","#0F6FC8", "#0F6FC8"],
                                 label: "orders",
                                 display: false,

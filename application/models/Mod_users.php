@@ -83,6 +83,71 @@ class Mod_users extends CI_Model {
     return $resultArr;
   }
 
+  public function getRecentUserActivitiesToday() {
+    $db = $this->mongo_db->customQuery();
+
+    $month = (int)date('m');
+    $year = (int)date('Y');
+    $day = (int)date('d');
+
+    // for demo purposes, with sample data
+    // $month = 4;
+    // $year = 2022;
+    // $day = 26;
+
+    $query = [
+      [
+        '$project' => [
+          '_id' => ['$toString' => '$_id'],
+          'message'  => '$message',
+          'admin_id' => '$admin_id',
+          'created_date' => '$created_date',
+          'created_date_month' => ['$month' => '$created_date'],
+          'created_date_year' => ['$year' => '$created_date'],
+          'created_date_day' => ['$dayOfMonth' => '$created_date'],
+          'created_date_hour' => ['$hour' => '$created_date'],
+        ]
+      ],
+      [
+        '$lookup' => [
+          'from' => 'users',
+          'let' => ['admin_id' => ['$toObjectId' => '$admin_id']],
+          'pipeline' => [
+            [
+              '$match' => [
+                  '$expr' => [
+                    '$eq' => ['$_id', '$$admin_id'],
+                  ],
+              ],
+            ],
+            [
+              '$project' => [
+                '_id' => ['$toString' => '$_id'],
+                'full_name' => '$full_name',
+                'email_address' => '$email_address',
+                'profile_image' => '$profile_image',
+              ]
+            ],
+          ],
+          'as' => 'profileData'
+        ]
+      ],
+      ['$match' => ['profileData' => ['$ne' => []]]],
+      ['$match' => ['created_date_month' => $month, 'created_date_year' => $year, 'created_date_day' => $day]],
+      [
+        '$group' => [
+          '_id' => '$created_date_hour',
+          'count' => ['$sum' => 1]
+        ]
+      ],
+      ['$sort' => ['_id' => 1]],
+    ];
+
+    $result = $db->activities->aggregate($query);
+    $resultArr = iterator_to_array($result);
+    return $resultArr;
+  }
+
   public function findActivePercentage(){
       
     $db = $this->mongo_db->customQuery();
