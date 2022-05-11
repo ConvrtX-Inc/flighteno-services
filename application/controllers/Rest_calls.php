@@ -4271,6 +4271,40 @@ class Rest_calls extends REST_Controller
         }
     }
 
+
+    // This is to get the payment_method from the order_id
+    public function getPaymentMethodByOrderId_post() {
+        $db = $this->mongo_db->customQuery();
+
+        if (!empty($this->input->request_headers('Authorization'))) {
+            $received_Token_Array = $this->input->request_headers('Authorization');
+            $received_Token = '';
+            $received_Token = $received_Token_Array['authorization'];
+            
+            if ($received_Token == '' || $received_Token == null || empty($received_Token)) {
+                $received_Token = $received_Token_Array['Authorization'];
+            }
+
+            $token = trim(str_replace("Token: ", "", $received_Token));
+            $tokenArray = $this->Mod_isValidUser->jwtDecode($token);
+
+            if (!empty($tokenArray->admin_id)) {
+                $order_id = (string)$this->post('order_id');
+                $payment_method = $this->Mod_order->getPaymentMethodFromAcceptedOffers($order_id);
+
+                $response_array['payment_method_id'] = $payment_method;
+                $response_array['status'] = 'Successfully Fetched';
+                $this->set_response($response_array, REST_Controller::HTTP_CREATED);
+            } else {
+                $response_array['status'] = 'Authorization Failed!!';
+                $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+            }
+        } else {
+            $response_array['status'] = 'Headers Are Missing!!!!!!!!!!!';
+            $this->set_response($response_array, REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
 }//end controller                                
 
 

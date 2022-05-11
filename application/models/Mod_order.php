@@ -1004,5 +1004,13 @@ class Mod_order extends CI_Model {
     $db->order_history->insertOne($orderHistoryData);
   }  
 
+  public function getPaymentMethodFromAcceptedOffers($order_id) {
+    $db   =  $this->mongo_db->customQuery();
+
+    $offerData =  $db->accepted_offers->find(['order_id' => $order_id]);
+    $getData   =  iterator_to_array($offerData);
+    return $getData[0]['payment_method_id'];
+  }
+
 }
 
