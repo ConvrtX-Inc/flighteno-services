@@ -373,9 +373,9 @@ class Rest_calls extends REST_Controller
 
                 if (count($userData) > 0) {
 
-                    //removed temporarily for testing
-                    //if (md5($password) == $userData['password']) {
-                    if (count($userData) > 0) {
+                    // FLIGHT-118 fix
+                    // Fix for login issue which accepts any credentials
+                    if (md5($password) == $userData['password']) {
                         if(!isset($userData['stripe_customer_id'])) {
                             $customer = $this->stripe->customers->create(['name' => $userData['full_name'],'email' => $userData['email_address']]);
                             $stripe_customer_id = $customer->id;
