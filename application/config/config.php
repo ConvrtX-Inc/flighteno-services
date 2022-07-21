@@ -536,4 +536,4 @@ $config['service_id'] = 'VAa0a01310d8c2116de1581afe34d6ba87';
  */
 $config['sid'] = 'AC81e89cf6e91eb32d34fb5c700ff5fbe0';
 $config['twilio_token'] = '5c34923aa392ca780de363a89d83f064';
-$config['service_id'] = 'MGd0f4b0986bf2391914c8526f05cf7661';
+$config['service_id'] = 'VA6d54c252ce05404db16fc3cbdecd53e2';
